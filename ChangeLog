@@ -1,0 +1,4 @@
+This package doesn't use a normal changelog, if you want to see the changelog
+check the git changelog.
+
+A command that may help you is git log
