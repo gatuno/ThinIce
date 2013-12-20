@@ -32,13 +32,34 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <SDL.h>
 #include <SDL_image.h>
 
 #include "config.h"
 
-#define FPS (1000/24)
+#include "mapa1.h"
+#include "mapa2.h"
+#include "mapa3.h"
+#include "mapa4.h"
+#include "mapa5.h"
+#include "mapa6.h"
+#include "mapa7.h"
+#include "mapa8.h"
+#include "mapa9.h"
+#include "mapa10.h"
+#include "mapa11.h"
+#include "mapa12.h"
+#include "mapa13.h"
+#include "mapa14.h"
+#include "mapa15.h"
+#include "mapa16.h"
+#include "mapa17.h"
+#include "mapa18.h"
+#include "mapa19.h"
+
+#define FPS (1000/18)
 
 #define SWAP(a, b, t) ((t) = (a), (a) = (b), (b) = (t))
 #define RANDOM(x) ((int) (x ## .0 * rand () / (RAND_MAX + 1.0)))
@@ -383,13 +404,29 @@ static int tiles_outputs [] = {
 };
 
 static int tiles_inicio [] = {
-	0,
+	-1,
 	60,
 	61,
-	0,
+	62,
 	63,
 	59,
-	
+	26,
+	70,
+	26, /* FIXME: Debe ser sobre una caja vacia */
+	26, /* FIXME: Debe ser sobre un hielo doble */
+	69,
+	64,
+	117,
+	68,
+	66,
+	67,
+	-1,
+	-1,
+	-1,
+	-1,
+	68,
+	65,
+	71
 };
 
 /* Codigos de salida */
@@ -406,6 +443,7 @@ int game_loop (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
 void copy_tile (SDL_Rect *rect, int tile);
+void load_map (int nivel, int (*mapa)[19], int (*frames)[19]);
 
 /* Variables globales */
 SDL_Surface * screen;
@@ -425,29 +463,20 @@ int main (int argc, char *argv[]) {
 }
 
 int game_loop (void) {
-	int done = 0;
+	int done = 0, g, h;
 	SDL_Event event;
 	SDLKey key;
 	Uint32 last_time, now_time;
 	SDL_Rect rect;
-	int portal_f = 0, f_rapido = 21;
-	int llave = 26;
-	int box[20];
-	
-	int g;
-	
-	for (g = 0; g < 12; g++) {
-		box[g] = g + 59;
-	}
-	
-	box[12] = 71; /* Melt */
-	box[13] = 117; /* Torbellino */
-	
-	Uint32 negro;
+	int mapa[15][19];
+	int frames[15][19];
+	int nivel;
 	
 	SDL_EventState (SDL_MOUSEMOTION, SDL_IGNORE);
 	
-	negro = SDL_MapRGB (screen->format, 0, 0, 0);
+	nivel = 1;
+	
+	load_map (nivel, mapa, frames);
 	do {
 		last_time = SDL_GetTicks ();
 		
@@ -458,44 +487,27 @@ int game_loop (void) {
 					done = GAME_QUIT;
 					break;
 				case SDL_KEYDOWN:
-					if (event.key.keysym.sym == SDLK_a) {
-						
-					} else if (event.key.keysym.sym == SDLK_b) {
-						
+					if (event.key.keysym.sym == SDLK_SPACE) {
+						if (nivel < 38) nivel++;
+						load_map (nivel, mapa, frames);
+					} else if (event.key.keysym.sym == SDLK_a) {
+						nivel--;
+						load_map (nivel, mapa, frames);
 					}
 					break;
 			}
 		}
-		
-		rect.y = 100;
-		
-		rect.x = 96;
-		portal_f = tiles_frames [portal_f];
-		copy_tile (&rect, tiles_outputs [portal_f]);
-		
-		rect.x = 120;
-		f_rapido = tiles_frames [f_rapido];
-		copy_tile (&rect, tiles_outputs [f_rapido]);
-		
-		rect.x = 144;
-		llave = tiles_frames [llave];
-		copy_tile (&rect, tiles_outputs [llave]);
-		
-		for (g = 0; g < 12; g++) {
-			rect.x = 168 + (g * 24);
-			box[g] = tiles_frames [box[g]];
-			copy_tile (&rect, tiles_outputs [box[g]]);
+		for (g = 0; g < 15; g++) {
+			for (h = 0; h < 19; h++) {
+				frames[g][h] = tiles_frames[frames[g][h]];
+				
+				rect.x = 100 + (h * TILE_HEIGHT);
+				rect.y = 50 + (g * TILE_WIDTH);
+				
+				copy_tile (&rect, tiles_outputs [frames[g][h]]);
+			}
 		}
 		
-		rect.x = 456;
-		box[12] = tiles_frames [box[12]];
-		copy_tile (&rect, tiles_outputs [box[12]]);
-		
-		rect.x = 480;
-		box[13] = tiles_frames [box[13]];
-		copy_tile (&rect, tiles_outputs [box[13]]);
-		
-		//printf ("Melt: %i\n", box[12] - 72 + 1);
 		SDL_Flip (screen);
 		
 		now_time = SDL_GetTicks ();
@@ -584,3 +596,158 @@ inline void copy_tile (SDL_Rect *rect, int tile) {
 	
 	SDL_BlitSurface (image_tiles, &r_tile, screen, rect);
 }
+
+void load_map (int nivel, int (*mapa)[19], int (*frames)[19]) {
+	const int (*copiar)[19];
+	int g, h;
+	int r;
+	
+	r = RANDOM(2);
+	r = nivel % 2;
+	nivel = (nivel + 1)/ 2;
+	printf ("Random: %i\n", r);
+	
+	/* TODO: Sortear número aleatorio */
+	switch (nivel) {
+		case 1:
+			copiar = mapa_1;
+			break;
+		case 2:
+			if (r) {
+				copiar = mapa_2_1;
+			} else {
+				copiar = mapa_2_2;
+			}
+			break;
+		case 3:
+			if (r) {
+				copiar = mapa_3_1;
+			} else {
+				copiar = mapa_3_2;
+			}
+			break;
+		case 4:
+			if (r) {
+				copiar = mapa_4_1;
+			} else {
+				copiar = mapa_4_2;
+			}
+			break;
+		case 5:
+			if (r) {
+				copiar = mapa_5_1;
+			} else {
+				copiar = mapa_5_2;
+			}
+			break;
+		case 6:
+			if (r) {
+				copiar = mapa_6_1;
+			} else {
+				copiar = mapa_6_2;
+			}
+			break;
+		case 7:
+			if (r) {
+				copiar = mapa_7_1;
+			} else {
+				copiar = mapa_7_2;
+			}
+			break;
+		case 8:
+			if (r) {
+				copiar = mapa_8_1;
+			} else {
+				copiar = mapa_8_2;
+			}
+			break;
+		case 9:
+			if (r) {
+				copiar = mapa_9_1;
+			} else {
+				copiar = mapa_9_2;
+			}
+			break;
+		case 10:
+			if (r) {
+				copiar = mapa_10_1;
+			} else {
+				copiar = mapa_10_2;
+			}
+			break;
+		case 11:
+			if (r) {
+				copiar = mapa_11_1;
+			} else {
+				copiar = mapa_11_2;
+			}
+			break;
+		case 12:
+			if (r) {
+				copiar = mapa_12_1;
+			} else {
+				copiar = mapa_12_2;
+			}
+			break;
+		case 13:
+			if (r) {
+				copiar = mapa_13_1;
+			} else {
+				copiar = mapa_13_2;
+			}
+			break;
+		case 14:
+			if (r) {
+				copiar = mapa_14_1;
+			} else {
+				copiar = mapa_14_2;
+			}
+			break;
+		case 15:
+			if (r) {
+				copiar = mapa_15_1;
+			} else {
+				copiar = mapa_15_2;
+			}
+			break;
+		case 16:
+			if (r) {
+				copiar = mapa_16_1;
+			} else {
+				copiar = mapa_16_2;
+			}
+			break;
+		case 17:
+			if (r) {
+				copiar = mapa_17_1;
+			} else {
+				copiar = mapa_17_2;
+			}
+			break;
+		case 18:
+			if (r) {
+				copiar = mapa_18_1;
+			} else {
+				copiar = mapa_18_2;
+			}
+			break;
+		case 19:
+			if (r) {
+				copiar = mapa_19_1;
+			} else {
+				copiar = mapa_19_2;
+			}
+			break;
+	}
+	
+	memcpy (mapa, copiar, sizeof (int[15][19]));
+	
+	for (g = 0; g < 15; g++) {
+		for (h = 0; h < 19; h++) {
+			frames[g][h] = tiles_inicio [mapa[g][h]];
+		}
+	}
+	
+	/* TODO: Faltan coordenadas iniciales, cajas, portales y bolsas de dinero adicionales */
+}
+
