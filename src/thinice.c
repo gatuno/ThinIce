@@ -75,6 +75,9 @@
 #define TILE_HEIGHT 24
 #define TILE_WIDTH 24
 
+#define MAP_X 144
+#define MAP_Y 48
+
 /* Enumerar las imágenes */
 enum {
 	IMG_ARCADE,
@@ -125,6 +128,40 @@ enum {
 	TILE_KEY_14,
 	TILE_KEY_15,
 	TILE_KEY_16,
+	
+	TILE_KEY_B_1,
+	TILE_KEY_B_2,
+	TILE_KEY_B_3,
+	TILE_KEY_B_4,
+	TILE_KEY_B_5,
+	TILE_KEY_B_6,
+	TILE_KEY_B_7,
+	TILE_KEY_B_8,
+	TILE_KEY_B_9,
+	TILE_KEY_B_10,
+	TILE_KEY_B_11,
+	TILE_KEY_B_12,
+	TILE_KEY_B_13,
+	TILE_KEY_B_14,
+	TILE_KEY_B_15,
+	TILE_KEY_B_16,
+	
+	TILE_KEY_C_1,
+	TILE_KEY_C_2,
+	TILE_KEY_C_3,
+	TILE_KEY_C_4,
+	TILE_KEY_C_5,
+	TILE_KEY_C_6,
+	TILE_KEY_C_7,
+	TILE_KEY_C_8,
+	TILE_KEY_C_9,
+	TILE_KEY_C_10,
+	TILE_KEY_C_11,
+	TILE_KEY_C_12,
+	TILE_KEY_C_13,
+	TILE_KEY_C_14,
+	TILE_KEY_C_15,
+	TILE_KEY_C_16,
 	
 	TILE_BAG,
 	TILE_GOAL,
@@ -332,7 +369,29 @@ static int tiles_frames [] = {
 	/* Torbellino */
 	118, 119, 120, 121, 122,
 	123, 124, 125, 126, 127, 128, 129, 130,
-	131, 132, 133, 134, 135, 136, 137, 119
+	131, 132, 133, 134, 135, 136, 137, 119,
+	
+	/* Llave 2 */
+	139,
+	140, 141, 142, 143,
+	144, 145, 146, 147,
+	148, 149, 150, 151,
+	152, 153, 154, 155,
+	156, 157, 158, 159,
+	160, 161, 162, 163,
+	164, 165, 166, 167,
+	168, 169, 170, 139,
+	
+	/* Llave 3 */
+	172,
+	173, 174, 175, 176,
+	177, 178, 179, 180,
+	181, 182, 183, 184,
+	185, 186, 187, 188,
+	189, 190, 191, 192,
+	193, 194, 195, 196,
+	197, 198, 199, 200,
+	201, 202, 203, 172
 };
 
 
@@ -400,7 +459,43 @@ static int tiles_outputs [] = {
 	TILE_LOSE_5, TILE_LOSE_6, TILE_LOSE_7, TILE_LOSE_8,
 	TILE_LOSE_9, TILE_LOSE_10, TILE_LOSE_11, TILE_LOSE_12,
 	TILE_LOSE_13, TILE_LOSE_14, TILE_LOSE_15, TILE_LOSE_16,
-	TILE_LOSE_17, TILE_LOSE_18, TILE_LOSE_19, TILE_LOSE_20
+	TILE_LOSE_17, TILE_LOSE_18, TILE_LOSE_19, TILE_LOSE_20,
+	
+	TILE_KEY_B_1,
+	TILE_KEY_B_1, TILE_KEY_B_1,
+	TILE_KEY_B_2, TILE_KEY_B_2,
+	TILE_KEY_B_3, TILE_KEY_B_3,
+	TILE_KEY_B_4, TILE_KEY_B_4,
+	TILE_KEY_B_5, TILE_KEY_B_5,
+	TILE_KEY_B_6, TILE_KEY_B_6,
+	TILE_KEY_B_7, TILE_KEY_B_7,
+	TILE_KEY_B_8, TILE_KEY_B_8,
+	TILE_KEY_B_9, TILE_KEY_B_9,
+	TILE_KEY_B_10, TILE_KEY_B_10,
+	TILE_KEY_B_11, TILE_KEY_B_11,
+	TILE_KEY_B_12, TILE_KEY_B_12,
+	TILE_KEY_B_13, TILE_KEY_B_13,
+	TILE_KEY_B_14, TILE_KEY_B_14,
+	TILE_KEY_B_15, TILE_KEY_B_15,
+	TILE_KEY_B_16, TILE_KEY_B_16,
+	
+	TILE_KEY_C_1,
+	TILE_KEY_C_1, TILE_KEY_C_1,
+	TILE_KEY_C_2, TILE_KEY_C_2,
+	TILE_KEY_C_3, TILE_KEY_C_3,
+	TILE_KEY_C_4, TILE_KEY_C_4,
+	TILE_KEY_C_5, TILE_KEY_C_5,
+	TILE_KEY_C_6, TILE_KEY_C_6,
+	TILE_KEY_C_7, TILE_KEY_C_7,
+	TILE_KEY_C_8, TILE_KEY_C_8,
+	TILE_KEY_C_9, TILE_KEY_C_9,
+	TILE_KEY_C_10, TILE_KEY_C_10,
+	TILE_KEY_C_11, TILE_KEY_C_11,
+	TILE_KEY_C_12, TILE_KEY_C_12,
+	TILE_KEY_C_13, TILE_KEY_C_13,
+	TILE_KEY_C_14, TILE_KEY_C_14,
+	TILE_KEY_C_15, TILE_KEY_C_15,
+	TILE_KEY_C_16, TILE_KEY_C_16
 };
 
 static int tiles_inicio [] = {
@@ -412,8 +507,8 @@ static int tiles_inicio [] = {
 	59,
 	26,
 	70,
-	26, /* FIXME: Debe ser sobre una caja vacia */
-	26, /* FIXME: Debe ser sobre un hielo doble */
+	138,
+	171,
 	69,
 	64,
 	117,
@@ -476,7 +571,10 @@ int game_loop (void) {
 	
 	nivel = 1;
 	
+	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
+	
 	load_map (nivel, mapa, frames);
+	SDL_Flip (screen);
 	do {
 		last_time = SDL_GetTicks ();
 		
@@ -487,28 +585,32 @@ int game_loop (void) {
 					done = GAME_QUIT;
 					break;
 				case SDL_KEYDOWN:
-					if (event.key.keysym.sym == SDLK_SPACE) {
-						if (nivel < 38) nivel++;
-						load_map (nivel, mapa, frames);
-					} else if (event.key.keysym.sym == SDLK_a) {
-						nivel--;
-						load_map (nivel, mapa, frames);
+					if (event.key.keysym.sym == SDLK_DOWN) {
+					} else if (event.key.keysym.sym == SDLK_UP) {
+					} else if (event.key.keysym.sym == SDLK_LEFT) {
+					} else if (event.key.keysym.sym == SDLK_RIGHT) {
 					}
 					break;
 			}
 		}
+		
 		for (g = 0; g < 15; g++) {
 			for (h = 0; h < 19; h++) {
 				frames[g][h] = tiles_frames[frames[g][h]];
 				
-				rect.x = 100 + (h * TILE_HEIGHT);
-				rect.y = 50 + (g * TILE_WIDTH);
+				rect.x = MAP_X + (h * TILE_HEIGHT);
+				rect.y = MAP_Y + (g * TILE_WIDTH);
 				
 				copy_tile (&rect, tiles_outputs [frames[g][h]]);
 			}
 		}
 		
-		SDL_Flip (screen);
+		rect.x = MAP_X;
+		rect.y = MAP_Y;
+		rect.w = 456;
+		rect.h = 360;
+		
+		SDL_UpdateRects (screen, 1, &rect);
 		
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
@@ -603,11 +705,7 @@ void load_map (int nivel, int (*mapa)[19], int (*frames)[19]) {
 	int r;
 	
 	r = RANDOM(2);
-	r = nivel % 2;
-	nivel = (nivel + 1)/ 2;
-	printf ("Random: %i\n", r);
 	
-	/* TODO: Sortear número aleatorio */
 	switch (nivel) {
 		case 1:
 			copiar = mapa_1;
