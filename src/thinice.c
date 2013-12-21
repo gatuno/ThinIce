@@ -498,7 +498,7 @@ static int tiles_outputs [] = {
 	TILE_KEY_C_16, TILE_KEY_C_16
 };
 
-static int tiles_inicio [] = {
+static int tiles_start [] = {
 	-1,
 	60,
 	61,
@@ -522,6 +522,118 @@ static int tiles_inicio [] = {
 	68,
 	65,
 	71
+};
+
+enum {
+	PLAYER_NORMAL = 0,
+	PLAYER_IGNITE,
+	PLAYER_DROWN,
+	NUM_PLAYER_STATES
+};
+
+static int player_frames [] = {
+	1,    /* Jugador normal 0 => 1 */
+	2, 3, /* 1 => 2, 2 => 3 */
+	4, 5, /* 3 => 4, 4 => 5 */
+	6, 7, /* 5 => 6, 6 => 7 */
+	8, 9, /* 7 => 8, 8 => 9 */
+	10, 11, /*  9 => 10, 10 => 11 */
+	12, 13, /* 11 => 12, 12 => 13 */
+	
+	14, 15,
+	16, 17,
+	18, 19,
+	20, 21,
+	
+	22, 23,
+	24, 25,
+	26, 27,
+	
+	28, 29,
+	30, 31,
+	32, 33,
+	
+	34, 35,
+	36, 37,
+	38, 39,
+	
+	40, 41,
+	42, 43,
+	44, 45,
+	
+	46, 47,
+	48, 49,
+	50,  1,
+	
+	52, /* Jugador prendiendo fuego 51 => 52 */
+	53, 54, 55, 56,
+	57, 58,
+	59, 60,
+	61, 62,
+	63,  1,
+	
+	65,
+	66, 67, 68, 69,
+	70, 71, 72, 73,
+	74, 75, 76, 77,
+	78, 79, 80, 81,
+	82, 83, 84, 85,
+	86, 87, 88, 89,
+	90, 91, 92, 92
+};
+
+static int player_outputs [] = {
+	TILE_BLACK_NORMAL_1,
+	TILE_BLACK_NORMAL_1, TILE_BLACK_NORMAL_1,
+	TILE_BLACK_NORMAL_2, TILE_BLACK_NORMAL_2,
+	TILE_BLACK_NORMAL_3, TILE_BLACK_NORMAL_3,
+	TILE_BLACK_NORMAL_1, TILE_BLACK_NORMAL_1,
+	TILE_BLACK_NORMAL_2, TILE_BLACK_NORMAL_2,
+	TILE_BLACK_NORMAL_3, TILE_BLACK_NORMAL_3,
+	
+	TILE_BLACK_NORMAL_4, TILE_BLACK_NORMAL_4,
+	TILE_BLACK_NORMAL_5, TILE_BLACK_NORMAL_5,
+	TILE_BLACK_NORMAL_6, TILE_BLACK_NORMAL_6,
+	TILE_BLACK_NORMAL_7, TILE_BLACK_NORMAL_7,
+	
+	TILE_BLACK_NORMAL_1, TILE_BLACK_NORMAL_1,
+	TILE_BLACK_NORMAL_2, TILE_BLACK_NORMAL_2,
+	TILE_BLACK_NORMAL_3, TILE_BLACK_NORMAL_3,
+	TILE_BLACK_NORMAL_1, TILE_BLACK_NORMAL_1,
+	TILE_BLACK_NORMAL_2, TILE_BLACK_NORMAL_2,
+	TILE_BLACK_NORMAL_3, TILE_BLACK_NORMAL_3,
+	TILE_BLACK_NORMAL_1, TILE_BLACK_NORMAL_1,
+	TILE_BLACK_NORMAL_2, TILE_BLACK_NORMAL_2,
+	TILE_BLACK_NORMAL_3, TILE_BLACK_NORMAL_3,
+	TILE_BLACK_NORMAL_1, TILE_BLACK_NORMAL_1,
+	TILE_BLACK_NORMAL_2, TILE_BLACK_NORMAL_2,
+	TILE_BLACK_NORMAL_3, TILE_BLACK_NORMAL_3,
+	TILE_BLACK_NORMAL_1, TILE_BLACK_NORMAL_1,
+	TILE_BLACK_NORMAL_2, TILE_BLACK_NORMAL_2,
+	TILE_BLACK_NORMAL_3, TILE_BLACK_NORMAL_3,
+	
+	TILE_BLACK_START_1,
+	TILE_BLACK_START_1, TILE_BLACK_START_1,
+	TILE_BLACK_START_1, TILE_BLACK_START_1,
+	TILE_BLACK_START_2, TILE_BLACK_START_2,
+	TILE_BLACK_START_3, TILE_BLACK_START_3,
+	TILE_BLACK_START_4, TILE_BLACK_START_4,
+	TILE_BLACK_START_5, TILE_BLACK_START_5,
+	
+	TILE_BLACK_OFF_1,
+	TILE_BLACK_OFF_1, TILE_BLACK_OFF_2, TILE_BLACK_OFF_3, TILE_BLACK_OFF_4,
+	TILE_BLACK_OFF_5, TILE_BLACK_OFF_6, TILE_BLACK_OFF_7, TILE_BLACK_OFF_8,
+	TILE_BLACK_OFF_9, TILE_BLACK_OFF_10, TILE_BLACK_OFF_11, TILE_BLACK_OFF_12,
+	TILE_BLACK_OFF_13, TILE_BLACK_OFF_14, TILE_BLACK_OFF_15, TILE_BLACK_OFF_16,
+	TILE_BLACK_OFF_17, TILE_BLACK_OFF_18, TILE_BLACK_OFF_19, TILE_BLACK_OFF_20,
+	TILE_BLACK_OFF_21, TILE_BLACK_OFF_22, TILE_BLACK_OFF_23, TILE_BLACK_OFF_24,
+	TILE_BLACK_OFF_25, TILE_BLACK_OFF_26, TILE_BLACK_OFF_27, TILE_BLACK_OFF_28
+};
+
+static int player_start [NUM_PLAYER_STATES] = {
+	0,
+	51,
+	64
 };
 
 /* Codigos de salida */
@@ -567,6 +679,8 @@ int game_loop (void) {
 	int frames[15][19];
 	int nivel;
 	
+	int player = 0;
+	
 	SDL_EventState (SDL_MOUSEMOTION, SDL_IGNORE);
 	
 	nivel = 1;
@@ -586,7 +700,9 @@ int game_loop (void) {
 					break;
 				case SDL_KEYDOWN:
 					if (event.key.keysym.sym == SDLK_DOWN) {
+						player = player_start [PLAYER_IGNITE];
 					} else if (event.key.keysym.sym == SDLK_UP) {
+						player = player_start [PLAYER_DROWN];
 					} else if (event.key.keysym.sym == SDLK_LEFT) {
 					} else if (event.key.keysym.sym == SDLK_RIGHT) {
 					}
@@ -610,8 +726,13 @@ int game_loop (void) {
 		rect.w = 456;
 		rect.h = 360;
 		
-		SDL_UpdateRects (screen, 1, &rect);
+		//SDL_UpdateRects (screen, 1, &rect);
 		
+		player = player_frames [player];
+		
+		copy_tile (&rect, player_outputs[player]);
+		
+		SDL_Flip (screen);
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 		
@@ -842,7 +963,7 @@ void load_map (int nivel, int (*mapa)[19], int (*frames)[19]) {
 	
 	for (g = 0; g < 15; g++) {
 		for (h = 0; h < 19; h++) {
-			frames[g][h] = tiles_inicio [mapa[g][h]];
+			frames[g][h] = tiles_start [mapa[g][h]];
 		}
 	}
 	
