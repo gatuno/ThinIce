@@ -517,8 +517,8 @@ static int tiles_start [] = {
 	68,
 	66,
 	67,
-	-1,
-	-1,
+	0,
+	21,
 	-1,
 	-1,
 	68,
@@ -652,12 +652,22 @@ enum {
 	RIGHT = 0x08,
 };
 
+/* Estructuras */
+typedef struct {
+	int x, y;
+} Punto;
+
+typedef struct {
+	int x, y;
+	int *frame;
+} Warp;
+
 /* Prototipos de función */
 int game_loop (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
 void copy_tile (SDL_Rect *rect, int tile);
-void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved);
+void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved, Warp *warps);
 
 /* Variables globales */
 SDL_Surface * screen;
@@ -686,7 +696,7 @@ int game_loop (void) {
 	int mapa[15][19];
 	int frames[15][19];
 	int nivel = 1;
-	int puffle_frame, player_x, player_y, save_player_x, save_player_y, next_player_x, next_player_y;
+	int puffle_frame;
 	int tiles_flipped, save_tiles_flipped, snow_melted, save_snow_melted;
 	int player_moving, slide_moving;
 	int wall_up, wall_down, wall_left, wall_right;
@@ -696,6 +706,9 @@ int game_loop (void) {
 	int player_die;
 	int random = RANDOM (2);
 	int last_solved = FALSE;
+	int warp_enable = FALSE;
+	Punto player, save_player, next_player;
+	Warp warps[2];
 	
 	puffle_frame = player_start[PLAYER_IGNITE];
 	tiles_flipped = save_tiles_flipped = snow_melted = save_snow_melted = 0;
@@ -705,13 +718,13 @@ int game_loop (void) {
 	player_die = FALSE;
 	last_key = 0;
 	
-	player_x = save_player_x = 14;
-	player_y = save_player_y = 10;
+	player.x = save_player.x = 14;
+	player.y = save_player.y = 10;
 	
 	SDL_EventState (SDL_MOUSEMOTION, SDL_IGNORE);
 	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
-	load_map (nivel, mapa, frames, &goal, random, FALSE);
+	load_map (nivel, mapa, frames, &goal, random, FALSE, warps);
 	
 	SDL_Flip (screen);
 	do {
@@ -748,11 +761,11 @@ int game_loop (void) {
 			}
 		}
 		
-		tile_actual = &mapa[player_y][player_x];
-		tile_up = &mapa[player_y - 1][player_x];
-		tile_down = &mapa[player_y + 1][player_x];
-		tile_left = &mapa[player_y][player_x - 1];
-		tile_right = &mapa[player_y][player_x + 1];
+		tile_actual = &mapa[player.y][player.x];
+		tile_up = &mapa[player.y - 1][player.x];
+		tile_down = &mapa[player.y + 1][player.x];
+		tile_left = &mapa[player.y][player.x - 1];
+		tile_right = &mapa[player.y][player.x + 1];
 		
 		if (*tile_up >= 20) {
 			wall_up = TRUE;
@@ -760,8 +773,8 @@ int game_loop (void) {
 			if (*tile_up == 21 && llave > 0) {
 				/* Convertir la puerta a hielo */
 				llave--;
-				mapa[player_y - 1][player_x] = 2;
-				frames[player_y - 1][player_x] = tiles_start[2];
+				mapa[player.y - 1][player.x] = 2;
+				frames[player.y - 1][player.x] = tiles_start[2];
 				/* TODO: Reproducir sonido */
 				wall_up = FALSE;
 			}
@@ -775,8 +788,8 @@ int game_loop (void) {
 			if (*tile_down == 21 && llave > 0) {
 				/* Convertir la puerta a hielo */
 				llave--;
-				mapa[player_y + 1][player_x] = 2;
-				frames[player_y + 1][player_x] = tiles_start[2];
+				mapa[player.y + 1][player.x] = 2;
+				frames[player.y + 1][player.x] = tiles_start[2];
 				/* TODO: Reproducir sonido */
 				wall_down = FALSE;
 			}
@@ -790,8 +803,8 @@ int game_loop (void) {
 			if (*tile_left == 21 && llave > 0) {
 				/* Convertir la puerta a hielo */
 				llave--;
-				mapa[player_y][player_x - 1] = 2;
-				frames[player_y][player_x - 1] = tiles_start[2];
+				mapa[player.y][player.x - 1] = 2;
+				frames[player.y][player.x - 1] = tiles_start[2];
 				/* TODO: Reproducir sonido */
 				wall_left = FALSE;
 			}
@@ -805,8 +818,8 @@ int game_loop (void) {
 			if (*tile_right == 21 && llave > 0) {
 				/* Convertir la puerta a hielo */
 				llave--;
-				mapa[player_y][player_x + 1] = 2;
-				frames[player_y][player_x + 1] = tiles_start[2];
+				mapa[player.y][player.x + 1] = 2;
+				frames[player.y][player.x + 1] = tiles_start[2];
 				/* TODO: Reproducir sonido */
 				wall_right = FALSE;
 			}
@@ -814,41 +827,70 @@ int game_loop (void) {
 			wall_right = FALSE;
 		}
 		
-		/* TODO: Colisión contra los portales */
-		if (wall_up && wall_down && wall_left && wall_right && player_moving == 0 && *tile_actual != 5 && !player_die) {
+		if (warps[0].x == player.x && warps[0].y == player.y && warp_enable && player_moving == 0) {
+			/* TODO: Reproducir sonido */
+			wall_up = wall_down = wall_left = wall_right = TRUE;
+			player.x = warps[1].x;
+			player.y = warps[1].y;
+			*warps[0].frame = tiles_start [11];
+			*warps[1].frame = tiles_start [11];
+			warp_enable = FALSE;
+		} else if (warps[1].x == player.x && warps[1].y == player.y && warp_enable && player_moving == 0) {
+			/* TODO: Reproducir sonido */
+			wall_up = wall_down = wall_left = wall_right = TRUE;
+			player.x = warps[0].x;
+			player.y = warps[0].y;
+			*warps[0].frame = tiles_start [11];
+			*warps[1].frame = tiles_start [11];
+			warp_enable = FALSE;
+		} else if (wall_up && wall_down && wall_left && wall_right && player_moving == 0 && *tile_actual != 5 && !player_die) {
 			/* Matar al puffle */
 			puffle_frame = player_start[PLAYER_DROWN];
 			player_die = TRUE;
-			mapa[player_y][player_x] = 12;
-			frames[player_y][player_x] = tiles_start[12];
+			mapa[player.y][player.x] = 12;
+			frames[player.y][player.x] = tiles_start[12];
+		}
+		
+		if (warp_enable) {
+			if (*tile_up == 11 || *tile_down == 11 || *tile_left == 11 || *tile_right == 11) {
+				if (*warps[0].frame < 22) {
+					frames[warps[0].y][warps[0].x] = tiles_start[17];
+					frames[warps[1].y][warps[1].x] = tiles_start[17];
+				}
+			} else {
+				if (*warps[0].frame > 21) {
+					frames[warps[0].y][warps[0].x] = tiles_start[16];
+					frames[warps[1].y][warps[1].x] = tiles_start[16];
+				}
+			}
 		}
 		
 		if (*tile_actual == 7) { /* Bolsa de dinero */
-			mapa[player_y][player_x] = 2;
-			frames[player_y][player_x] = tiles_start[2];
+			mapa[player.y][player.x] = 2;
+			frames[player.y][player.x] = tiles_start[2];
 			/* Sumar bonus point */
 			
 			/* if (savebonuspoint + bonuspoint) {
 				Disparar estampa
 			   } */
 		} else if (*tile_actual == 8) {
-			mapa[player_y][player_x] = 3;
-			frames[player_y][player_x] = tiles_start[3];
+			mapa[player.y][player.x] = 3;
+			frames[player.y][player.x] = tiles_start[3];
 			llave++;
 			/* TODO: Reproducir sonido de llave */
 		} else if (*tile_actual == 9) {
-			mapa[player_y][player_x] = 4;
-			frames[player_y][player_x] = tiles_start[4];
+			mapa[player.y][player.x] = 4;
+			frames[player.y][player.x] = tiles_start[4];
 			llave++;
 			/* TODO: Reproducir sonido de llave */
 		} else if (*tile_actual == 6) {
-			mapa[player_y][player_x] = 2;
-			frames[player_y][player_x] = tiles_start[2];
+			mapa[player.y][player.x] = 2;
+			frames[player.y][player.x] = tiles_start[2];
 			llave++;
 			/* TODO: Reproducir sonido de llave */
 		} else if (*tile_actual == 5 && player_moving == 0 && nivel < 19) {
-			save_player_x = player_x;
-			save_player_y = player_y;
+			save_player.x = player.x;
+			save_player.y = player.y;
 			nivel++;
 			
 			if (tiles_flipped == goal) {
@@ -874,7 +916,8 @@ int game_loop (void) {
 			random = RANDOM(2);
 			/* tries == 1 */
 			if (nivel != 20) {
-				load_map (nivel, mapa, frames, &goal, random, last_solved);
+				load_map (nivel, mapa, frames, &goal, random, last_solved, warps);
+				if (nivel >= 17) warp_enable = TRUE;
 			} else {
 				/* Poner en blanco la pantalla y salir del gameloop */
 				return GAME_QUIT; /* FIXME: Pantalla de salida */
@@ -884,27 +927,27 @@ int game_loop (void) {
 		if (player_moving == 0) {
 			/* TODO: Empujar bloque */
 			if (last_key & DOWN && !wall_down) {
-				next_player_y = player_y + 1;
-				next_player_x = player_x;
+				next_player.y = player.y + 1;
+				next_player.x = player.x;
 				player_moving = 3;
 			} else if (last_key & UP && !wall_up) {
-				next_player_y = player_y - 1;
-				next_player_x = player_x;
+				next_player.y = player.y - 1;
+				next_player.x = player.x;
 				player_moving = 3;
 			} else if (last_key & LEFT && !wall_left) {
-				next_player_y = player_y;
-				next_player_x = player_x - 1;
+				next_player.y = player.y;
+				next_player.x = player.x - 1;
 				player_moving = 3;
 			} else if (last_key & RIGHT && !wall_right) {
-				next_player_y = player_y;
-				next_player_x = player_x + 1;
+				next_player.y = player.y;
+				next_player.x = player.x + 1;
 				player_moving = 3;
 			}
 			
 			if (player_moving != 0) {
 				if (*tile_actual == 2) {
-					mapa[player_y][player_x] = 22;
-					frames[player_y][player_x] = tiles_start [22];
+					mapa[player.y][player.x] = 22;
+					frames[player.y][player.x] = tiles_start [22];
 					tiles_flipped++;
 					snow_melted++;
 					
@@ -912,8 +955,8 @@ int game_loop (void) {
 						Disparar estampa
 					} */
 				} else if (*tile_actual == 4) {
-					mapa[player_y][player_x] = 2;
-					frames[player_y][player_x] = tiles_start [2];
+					mapa[player.y][player.x] = 2;
+					frames[player.y][player.x] = tiles_start [2];
 					tiles_flipped++;
 					/* TODO: Reproducir sonido */
 				} else if (*tile_actual == 14) {
@@ -937,27 +980,28 @@ int game_loop (void) {
 		if (player_moving > 0) {
 			player_moving--;
 			
-			rect.x = MAP_X + (next_player_x * TILE_WIDTH) + ((player_x - next_player_x) * 8 * player_moving);
-			rect.y = MAP_Y + (next_player_y * TILE_HEIGHT) + ((player_y - next_player_y) * 8 * player_moving);
+			rect.x = MAP_X + (next_player.x * TILE_WIDTH) + ((player.x - next_player.x) * 8 * player_moving);
+			rect.y = MAP_Y + (next_player.y * TILE_HEIGHT) + ((player.y - next_player.y) * 8 * player_moving);
 			
 			if (player_moving == 0) {
-				player_x = next_player_x;
-				player_y = next_player_y;
+				player.x = next_player.x;
+				player.y = next_player.y;
 			}
 		} else {
-			rect.x = MAP_X + (player_x * TILE_WIDTH);
-			rect.y = MAP_Y + (player_y * TILE_HEIGHT);
+			rect.x = MAP_X + (player.x * TILE_WIDTH);
+			rect.y = MAP_Y + (player.y * TILE_HEIGHT);
 		}
 		
 		if (player_die && puffle_frame == 92) {
 			tiles_flipped = 0;
 			snow_melted = 0;
 			
-			player_y = save_player_y;
-			player_x = save_player_x;
+			player.y = save_player.y;
+			player.x = save_player.x;
 			puffle_frame = player_start [PLAYER_IGNITE];
 			llave = 0;
-			load_map (nivel, mapa, frames, &goal, random, last_solved);
+			load_map (nivel, mapa, frames, &goal, random, last_solved, warps);
+			if (nivel >= 17) warp_enable = TRUE;
 			player_die = FALSE;
 			continue;
 		}
@@ -1058,7 +1102,7 @@ inline void copy_tile (SDL_Rect *rect, int tile) {
 	SDL_BlitSurface (image_tiles, &r_tile, screen, rect);
 }
 
-void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved) {
+void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved, Warp *warps) {
 	const int (*copiar)[19];
 	int g, h;
 	
@@ -1265,12 +1309,23 @@ void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, 
 		}
 	}
 	
+	warps[0].x = warps[0].y = warps[1].x = warps[1].y = -1;
+	
+	r = 0;
 	for (g = 0; g < 15; g++) {
 		for (h = 0; h < 19; h++) {
 			frames[g][h] = tiles_start [mapa[g][h]];
+			
+			if (mapa[g][h] == 11) {
+				warps[r].x = h;
+				warps[r].y = g;
+				warps[r].frame = &frames[g][h];
+				frames[g][h] = tiles_start[16];
+				r++;
+			}
 		}
 	}
 	
-	/* TODO: Faltan coordenadas iniciales, cajas, portales y bolsas de dinero adicionales */
+	/* TODO: Faltan cajas */
 }
 
