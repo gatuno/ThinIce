@@ -657,7 +657,7 @@ int game_loop (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
 void copy_tile (SDL_Rect *rect, int tile);
-void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r);
+void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved);
 
 /* Variables globales */
 SDL_Surface * screen;
@@ -685,7 +685,7 @@ int game_loop (void) {
 	
 	int mapa[15][19];
 	int frames[15][19];
-	int nivel = 11;
+	int nivel = 1;
 	int puffle_frame, player_x, player_y, save_player_x, save_player_y, next_player_x, next_player_y;
 	int tiles_flipped, save_tiles_flipped, snow_melted, save_snow_melted;
 	int player_moving, slide_moving;
@@ -695,6 +695,7 @@ int game_loop (void) {
 	int goal;
 	int player_die;
 	int random = RANDOM (2);
+	int last_solved = FALSE;
 	
 	puffle_frame = player_start[PLAYER_IGNITE];
 	tiles_flipped = save_tiles_flipped = snow_melted = save_snow_melted = 0;
@@ -710,7 +711,7 @@ int game_loop (void) {
 	SDL_EventState (SDL_MOUSEMOTION, SDL_IGNORE);
 	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
-	load_map (nivel, mapa, frames, &goal, random);
+	load_map (nivel, mapa, frames, &goal, random, FALSE);
 	
 	SDL_Flip (screen);
 	do {
@@ -852,14 +853,14 @@ int game_loop (void) {
 			
 			if (tiles_flipped == goal) {
 				/* Sumar puntos por completo */
-				/* Activar bandera de ultimo stage completo */
+				last_solved = TRUE;
 				/* if (nivel != 19) TODO: Reproducir sonido */
 				/* if (tries == 1) {
 					Sumar puntos por hacerlo a la primera
 				   }
 				*/
 			} else {
-				/* Desactivar bandera de ultimo stage completo */
+				last_solved = FALSE;
 			}
 			/* if (nivel == 19) {
 				Calcular puntos de tiempo
@@ -873,7 +874,7 @@ int game_loop (void) {
 			random = RANDOM(2);
 			/* tries == 1 */
 			if (nivel != 20) {
-				load_map (nivel, mapa, frames, &goal, random);
+				load_map (nivel, mapa, frames, &goal, random, last_solved);
 			} else {
 				/* Poner en blanco la pantalla y salir del gameloop */
 				return GAME_QUIT; /* FIXME: Pantalla de salida */
@@ -956,7 +957,7 @@ int game_loop (void) {
 			player_x = save_player_x;
 			puffle_frame = player_start [PLAYER_IGNITE];
 			llave = 0;
-			load_map (nivel, mapa, frames, &goal, random);
+			load_map (nivel, mapa, frames, &goal, random, last_solved);
 			player_die = FALSE;
 			continue;
 		}
@@ -1057,7 +1058,7 @@ inline void copy_tile (SDL_Rect *rect, int tile) {
 	SDL_BlitSurface (image_tiles, &r_tile, screen, rect);
 }
 
-void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r) {
+void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved) {
 	const int (*copiar)[19];
 	int g, h;
 	
@@ -1213,6 +1214,56 @@ void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r) 
 	}
 	
 	memcpy (mapa, copiar, sizeof (int[15][19]));
+	
+	if (last_solved) {
+		switch (nivel) {
+			case 4:
+				mapa[7][7] = 7;
+				break;
+			case 5:
+				mapa[10][9] = 7;
+				break;
+			case 6:
+				mapa[11][10] = 7;
+				break;
+			case 7:
+				mapa[9][11] = 7;
+				break;
+			case 8:
+				mapa[10][2] = 7;
+				break;
+			case 9:
+				mapa[3][6] = 7;
+				break;
+			case 10:
+				mapa[5][14] = 7;
+				break;
+			case 11:
+				mapa[13][8] = 7;
+				break;
+			case 12:
+				mapa[7][10] = 7;
+				break;
+			case 13:
+				mapa[7][9] = 7;
+				break;
+			case 14:
+				mapa[3][6] = 7;
+				break;
+			case 15:
+				mapa[5][9] = 7;
+				break;
+			case 16:
+				mapa[9][5] = 7;
+				break;
+			case 17:
+				mapa[5][7] = 7;
+				break;
+			case 18:
+				mapa[1][17] = 7;
+				break;
+		}
+	}
 	
 	for (g = 0; g < 15; g++) {
 		for (h = 0; h < 19; h++) {
