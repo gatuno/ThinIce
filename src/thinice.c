@@ -662,6 +662,20 @@ static int player_start [NUM_PLAYER_STATES] = {
 	64
 };
 
+static int arcade_frames[4] = {
+	0,
+	2,
+	3,
+	0
+};
+
+static int arcade_outputs [4] = {
+	IMG_DOWN_1,
+	IMG_DOWN_2,
+	IMG_DOWN_2,
+	IMG_DOWN_3
+};
+
 /* Codigos de salida */
 enum {
 	GAME_NONE = 0, /* No usado */
@@ -757,6 +771,8 @@ int game_loop (void) {
 	Punto player, save_player, next_player, movible, old_movible;
 	Warp warps[2];
 	
+	int arcade_button_left = 0, arcade_button_right = 0, arcade_button_up = 0, arcade_button_down = 0;
+	
 	tiles_flipped = save_tiles_flipped = snow_melted = save_snow_melted = 0;
 	bonus_point = save_bonus_point = solved_stages = 0;
 	first_try_points = first_try_count = 0;
@@ -827,7 +843,7 @@ int game_loop (void) {
 				llave--;
 				mapa[player.y - 1][player.x] = 2;
 				frames[player.y - 1][player.x] = tiles_start[2];
-				if (use_sound) Mix_PlayChannel (-1, sounds[SND_WARP], 0);
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_KEY], 0);
 				wall_up = FALSE;
 			}
 		} else if (movible.y + 1 == player.y && movible.x == player.x && movible_wall_up) {
@@ -1032,6 +1048,7 @@ int game_loop (void) {
 			}
 		} else if (*tile_actual == 14) {
 			area_secreta (mapa, frames, solved_stages);
+			if (use_sound) Mix_PlayChannel (-1, sounds[SND_WARP], 0);
 		}
 		
 		if (player_moving == 0) {
@@ -1041,7 +1058,7 @@ int game_loop (void) {
 				player_moving = 3;
 				
 				/* Empujar el bloque */
-				if (movible.x == player.x && movible.y - 1 == player.y && !movible_wall_down) {
+				if (movible.x == player.x && movible.y - 1 == player.y && !movible_wall_down && slide_block == 0) {
 					/* Empujar el bloque hacia abajo */
 					slide_block = DOWN;
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_MOVE], 0);
@@ -1052,7 +1069,7 @@ int game_loop (void) {
 				player_moving = 3;
 				
 				/* Empujar el bloque */
-				if (movible.x == player.x && movible.y + 1 == player.y && !movible_wall_up) {
+				if (movible.x == player.x && movible.y + 1 == player.y && !movible_wall_up && slide_block == 0) {
 					/* Empujar el bloque hacia arriba */
 					slide_block = UP;
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_MOVE], 0);
@@ -1063,7 +1080,7 @@ int game_loop (void) {
 				player_moving = 3;
 				
 				/* Empujar el bloque */
-				if (movible.x + 1 == player.x && movible.y == player.y && !movible_wall_left) {
+				if (movible.x + 1 == player.x && movible.y == player.y && !movible_wall_left && slide_block == 0) {
 					/* Empujar el bloque hacia arriba */
 					slide_block = LEFT;
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_MOVE], 0);
@@ -1074,7 +1091,7 @@ int game_loop (void) {
 				player_moving = 3;
 				
 				/* Empujar el bloque */
-				if (movible.x - 1 == player.x && movible.y == player.y && !movible_wall_right) {
+				if (movible.x - 1 == player.x && movible.y == player.y && !movible_wall_right && slide_block == 0) {
 					/* Empujar el bloque hacia arriba */
 					slide_block = RIGHT;
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_MOVE], 0);
@@ -1180,18 +1197,59 @@ int game_loop (void) {
 			
 			rect.x = MAP_X + (movible.x * TILE_WIDTH) + ((old_movible.x - movible.x) * 8 * slide_moving);
 			rect.y = MAP_Y + (movible.y * TILE_HEIGHT) + ((old_movible.y - movible.y) * 8 * slide_moving);
-		} else {
+			copy_tile (&rect, TILE_BLOCK);
+		} else if (movible.x != -1) {
 			rect.x = MAP_X + (movible.x * TILE_WIDTH);
 			rect.y = MAP_Y + (movible.y * TILE_HEIGHT);
+			copy_tile (&rect, TILE_BLOCK);
 		}
 		
-		copy_tile (&rect, TILE_BLOCK);
+		if (last_key & DOWN) {
+			arcade_button_down = 1;
+		}
+		arcade_button_down = arcade_frames[arcade_button_down];
+		if (last_key & UP) {
+			arcade_button_up = 1;
+		}
+		arcade_button_up = arcade_frames[arcade_button_up];
+		if (last_key & LEFT) {
+			arcade_button_left = 1;
+		}
+		arcade_button_left = arcade_frames[arcade_button_left];
+		if (last_key & RIGHT) {
+			arcade_button_right = 1;
+		}
+		arcade_button_right = arcade_frames[arcade_button_right];
+		
+		rect.x = 229;
+		rect.y = 433;
+		rect.w = 286;
+		rect.h = 48;
+		SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+		
+		rect.x = 230; rect.y = 446;
+		rect.w = images[IMG_LEFT_1]->w;
+		rect.h = images[IMG_LEFT_1]->h;
+		SDL_BlitSurface (images[3 + arcade_outputs[arcade_button_left]], NULL, screen, &rect);
+		
+		rect.x = 423;
+		SDL_BlitSurface (images[6 + arcade_outputs[arcade_button_right]], NULL, screen, &rect);
+		
+		rect.x = 328; rect.y = 435;
+		rect.w = images[IMG_UP_1]->w;
+		rect.h = images[IMG_UP_1]->h;
+		SDL_BlitSurface (images[9 + arcade_outputs[arcade_button_up]], NULL, screen, &rect);
+		
+		rect.x = 324; rect.y = 457;
+		rect.w = images[IMG_DOWN_1]->w;
+		rect.h = images[IMG_DOWN_1]->h;
+		SDL_BlitSurface (images[arcade_outputs[arcade_button_down]], NULL, screen, &rect);
 		
 		/* Actualizar la pantalla */
 		rect.x = MAP_X;
 		rect.y = MAP_Y;
 		rect.w = 456;
-		rect.h = 360;
+		rect.h = 432;
 		SDL_UpdateRects (screen, 1, &rect);
 		
 		now_time = SDL_GetTicks ();
@@ -1220,7 +1278,6 @@ int game_loop (void) {
 /* Mattias Engdegard <f91-men@nada.kth.se> */
 SDL_Surface * set_video_mode (unsigned flags) {
 	/* Prefer 16bpp, but also prefer native modes to emulated 16bpp. */
-
 	int depth;
 
 	depth = SDL_VideoModeOK (760, 480, 16, flags);
