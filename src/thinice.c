@@ -36,6 +36,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 
 #include "config.h"
 
@@ -61,7 +62,6 @@
 
 #define FPS (1000/18)
 
-#define SWAP(a, b, t) ((t) = (a), (a) = (b), (b) = (t))
 #define RANDOM(x) ((int) (x ## .0 * rand () / (RAND_MAX + 1.0)))
 
 #ifndef FALSE
@@ -305,6 +305,32 @@ const char *images_names[NUM_IMAGES] = {
 };
 
 #define IMG_TILE_NAME GAMEDATA_DIR "images/tiles.png"
+
+enum {
+	SND_START,
+	SND_ICE,
+	SND_DOUBLE_ICE,
+	SND_DROWN,
+	SND_MONEY,
+	SND_KEY,
+	SND_MOVE,
+	SND_WARP,
+	SND_COMPLETE,
+	
+	NUM_SOUNDS
+};
+
+const char *sound_names[NUM_SOUNDS] = {
+	GAMEDATA_DIR "sounds/start.wav",
+	GAMEDATA_DIR "sounds/ice.wav",
+	GAMEDATA_DIR "sounds/double.wav",
+	GAMEDATA_DIR "sounds/drown.wav",
+	GAMEDATA_DIR "sounds/money.wav",
+	GAMEDATA_DIR "sounds/key.wav",
+	GAMEDATA_DIR "sounds/move.wav",
+	GAMEDATA_DIR "sounds/warp.wav",
+	GAMEDATA_DIR "sounds/complete.wav"
+};
 
 static int tiles_frames [] = {
 	1, /* 0 => 1 Portal normal */
@@ -673,6 +699,9 @@ SDL_Surface * screen;
 SDL_Surface * image_tiles;
 SDL_Surface * images [NUM_IMAGES];
 
+int use_sound;
+Mix_Chunk * sounds[NUM_SOUNDS];
+
 int main (int argc, char *argv[]) {
 	
 	setup ();
@@ -798,7 +827,7 @@ int game_loop (void) {
 				llave--;
 				mapa[player.y - 1][player.x] = 2;
 				frames[player.y - 1][player.x] = tiles_start[2];
-				/* TODO: Reproducir sonido */
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_WARP], 0);
 				wall_up = FALSE;
 			}
 		} else if (movible.y + 1 == player.y && movible.x == player.x && movible_wall_up) {
@@ -815,7 +844,7 @@ int game_loop (void) {
 				llave--;
 				mapa[player.y + 1][player.x] = 2;
 				frames[player.y + 1][player.x] = tiles_start[2];
-				/* TODO: Reproducir sonido */
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_KEY], 0);
 				wall_down = FALSE;
 			}
 		} else if (movible.y - 1 == player.y && movible.x == player.x && movible_wall_down) {
@@ -832,7 +861,7 @@ int game_loop (void) {
 				llave--;
 				mapa[player.y][player.x - 1] = 2;
 				frames[player.y][player.x - 1] = tiles_start[2];
-				/* TODO: Reproducir sonido */
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_KEY], 0);
 				wall_left = FALSE;
 			}
 		} else if (movible.y == player.y && movible.x + 1 == player.x && movible_wall_left) {
@@ -849,7 +878,7 @@ int game_loop (void) {
 				llave--;
 				mapa[player.y][player.x + 1] = 2;
 				frames[player.y][player.x + 1] = tiles_start[2];
-				/* TODO: Reproducir sonido */
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_KEY], 0);
 				wall_right = FALSE;
 			}
 		} else if (movible.y == player.y && movible.x - 1 == player.x && movible_wall_right) {
@@ -859,7 +888,7 @@ int game_loop (void) {
 		}
 		
 		if (warps[0].x == player.x && warps[0].y == player.y && warp_enable && player_moving == 0) {
-			/* TODO: Reproducir sonido */
+			if (use_sound) Mix_PlayChannel (-1, sounds[SND_WARP], 0);
 			wall_up = wall_down = wall_left = wall_right = TRUE;
 			player.x = warps[1].x;
 			player.y = warps[1].y;
@@ -867,7 +896,7 @@ int game_loop (void) {
 			*warps[1].frame = tiles_start [11];
 			warp_enable = FALSE;
 		} else if (warps[1].x == player.x && warps[1].y == player.y && warp_enable && player_moving == 0) {
-			/* TODO: Reproducir sonido */
+			if (use_sound) Mix_PlayChannel (-1, sounds[SND_WARP], 0);
 			wall_up = wall_down = wall_left = wall_right = TRUE;
 			player.x = warps[0].x;
 			player.y = warps[0].y;
@@ -926,7 +955,7 @@ int game_loop (void) {
 			frames[player.y][player.x] = tiles_start[2];
 			bonus_point++;
 			
-			/* TODO: Reproducir sonido del dinero */
+			if (use_sound) Mix_PlayChannel (-1, sounds[SND_MONEY], 0);
 			/*
 			int suma_bolsas = save_bonus_point + bonus_point;
 			if (suma_bolsas == 1) {
@@ -944,17 +973,17 @@ int game_loop (void) {
 			mapa[player.y][player.x] = 3;
 			frames[player.y][player.x] = tiles_start[3];
 			llave++;
-			/* TODO: Reproducir sonido de llave */
+			if (use_sound) Mix_PlayChannel (-1, sounds[SND_KEY], 0);
 		} else if (*tile_actual == 9) {
 			mapa[player.y][player.x] = 4;
 			frames[player.y][player.x] = tiles_start[4];
 			llave++;
-			/* TODO: Reproducir sonido de llave */
+			if (use_sound) Mix_PlayChannel (-1, sounds[SND_KEY], 0);
 		} else if (*tile_actual == 6) {
 			mapa[player.y][player.x] = 2;
 			frames[player.y][player.x] = tiles_start[2];
 			llave++;
-			/* TODO: Reproducir sonido de llave */
+			if (use_sound) Mix_PlayChannel (-1, sounds[SND_KEY], 0);
 		} else if (*tile_actual == 5 && player_moving == 0 && nivel < 20) {
 			save_player.x = player.x;
 			save_player.y = player.y;
@@ -964,7 +993,7 @@ int game_loop (void) {
 				/* Sumar puntos por completo */
 				last_solved = TRUE;
 				solved_stages++;
-				/* if (nivel != 19) TODO: Reproducir sonido */
+				if (nivel != 19) if (use_sound) Mix_PlayChannel (-1, sounds[SND_COMPLETE], 0);
 				if (tries == 1) {
 					first_try_points += tiles_flipped;
 					first_try_count++;
@@ -1015,7 +1044,7 @@ int game_loop (void) {
 				if (movible.x == player.x && movible.y - 1 == player.y && !movible_wall_down) {
 					/* Empujar el bloque hacia abajo */
 					slide_block = DOWN;
-					/* TODO: Reproducir sonido */
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_MOVE], 0);
 				}
 			} else if (last_key & UP && !wall_up) {
 				next_player.y = player.y - 1;
@@ -1026,7 +1055,7 @@ int game_loop (void) {
 				if (movible.x == player.x && movible.y + 1 == player.y && !movible_wall_up) {
 					/* Empujar el bloque hacia arriba */
 					slide_block = UP;
-					/* TODO: Reproducir sonido */
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_MOVE], 0);
 				}
 			} else if (last_key & LEFT && !wall_left) {
 				next_player.y = player.y;
@@ -1037,7 +1066,7 @@ int game_loop (void) {
 				if (movible.x + 1 == player.x && movible.y == player.y && !movible_wall_left) {
 					/* Empujar el bloque hacia arriba */
 					slide_block = LEFT;
-					/* TODO: Reproducir sonido */
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_MOVE], 0);
 				}
 			} else if (last_key & RIGHT && !wall_right) {
 				next_player.y = player.y;
@@ -1048,7 +1077,7 @@ int game_loop (void) {
 				if (movible.x - 1 == player.x && movible.y == player.y && !movible_wall_right) {
 					/* Empujar el bloque hacia arriba */
 					slide_block = RIGHT;
-					/* TODO: Reproducir sonido */
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_MOVE], 0);
 				}
 			}
 			
@@ -1058,7 +1087,7 @@ int game_loop (void) {
 					frames[player.y][player.x] = tiles_start [22];
 					tiles_flipped++;
 					snow_melted++;
-					
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 					/* if (save_snow_melted + snow_melted == 480) {
 						Disparar estampa
 					} */
@@ -1066,7 +1095,7 @@ int game_loop (void) {
 					mapa[player.y][player.x] = 2;
 					frames[player.y][player.x] = tiles_start [2];
 					tiles_flipped++;
-					/* TODO: Reproducir sonido */
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_DOUBLE_ICE], 0);
 				}
 			}
 		}
@@ -1222,6 +1251,25 @@ void setup (void) {
 		exit (1);
 	}
 	
+	use_sound = 1;
+	if (SDL_InitSubSystem (SDL_INIT_AUDIO) < 0) {
+		fprintf (stdout,
+			"Warning: Can't initialize the audio subsystem\n"
+			"Continuing...\n");
+		use_sound = 0;
+	}
+	
+	if (use_sound) {
+		/* Inicializar el sonido */
+		if (Mix_OpenAudio (22050, AUDIO_S16, 2, 4096) < 0) {
+			fprintf (stdout,
+				"Warning: Can't initialize the SDL Mixer library\n");
+			use_sound = 0;
+		} else {
+			Mix_AllocateChannels (3);
+		}
+	}
+	
 	for (g = 0; g < NUM_IMAGES; g++) {
 		image = IMG_Load (images_names[g]);
 		
@@ -1250,6 +1298,38 @@ void setup (void) {
 				"%s\n", images_names[g], SDL_GetError());
 			SDL_Quit ();
 			exit (1);
+	}
+	
+	if (use_sound) {
+		for (g = 0; g < NUM_SOUNDS; g++) {
+			sounds[g] = Mix_LoadWAV (sound_names [g]);
+			
+			if (sounds[g] == NULL) {
+				fprintf (stderr,
+					"Failed to load data file:\n"
+					"%s\n"
+					"The error returned by SDL is:\n"
+					"%s\n", sound_names [g], SDL_GetError ());
+				SDL_Quit ();
+				exit (1);
+			}
+			Mix_VolumeChunk (sounds[g], MIX_MAX_VOLUME / 2);
+		}
+		
+		/* Cargar la música
+		
+		mus_carnie = Mix_LoadMUS (MUS_CARNIE);
+		
+		if (mus_carnie == NULL) {
+			fprintf (stderr,
+				"Failed to load data file:\n"
+				"%s\n"
+				"The error returned by SDL is:\n"
+				"%s\n", MUS_CARNIE, SDL_GetError ());
+			SDL_Quit ();
+			exit (1);
+		}
+		*/
 	}
 	
 	srand (SDL_GetTicks ());

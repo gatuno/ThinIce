@@ -1,6 +1,6 @@
-AC_INIT([Thin Ice], [0.1], [], [thin-ice])
+AC_INIT([Thin Ice], [0.7], [], [thin-ice])
 
-AC_REVISION([Revision 1])
+AC_REVISION([Revision 2])
 
 AC_CONFIG_AUX_DIR([build-aux])
 
@@ -38,12 +38,11 @@ PKG_CHECK_MODULES(SDL_image, [SDL_image >= $SDL_IMAGE_VERSION], [], [])
 #PKG_CHECK_MODULES(SDL_ttf, [SDL_ttf >= $SDL_TTF_VERSION], [], [])
 
 # SDL_Mixer doesn't have pkg-config
-# Aún no necesito la SDL Mixer
-#SDL_mixer_LIBS=""
-#AC_ARG_VAR(SDL_mixer_LIBS, [linker flags for SDL_mixer])
+SDL_mixer_LIBS=""
+AC_ARG_VAR(SDL_mixer_LIBS, [linker flags for SDL_mixer])
 # AC_MSG_CHECKING([if you have SDL_mixer installed on your system])
-#AC_CHECK_HEADERS(SDL/SDL_mixer.h, [], [AC_MSG_FAILURE([SDL_mixer not found in your system])])
-#AC_CHECK_LIB(SDL_mixer, main, [SDL_mixer_LIBS="-lSDL_mixer"], [AC_MSG_FAILURE([SDL_mixer not found in your system])])
+AC_CHECK_HEADERS(SDL/SDL_mixer.h, [], [AC_MSG_FAILURE([SDL_mixer not found in your system])])
+AC_CHECK_LIB(SDL_mixer, main, [SDL_mixer_LIBS="-lSDL_mixer"], [AC_MSG_FAILURE([SDL_mixer not found in your system])])
 
 AC_CONFIG_HEADERS([config.h])
 
