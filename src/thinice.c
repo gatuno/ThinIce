@@ -666,6 +666,7 @@ void setup (void);
 SDL_Surface * set_video_mode(unsigned);
 void copy_tile (SDL_Rect *rect, int tile);
 void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved, Warp *warps, Punto *movible);
+void area_secreta (int (*mapa)[19], int (*frames)[19], int solved_stages);
 
 /* Variables globales */
 SDL_Surface * screen;
@@ -691,11 +692,27 @@ int game_loop (void) {
 	Uint32 last_time, now_time;
 	SDL_Rect rect;
 	
+	/* tiles_flipped representa los tiles pisados. Se guardan por nivel
+	 * y se acumulan en save_tiles_flipped
+	 * save_snow_melted representa los bloques derretidos. Se guardan por nivel
+	 * y se acumulan en save_snow_melted.
+	 * bonus_point representa la cantidad de bolsas de dinero. Se acumulan en
+	 * save_bonus_point
+	 * solved_stages representa los niveles completados correctamente.
+	 * tries cantidad de intentos por nivel
+	 * First_try_points suma los tiles_flipped si el nivel se resolvió en el
+	 * primer intento.
+	 * First_try_count cuando la cantidad de niveles resueltos en el primer
+	 * intento.
+	 */
+	int tiles_flipped, save_tiles_flipped, snow_melted, save_snow_melted;
+	int bonus_point, save_bonus_point, solved_stages;
+	int tries, first_try_points, first_try_count;
+	
 	int mapa[15][19];
 	int frames[15][19];
 	int nivel = 1;
 	int puffle_frame;
-	int tiles_flipped, save_tiles_flipped, snow_melted, save_snow_melted;
 	int player_moving, slide_moving;
 	int wall_up, wall_down, wall_left, wall_right;
 	int movible_wall_up, movible_wall_down, movible_wall_left, movible_wall_right;
@@ -711,8 +728,12 @@ int game_loop (void) {
 	Punto player, save_player, next_player, movible, old_movible;
 	Warp warps[2];
 	
-	puffle_frame = player_start[PLAYER_IGNITE];
 	tiles_flipped = save_tiles_flipped = snow_melted = save_snow_melted = 0;
+	bonus_point = save_bonus_point = solved_stages = 0;
+	first_try_points = first_try_count = 0;
+	tries = 1;
+	
+	puffle_frame = player_start[PLAYER_IGNITE];
 	player_moving = slide_moving = 0;
 	wall_up = wall_down = wall_left = wall_right = FALSE;
 	movible_wall_up = movible_wall_down = movible_wall_left = movible_wall_right = FALSE;
@@ -903,11 +924,22 @@ int game_loop (void) {
 		if (*tile_actual == 7) { /* Bolsa de dinero */
 			mapa[player.y][player.x] = 2;
 			frames[player.y][player.x] = tiles_start[2];
-			/* Sumar bonus point */
+			bonus_point++;
 			
-			/* if (savebonuspoint + bonuspoint) {
-				Disparar estampa
-			   } */
+			/* TODO: Reproducir sonido del dinero */
+			/*
+			int suma_bolsas = save_bonus_point + bonus_point;
+			if (suma_bolsas == 1) {
+				Disparar estampa 63
+			} else if (suma_bolsas == 3) {
+				Disparar estampa 64
+			} else if (suma_bolsas == 6) {
+				Disparar estampa 65
+			} else if (suma_bolsas == 10) {
+				Disparar estampa 67
+			} else if (suma_bolsas == 33) {
+				Disparar estampa 70
+			}*/
 		} else if (*tile_actual == 8) {
 			mapa[player.y][player.x] = 3;
 			frames[player.y][player.x] = tiles_start[3];
@@ -923,7 +955,7 @@ int game_loop (void) {
 			frames[player.y][player.x] = tiles_start[2];
 			llave++;
 			/* TODO: Reproducir sonido de llave */
-		} else if (*tile_actual == 5 && player_moving == 0 && nivel < 19) {
+		} else if (*tile_actual == 5 && player_moving == 0 && nivel < 20) {
 			save_player.x = player.x;
 			save_player.y = player.y;
 			nivel++;
@@ -931,26 +963,36 @@ int game_loop (void) {
 			if (tiles_flipped == goal) {
 				/* Sumar puntos por completo */
 				last_solved = TRUE;
+				solved_stages++;
 				/* if (nivel != 19) TODO: Reproducir sonido */
-				/* if (tries == 1) {
-					Sumar puntos por hacerlo a la primera
-				   }
-				*/
+				if (tries == 1) {
+					first_try_points += tiles_flipped;
+					first_try_count++;
+				}
 			} else {
 				last_solved = FALSE;
 			}
-			/* if (nivel == 19) {
+			/* if (solved_stages == 19) {
 				Calcular puntos de tiempo
-				if (niveles_resueltos == 19) disparar estampa
+				Disparar estampa 71
 			   }
 			*/
 			save_tiles_flipped += tiles_flipped;
 			tiles_flipped = 0;
 			save_snow_melted += snow_melted;
 			snow_melted = 0;
+			save_bonus_point += bonus_point;
+			bonus_point = 0;
 			slide_block = 0;
 			random = RANDOM(2);
-			/* tries == 1 */
+			tries = 1;
+			printf ("-----\n");
+			printf ("Save Bonus Point: %i, Bonus point: %i\n", save_bonus_point, bonus_point);
+			printf ("Save tiles_flipped: %i, Tiles_flipped: %i\n", save_tiles_flipped, tiles_flipped);
+			printf ("Save Snow melted: %i, Snow melted: %i\n", save_snow_melted, snow_melted);
+			printf ("First try points: %i\n", first_try_points);
+			printf ("Solved stages count: %i\n", solved_stages);
+			printf ("-----\n\n");
 			if (nivel != 20) {
 				load_map (nivel, mapa, frames, &goal, random, last_solved, warps, &movible);
 				if (nivel >= 17) warp_enable = TRUE;
@@ -959,6 +1001,8 @@ int game_loop (void) {
 				/* Poner en blanco la pantalla y salir del gameloop */
 				return GAME_QUIT; /* FIXME: Pantalla de salida */
 			}
+		} else if (*tile_actual == 14) {
+			area_secreta (mapa, frames, solved_stages);
 		}
 		
 		if (player_moving == 0) {
@@ -1023,8 +1067,6 @@ int game_loop (void) {
 					frames[player.y][player.x] = tiles_start [2];
 					tiles_flipped++;
 					/* TODO: Reproducir sonido */
-				} else if (*tile_actual == 14) {
-					/* TODO: El area secreta */
 				}
 			}
 		}
@@ -1129,7 +1171,8 @@ int game_loop (void) {
 		if (player_die && puffle_frame == 92) {
 			tiles_flipped = 0;
 			snow_melted = 0;
-			
+			bonus_point = 0;
+			tries++;
 			player.y = save_player.y;
 			player.x = save_player.x;
 			puffle_frame = player_start [PLAYER_IGNITE];
@@ -1468,6 +1511,158 @@ void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, 
 				r++;
 			}
 		}
+	}
+}
+
+void area_secreta (int (*mapa)[19], int (*frames)[19], int solved_stages) {
+	/* Muro */
+	mapa[2][13] = mapa[11][16] = mapa[11][18] = mapa[10][18] =
+	mapa[9][18] = mapa[8][18] = mapa[7][18] = 20;
+	frames[2][13] = frames[11][16] = frames[11][18] = frames[10][18] =
+	frames[9][18] = frames[8][18] = frames[7][18] = tiles_start[20];
+	
+	/* Hielo */
+	mapa[3][13] = mapa[9][14] = mapa[7][14] = mapa[5][14] = mapa[3][14] =
+	mapa[1][14] = mapa[10][15] = mapa[8][15] = mapa[6][15] = mapa[4][15] =
+	mapa[2][15] = mapa[10][16] = mapa[9][16] = mapa[7][16] = mapa[5][16] =
+	mapa[3][16] = mapa[1][16] = mapa[12][17] = mapa[11][17] = mapa[10][17] =
+	mapa[8][17] = mapa[6][17] = mapa[4][17] = mapa[2][17] = 2;
+	frames[3][13] = frames[9][14] = frames[7][14] = frames[5][14] = frames[3][14] =
+	frames[1][14] = frames[10][15] = frames[8][15] = frames[6][15] = frames[4][15] =
+	frames[2][15] = frames[10][16] = frames[9][16] = frames[7][16] = frames[5][16] =
+	frames[3][16] = frames[1][16] = frames[12][17] = frames[11][17] = frames[10][17] =
+	frames[8][17] = frames[6][17] = frames[4][17] = frames[2][17] = tiles_start[2];
+	
+	/* El boton */
+	mapa[13][17] = 3;
+	frames[13][17] = tiles_start[15];
+	
+	/* Bolsas de dinero */
+	if (solved_stages >= 1) {
+		mapa[8][14] = 7;
+		frames[8][14] = tiles_start[7];
+	} else {
+		mapa[8][14] = 2;
+		frames[8][14] = tiles_start[2];
+	}
+	if (solved_stages >= 2) {
+		mapa[6][14] = 7;
+		frames[6][14] = tiles_start[7];
+	} else {
+		mapa[6][14] = 2;
+		frames[6][14] = tiles_start[2];
+	}
+	if (solved_stages >= 3) {
+		mapa[4][14] = 7;
+		frames[4][14] = tiles_start[7];
+	} else {
+		mapa[4][14] = 2;
+		frames[4][14] = tiles_start[2];
+	}
+	if (solved_stages >= 4) {
+		mapa[2][14] = 7;
+		frames[2][14] = tiles_start[7];
+	} else {
+		mapa[2][14] = 2;
+		frames[2][14] = tiles_start[2];
+	}
+	if (solved_stages >= 9) {
+		mapa[9][15] = 7;
+		frames[9][15] = tiles_start[7];
+	} else {
+		mapa[9][15] = 2;
+		frames[9][15] = tiles_start[2];
+	}
+	if (solved_stages >= 8) {
+		mapa[7][15] = 7;
+		frames[7][15] = tiles_start[7];
+	} else {
+		mapa[7][15] = 2;
+		frames[7][15] = tiles_start[2];
+	}
+	if (solved_stages >= 7) {
+		mapa[5][15] = 7;
+		frames[5][15] = tiles_start[7];
+	} else {
+		mapa[5][15] = 2;
+		frames[5][15] = tiles_start[2];
+	}
+	if (solved_stages >= 6) {
+		mapa[3][15] = 7;
+		frames[3][15] = tiles_start[7];
+	} else {
+		mapa[3][15] = 2;
+		frames[3][15] = tiles_start[2];
+	}
+	if (solved_stages >= 5) {
+		mapa[1][15] = 7;
+		frames[1][15] = tiles_start[7];
+	} else {
+		mapa[1][15] = 2;
+		frames[1][15] = tiles_start[2];
+	}
+	if (solved_stages >= 10) {
+		mapa[8][16] = 7;
+		frames[8][16] = tiles_start[7];
+	} else {
+		mapa[8][16] = 2;
+		frames[8][16] = tiles_start[2];
+	}
+	if (solved_stages >= 11) {
+		mapa[6][16] = 7;
+		frames[6][16] = tiles_start[7];
+	} else {
+		mapa[6][16] = 2;
+		frames[6][16] = tiles_start[2];
+	}
+	if (solved_stages >= 12) {
+		mapa[4][16] = 7;
+		frames[4][16] = tiles_start[7];
+	} else {
+		mapa[4][16] = 2;
+		frames[4][16] = tiles_start[2];
+	}
+	if (solved_stages >= 13) {
+		mapa[2][16] = 7;
+		frames[2][16] = tiles_start[7];
+	} else {
+		mapa[2][16] = 2;
+		frames[2][16] = tiles_start[2];
+	}
+	if (solved_stages >= 18) {
+		mapa[9][17] = 7;
+		frames[9][17] = tiles_start[7];
+	} else {
+		mapa[9][17] = 2;
+		frames[9][17] = tiles_start[2];
+	}
+	if (solved_stages >= 17) {
+		mapa[7][17] = 7;
+		frames[7][17] = tiles_start[7];
+	} else {
+		mapa[7][17] = 2;
+		frames[7][17] = tiles_start[2];
+	}
+	if (solved_stages >= 16) {
+		mapa[5][17] = 7;
+		frames[5][17] = tiles_start[7];
+	} else {
+		mapa[5][17] = 2;
+		frames[5][17] = tiles_start[2];
+	}
+	if (solved_stages >= 15) {
+		mapa[3][17] = 7;
+		frames[3][17] = tiles_start[7];
+	} else {
+		mapa[3][17] = 2;
+		frames[3][17] = tiles_start[2];
+	}
+	if (solved_stages >= 14) {
+		mapa[1][17] = 7;
+		frames[1][17] = tiles_start[7];
+	} else {
+		mapa[1][17] = 2;
+		frames[1][17] = tiles_start[2];
 	}
 }
 
