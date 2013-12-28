@@ -3,8 +3,9 @@
 gamedatadir = $(pkgdatadir)/data
 
 bin_PROGRAMS = thin-ice
-thin_ice_SOURCES = thinice.c
-EXTRA_DIST = mapa1.h \
+thin_ice_SOURCES = thinice.c cp-button.c
+EXTRA_DIST = cp-button.h \
+	mapa1.h \
 	mapa2.h \
 	mapa3.h \
 	mapa4.h \

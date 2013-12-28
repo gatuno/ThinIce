@@ -60,6 +60,8 @@
 #include "mapa18.h"
 #include "mapa19.h"
 
+#include "cp-button.h"
+
 #define FPS (1000/18)
 
 #define RANDOM(x) ((int) (x ## .0 * rand () / (RAND_MAX + 1.0)))
@@ -81,6 +83,11 @@
 /* Enumerar las imágenes */
 enum {
 	IMG_ARCADE,
+	IMG_PUFFLE_ON_ICE,
+	
+	IMG_BUTTON_1_UP,
+	IMG_BUTTON_1_OVER,
+	IMG_BUTTON_1_DOWN,
 	
 	IMG_DOWN_1,
 	IMG_DOWN_2,
@@ -290,6 +297,12 @@ enum {
 
 const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/arcade.png",
+	GAMEDATA_DIR "images/puffle-on-ice.png",
+	
+	GAMEDATA_DIR "images/boton-ui-1-up.png",
+	GAMEDATA_DIR "images/boton-ui-1-over.png",
+	GAMEDATA_DIR "images/boton-ui-1-down.png",
+	
 	GAMEDATA_DIR "images/down-1.png",
 	GAMEDATA_DIR "images/down-2.png",
 	GAMEDATA_DIR "images/down-3.png",
@@ -690,6 +703,18 @@ enum {
 	RIGHT = 0x08
 };
 
+enum {
+	BUTTON_NONE = 0,
+	BUTTON_CLOSE,
+	
+	BUTTON_START,
+	BUTTON_PLAY,
+	BUTTON_PREV,
+	BUTTON_NEXT,
+	
+	NUM_BUTTONS
+};
+
 /* Estructuras */
 typedef struct {
 	int x, y;
@@ -701,12 +726,14 @@ typedef struct {
 } Warp;
 
 /* Prototipos de función */
+int game_intro (void);
 int game_loop (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
 void copy_tile (SDL_Rect *rect, int tile);
 void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved, Warp *warps, Punto *movible);
 void area_secreta (int (*mapa)[19], int (*frames)[19], int solved_stages);
+int map_button_in_opening (int x, int y);
 
 /* Variables globales */
 SDL_Surface * screen;
@@ -720,12 +747,86 @@ int main (int argc, char *argv[]) {
 	
 	setup ();
 	
+	cp_registrar_botones (NUM_BUTTONS);
+	cp_registrar_boton (BUTTON_START, IMG_BUTTON_1_UP);
+	cp_button_start ();
+	
 	do {
+		if (game_intro () == GAME_QUIT) break;
+		/*if (game_explain () == GAME_QUIT) break;*/
 		if (game_loop () == GAME_QUIT) break;
 	} while (1 == 0);
 	
 	SDL_Quit ();
 	return EXIT_SUCCESS;
+}
+
+int game_intro (void) {
+	int done = 0;
+	SDL_Event event;
+	Uint32 last_time, now_time;
+	SDL_Rect rect;
+	int map;
+	
+	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
+	
+	rect.x = 184; rect.y = 93;
+	rect.w = images[IMG_PUFFLE_ON_ICE]->w; rect.h = images[IMG_PUFFLE_ON_ICE]->h;
+	
+	SDL_BlitSurface (images[IMG_PUFFLE_ON_ICE], NULL, screen, &rect);
+	
+	rect.x = 324; rect.y = 382;
+	rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
+	
+	SDL_BlitSurface (images[IMG_BUTTON_1_UP], NULL, screen, &rect);
+	
+	/* Titulo
+	rect.x = 227; rect.y = 37*/
+	
+	SDL_Flip (screen);
+	do {
+		last_time = SDL_GetTicks ();
+		
+		while (SDL_PollEvent(&event) > 0) {
+			switch (event.type) {
+				case SDL_QUIT:
+					/* Vamos a cerrar la aplicación */
+					done = GAME_QUIT;
+					break;
+				case SDL_MOUSEMOTION:
+					map = map_button_in_opening (event.motion.x, event.motion.y);
+					cp_button_motion (map);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					map = map_button_in_opening (event.button.x, event.button.y);
+					cp_button_down (map);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					map = map_button_in_opening (event.button.x, event.button.y);
+					map = cp_button_up (map);
+					
+					switch (map) {
+						case BUTTON_START:
+							done = GAME_CONTINUE;
+							break;
+					}
+					break;
+			}
+		}
+		
+		if (cp_button_refresh[BUTTON_START]) {
+			rect.x = 324; rect.y = 382;
+			rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
+		
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_START]], NULL, screen, &rect);
+			SDL_UpdateRects (screen, 1, &rect);
+			cp_button_refresh[BUTTON_START] = 0;
+		}
+		now_time = SDL_GetTicks ();
+		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
+	} while (!done);
+	
+	return done;
 }
 
 int game_loop (void) {
@@ -1801,5 +1902,10 @@ void area_secreta (int (*mapa)[19], int (*frames)[19], int solved_stages) {
 		mapa[1][17] = 2;
 		frames[1][17] = tiles_start[2];
 	}
+}
+
+int map_button_in_opening (int x, int y) {
+	if (x >= 324 && x < 421 && y >= 382 && y < 411) return BUTTON_START;
+	return BUTTON_NONE;
 }
 
