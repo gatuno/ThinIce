@@ -6,6 +6,9 @@ nobase_dist_gamedata_DATA = images/tiles.png \
 	images/boton-ui-1-down.png \
 	images/boton-ui-1-over.png \
 	images/boton-ui-1-up.png \
+	images/boton-close-down.png \
+	images/boton-close-over.png \
+	images/boton-close-up.png \
 	images/down-1.png \
 	images/down-2.png \
 	images/down-3.png \

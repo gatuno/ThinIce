@@ -28,7 +28,7 @@ int cp_old_map, cp_last_button;
 void cp_registrar_botones (int n) {
 	cp_button_frames = malloc (sizeof (int) * n);
 	cp_button_refresh = malloc (sizeof (int) * n);
-	memset (cp_button_refresh, 0, sizeof (n * sizeof (int)));
+	memset (cp_button_refresh, 0, n * sizeof (int));
 }
 
 void cp_registrar_boton (int n, int frame) {

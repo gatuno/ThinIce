@@ -89,6 +89,10 @@ enum {
 	IMG_BUTTON_1_OVER,
 	IMG_BUTTON_1_DOWN,
 	
+	IMG_BUTTON_CLOSE_UP,
+	IMG_BUTTON_CLOSE_OVER,
+	IMG_BUTTON_CLOSE_DOWN,
+	
 	IMG_DOWN_1,
 	IMG_DOWN_2,
 	IMG_DOWN_3,
@@ -302,6 +306,10 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/boton-ui-1-up.png",
 	GAMEDATA_DIR "images/boton-ui-1-over.png",
 	GAMEDATA_DIR "images/boton-ui-1-down.png",
+	
+	GAMEDATA_DIR "images/boton-close-up.png",
+	GAMEDATA_DIR "images/boton-close-over.png",
+	GAMEDATA_DIR "images/boton-close-down.png",
 	
 	GAMEDATA_DIR "images/down-1.png",
 	GAMEDATA_DIR "images/down-2.png",
@@ -734,6 +742,7 @@ void copy_tile (SDL_Rect *rect, int tile);
 void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved, Warp *warps, Punto *movible);
 void area_secreta (int (*mapa)[19], int (*frames)[19], int solved_stages);
 int map_button_in_opening (int x, int y);
+int map_button_in_game (int x, int y);
 
 /* Variables globales */
 SDL_Surface * screen;
@@ -749,6 +758,7 @@ int main (int argc, char *argv[]) {
 	
 	cp_registrar_botones (NUM_BUTTONS);
 	cp_registrar_boton (BUTTON_START, IMG_BUTTON_1_UP);
+	cp_registrar_boton (BUTTON_CLOSE, IMG_BUTTON_CLOSE_UP);
 	cp_button_start ();
 	
 	do {
@@ -780,6 +790,11 @@ int game_intro (void) {
 	
 	SDL_BlitSurface (images[IMG_BUTTON_1_UP], NULL, screen, &rect);
 	
+	rect.x = 654; rect.y = 24;
+	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+	
+	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
+	
 	/* Titulo
 	rect.x = 227; rect.y = 37*/
 	
@@ -809,6 +824,9 @@ int game_intro (void) {
 						case BUTTON_START:
 							done = GAME_CONTINUE;
 							break;
+						case BUTTON_CLOSE:
+							done = GAME_QUIT;
+							break;
 					}
 					break;
 			}
@@ -817,11 +835,23 @@ int game_intro (void) {
 		if (cp_button_refresh[BUTTON_START]) {
 			rect.x = 324; rect.y = 382;
 			rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
-		
+			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_START]], NULL, screen, &rect);
 			SDL_UpdateRects (screen, 1, &rect);
 			cp_button_refresh[BUTTON_START] = 0;
 		}
+		
+		if (cp_button_refresh[BUTTON_CLOSE]) {
+			rect.x = 654; rect.y = 24;
+			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+			
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+			SDL_UpdateRects (screen, 1, &rect);
+			cp_button_refresh[BUTTON_CLOSE] = 0;
+		}
+		
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 	} while (!done);
@@ -835,6 +865,7 @@ int game_loop (void) {
 	int last_key;
 	Uint32 last_time, now_time;
 	SDL_Rect rect;
+	int map;
 	
 	/* tiles_flipped representa los tiles pisados. Se guardan por nivel
 	 * y se acumulan en save_tiles_flipped
@@ -890,10 +921,14 @@ int game_loop (void) {
 	player.x = save_player.x = 14;
 	player.y = save_player.y = 10;
 	
-	SDL_EventState (SDL_MOUSEMOTION, SDL_IGNORE);
-	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
 	load_map (nivel, mapa, frames, &goal, random, FALSE, warps, &movible);
+	
+	/* Predibujar el boton de cierre */
+	rect.x = 654; rect.y = 24;
+	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+	
+	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
 	
 	SDL_Flip (screen);
 	do {
@@ -925,6 +960,24 @@ int game_loop (void) {
 						last_key &= ~LEFT;
 					} else if (event.key.keysym.sym == SDLK_RIGHT) {
 						last_key &= ~RIGHT;
+					}
+					break;
+				case SDL_MOUSEMOTION:
+					map = map_button_in_game (event.motion.x, event.motion.y);
+					cp_button_motion (map);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					map = map_button_in_game (event.button.x, event.button.y);
+					cp_button_down (map);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					map = map_button_in_game (event.button.x, event.button.y);
+					map = cp_button_up (map);
+					
+					switch (map) {
+						case BUTTON_CLOSE:
+							done = GAME_QUIT;
+							break;
 					}
 					break;
 			}
@@ -1345,6 +1398,18 @@ int game_loop (void) {
 		rect.w = images[IMG_DOWN_1]->w;
 		rect.h = images[IMG_DOWN_1]->h;
 		SDL_BlitSurface (images[arcade_outputs[arcade_button_down]], NULL, screen, &rect);
+		
+		/* El botón de cierre */
+		if (cp_button_refresh[BUTTON_CLOSE]) {
+			rect.x = 654; rect.y = 24;
+			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+			
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+			SDL_UpdateRects (screen, 1, &rect);
+			cp_button_refresh[BUTTON_CLOSE] = 0;
+		}
 		
 		/* Actualizar la pantalla */
 		rect.x = MAP_X;
@@ -1906,6 +1971,12 @@ void area_secreta (int (*mapa)[19], int (*frames)[19], int solved_stages) {
 
 int map_button_in_opening (int x, int y) {
 	if (x >= 324 && x < 421 && y >= 382 && y < 411) return BUTTON_START;
+	if (x >= 654 && x < 683 && y >= 24 && y < 53) return BUTTON_CLOSE;
+	return BUTTON_NONE;
+}
+
+int map_button_in_game (int x, int y) {
+	if (x >= 654 && x < 683 && y >= 24 && y < 53) return BUTTON_CLOSE;
 	return BUTTON_NONE;
 }
 
