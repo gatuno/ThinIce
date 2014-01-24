@@ -6,6 +6,9 @@ nobase_dist_gamedata_DATA = images/tiles.png \
 	images/boton-ui-1-down.png \
 	images/boton-ui-1-over.png \
 	images/boton-ui-1-up.png \
+	images/boton-ui-2-down.png \
+	images/boton-ui-2-over.png \
+	images/boton-ui-2-up.png \
 	images/boton-close-down.png \
 	images/boton-close-over.png \
 	images/boton-close-up.png \
@@ -30,5 +33,8 @@ nobase_dist_gamedata_DATA = images/tiles.png \
 	sounds/move.wav \
 	sounds/points.wav \
 	sounds/start.wav \
-	sounds/warp.wav
+	sounds/warp.wav \
+	sounds/button-1.wav \
+	music/thinice1.ogg \
+	music/thinice2.ogg
 

@@ -353,6 +353,9 @@ const char *sound_names[NUM_SOUNDS] = {
 	GAMEDATA_DIR "sounds/complete.wav"
 };
 
+#define MUS_INTRO GAMEDATA_DIR "music/thinice1.ogg"
+#define MUS_THINICE GAMEDATA_DIR "music/thinice2.ogg"
+
 static int tiles_frames [] = {
 	1, /* 0 => 1 Portal normal */
 	2, 3, /* 1 => 2, 2 => 3 */
@@ -751,6 +754,9 @@ SDL_Surface * images [NUM_IMAGES];
 
 int use_sound;
 Mix_Chunk * sounds[NUM_SOUNDS];
+Mix_Music * music_intro;
+Mix_Music * music_thinice;
+
 
 int main (int argc, char *argv[]) {
 	
@@ -795,12 +801,42 @@ int game_intro (void) {
 	
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
 	
+	/* Botones de arcade */
+	rect.x = 230; rect.y = 446;
+	rect.w = images[IMG_LEFT_1]->w;
+	rect.h = images[IMG_LEFT_1]->h;
+	SDL_BlitSurface (images[IMG_LEFT_1], NULL, screen, &rect);
+	
+	rect.x = 423;
+	SDL_BlitSurface (images[IMG_RIGHT_1], NULL, screen, &rect);
+	
+	rect.x = 328; rect.y = 435;
+	rect.w = images[IMG_UP_1]->w;
+	rect.h = images[IMG_UP_1]->h;
+	SDL_BlitSurface (images[IMG_UP_1], NULL, screen, &rect);
+	
+	rect.x = 324; rect.y = 457;
+	rect.w = images[IMG_DOWN_1]->w;
+	rect.h = images[IMG_DOWN_1]->h;
+	SDL_BlitSurface (images[IMG_DOWN_1], NULL, screen, &rect);
+	
 	/* Titulo
 	rect.x = 227; rect.y = 37*/
 	
 	SDL_Flip (screen);
+	
+	Mix_PlayMusic (music_intro, 1);
+	
 	do {
 		last_time = SDL_GetTicks ();
+		
+		if (music_intro != NULL) {
+			if (!Mix_PlayingMusic ()) {
+				Mix_PlayMusic (music_thinice, -1);
+				Mix_FreeMusic (music_intro);
+				music_intro = NULL;
+			}
+		}
 		
 		while (SDL_PollEvent(&event) > 0) {
 			switch (event.type) {
@@ -933,6 +969,14 @@ int game_loop (void) {
 	SDL_Flip (screen);
 	do {
 		last_time = SDL_GetTicks ();
+		
+		if (music_intro != NULL) {
+			if (!Mix_PlayingMusic ()) {
+				Mix_PlayMusic (music_thinice, -1);
+				Mix_FreeMusic (music_intro);
+				music_intro = NULL;
+			}
+		}
 		
 		while (SDL_PollEvent(&event) > 0) {
 			switch (event.type) {
@@ -1539,20 +1583,18 @@ void setup (void) {
 			Mix_VolumeChunk (sounds[g], MIX_MAX_VOLUME / 2);
 		}
 		
-		/* Cargar la música
+		/* Cargar la música */
+		music_intro = Mix_LoadMUS (MUS_INTRO);
+		music_thinice = Mix_LoadMUS (MUS_THINICE);
 		
-		mus_carnie = Mix_LoadMUS (MUS_CARNIE);
-		
-		if (mus_carnie == NULL) {
+		if (music_intro == NULL || music_thinice == NULL) {
 			fprintf (stderr,
-				"Failed to load data file:\n"
-				"%s\n"
+				"Failed to load a music file:\n"
 				"The error returned by SDL is:\n"
-				"%s\n", MUS_CARNIE, SDL_GetError ());
+				"%s\n", SDL_GetError ());
 			SDL_Quit ();
 			exit (1);
 		}
-		*/
 	}
 	
 	srand (SDL_GetTicks ());
