@@ -966,6 +966,25 @@ int game_loop (void) {
 	
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
 	
+	/* Botones de arcade */
+	rect.x = 230; rect.y = 446;
+	rect.w = images[IMG_LEFT_1]->w;
+	rect.h = images[IMG_LEFT_1]->h;
+	SDL_BlitSurface (images[IMG_LEFT_1], NULL, screen, &rect);
+	
+	rect.x = 423;
+	SDL_BlitSurface (images[IMG_RIGHT_1], NULL, screen, &rect);
+	
+	rect.x = 328; rect.y = 435;
+	rect.w = images[IMG_UP_1]->w;
+	rect.h = images[IMG_UP_1]->h;
+	SDL_BlitSurface (images[IMG_UP_1], NULL, screen, &rect);
+	
+	rect.x = 324; rect.y = 457;
+	rect.w = images[IMG_DOWN_1]->w;
+	rect.h = images[IMG_DOWN_1]->h;
+	SDL_BlitSurface (images[IMG_DOWN_1], NULL, screen, &rect);
+	
 	SDL_Flip (screen);
 	do {
 		last_time = SDL_GetTicks ();

@@ -99,4 +99,6 @@ int cp_button_up (int map) {
 		
 		cp_last_button = 0;
 	}
+	
+	return 0;
 }
