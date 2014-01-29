@@ -920,9 +920,15 @@ int game_explain (void) {
 	SDL_Rect rect;
 	int map;
 	
+	int mapa[3][12];
 	int escena = 1;
 	int frame;
 	int refresh_escena = 0;
+	int puffle_frame = player_start [PLAYER_NORMAL];
+	SDL_Rect puffle;
+	
+	puffle.w = TILE_WIDTH;
+	puffle.h = TILE_HEIGHT;
 	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
 	
@@ -1041,19 +1047,6 @@ int game_explain (void) {
 				rect.w = images[IMG_PUFFLE_EXPLAIN]->w; rect.h = images[IMG_PUFFLE_EXPLAIN]->h;
 				SDL_BlitSurface (images[IMG_PUFFLE_EXPLAIN], NULL, screen, &rect);
 				
-			} else if (escena == 2) {
-				/* Preparar la segunda escena */
-				rect.x = rect.y = 192;
-				rect.w = images[IMG_EXPLAIN_1]->w;
-				rect.h = images[IMG_EXPLAIN_1]->h;
-				
-				SDL_BlitSurface (images[IMG_EXPLAIN_1], NULL, screen, &rect);
-			} else if (escena == 3) {
-				rect.x = rect.y = 192;
-				rect.w = images[IMG_EXPLAIN_2]->w;
-				rect.h = images[IMG_EXPLAIN_2]->h;
-				
-				SDL_BlitSurface (images[IMG_EXPLAIN_2], NULL, screen, &rect);
 			} else if (escena == 4) {
 				rect.x = 284;
 				rect.y = 196;
@@ -1066,9 +1059,303 @@ int game_explain (void) {
 		}
 		
 		if (escena == 2) {
-			
+			rect.x = rect.y = 192;
+			rect.w = images[IMG_EXPLAIN_1]->w;
+			rect.h = images[IMG_EXPLAIN_1]->h;
+		
+			SDL_BlitSurface (images[IMG_EXPLAIN_1], NULL, screen, &rect);
+			switch (frame) {
+				case 0:
+					/* Preparar la segunda escena */
+					for (g = 0; g < 3; g++) {
+						for (h = 0; h < 12; h++) {
+							mapa[g][h] = -1;
+						}
+					}
+					
+					puffle.x = 216;
+					puffle.y = 240;
+					break;
+				case 16:
+					puffle.x += 8;
+					mapa[1][0] = tiles_start[22];
+					break;
+				case 17:
+				case 18:
+					puffle.x += 8;
+					break;
+				case 21:
+					puffle.x += 8;
+					mapa[1][1] = tiles_start[22];
+					break;
+				case 22:
+				case 23:
+					puffle.x += 8;
+					break;
+				case 26:
+					puffle.x += 8;
+					mapa[1][2] = tiles_start[22];
+					break;
+				case 27:
+				case 28:
+					puffle.x += 8;
+					break;
+				case 31:
+					puffle.x += 8;
+					mapa[1][3] = tiles_start[22];
+					break;
+				case 32:
+				case 33:
+					puffle.x += 8;
+					break;
+				case 36:
+					puffle.x += 8;
+					mapa[1][4] = tiles_start[22];
+					break;
+				case 37:
+				case 38:
+					puffle.x += 8;
+					break;
+				case 41:
+					puffle.x += 8;
+					mapa[1][5] = tiles_start[22];
+					break;
+				case 42:
+				case 43:
+					puffle.x += 8;
+					break;
+				case 46:
+					puffle.x += 8;
+					mapa[1][6] = tiles_start[22];
+					break;
+				case 47:
+				case 48:
+					puffle.x += 8;
+					break;
+				case 51:
+					puffle.x += 8;
+					mapa[1][7] = tiles_start[22];
+					break;
+				case 52:
+				case 53:
+					puffle.x += 8;
+					break;
+				case 56:
+					puffle.x += 8;
+					mapa[1][8] = tiles_start[22];
+					break;
+				case 57:
+				case 58:
+					puffle.x += 8;
+					break;
+				case 61:
+					puffle.x += 8;
+					mapa[1][9] = tiles_start[22];
+					break;
+				case 62:
+				case 63:
+					puffle.x += 8;
+					break;
+				case 66:
+					puffle.x += 8;
+					mapa[1][10] = tiles_start[22];
+					break;
+				case 67:
+				case 68:
+					puffle.x += 8;
+					break;
+				case 71:
+					puffle.x += 8;
+					mapa[1][11] = tiles_start[22];
+					break;
+				case 72:
+				case 73:
+					puffle.x += 8;
+					break;
+			}
 		} else if (escena == 3) {
+			rect.x = rect.y = 192;
+			rect.w = images[IMG_EXPLAIN_2]->w;
+			rect.h = images[IMG_EXPLAIN_2]->h;
 			
+			SDL_BlitSurface (images[IMG_EXPLAIN_2], NULL, screen, &rect);
+			switch (frame) {
+				case 0:
+					for (g = 0; g < 3; g++) {
+						for (h = 0; h < 12; h++) {
+							mapa[g][h] = -1;
+						}
+					}
+					puffle.x = 216;
+					puffle.y = 240;
+					break;
+				case 16:
+					puffle.x += 8;
+					mapa[1][0] = tiles_start[22];
+					break;
+				case 17:
+				case 18:
+					puffle.x += 8;
+					break;
+				case 21:
+					puffle.x += 8;
+					mapa[1][1] = tiles_start[22];
+					break;
+				case 22:
+				case 23:
+					puffle.x += 8;
+					break;
+				case 26:
+					puffle.x += 8;
+					mapa[1][2] = tiles_start[22];
+					break;
+				case 27:
+				case 28:
+					puffle.x += 8;
+					break;
+				case 31:
+					puffle.x += 8;
+					mapa[1][3] = tiles_start[22];
+					break;
+				case 32:
+				case 33:
+					puffle.x += 8;
+					break;
+				case 36:
+					puffle.x += 8;
+					mapa[1][4] = tiles_start[22];
+					break;
+				case 37:
+				case 38:
+					puffle.x += 8;
+					break;
+				case 41:
+					puffle.x += 8;
+					mapa[1][5] = tiles_start[22];
+					break;
+				case 42:
+				case 43:
+					puffle.x += 8;
+					break;
+				case 46:
+					puffle.x += 8;
+					mapa[1][6] = tiles_start[22];
+					break;
+				case 47:
+				case 48:
+					puffle.x += 8;
+					break;
+				case 51:
+					puffle.y -= 8;
+					mapa[1][7] = tiles_start[22];
+					break;
+				case 52:
+				case 53:
+					puffle.y -= 8;
+					break;
+				case 56:
+					puffle.x += 8;
+					mapa[0][7] = tiles_start[22];
+					break;
+				case 57:
+				case 58:
+					puffle.x += 8;
+					break;
+				case 61:
+					puffle.x += 8;
+					mapa[0][8] = tiles_start[22];
+					break;
+				case 62:
+				case 63:
+					puffle.x += 8;
+					break;
+				case 66:
+					puffle.y += 8;
+					mapa[0][9] = tiles_start[22];
+					break;
+				case 67:
+				case 68:
+					puffle.y += 8;
+					break;
+				case 71:
+					puffle.x -= 8;
+					mapa[1][9] = tiles_start[22];
+					break;
+				case 72:
+				case 73:
+					puffle.x -= 8;
+					break;
+				case 76:
+					puffle.y += 8;
+					mapa[1][8] = tiles_start[22];
+					break;
+				case 77:
+				case 78:
+					puffle.y += 8;
+					break;
+				case 81:
+					puffle.x += 8;
+					mapa[2][8] = tiles_start[22];
+					break;
+				case 82:
+				case 83:
+					puffle.x += 8;
+					break;
+				case 86:
+					puffle.x += 8;
+					mapa[2][9] = tiles_start[22];
+					break;
+				case 87:
+				case 88:
+					puffle.x += 8;
+					break;
+				case 91:
+					puffle.y -= 8;
+					mapa[2][10] = tiles_start[22];
+					break;
+				case 92:
+				case 93:
+					puffle.y -= 8;
+					break;
+				case 96:
+					puffle.x += 8;
+					mapa[1][10] = tiles_start[22];
+					break;
+				case 97:
+				case 98:
+					puffle.x += 8;
+					break;
+				case 101:
+					puffle.x += 8;
+					mapa[1][11] = tiles_start[22];
+					break;
+				case 102:
+				case 103:
+					puffle.x += 8;
+					break;
+			}
+		}
+		
+		if (escena == 2 || escena == 3) {
+			for (g = 0; g < 3; g++) {
+				for (h = 0; h < 12; h++) {
+					if (mapa[g][h] != -1) {
+						mapa[g][h] = tiles_frames[mapa[g][h]];
+						
+						/* Dibujar */
+						rect.x = 216 + (h * TILE_WIDTH);
+						rect.y = 216 + (g * TILE_HEIGHT);
+						
+						copy_tile (&rect, tiles_outputs [mapa[g][h]]);
+					}
+				}
+			}
+			frame++;
+			if (escena == 2 && frame >= 105) frame = 0;
+			if (escena == 3 && frame >= 143) frame = 0;
+			
+			puffle_frame = player_frames [puffle_frame];
+			copy_tile (&puffle, player_outputs[puffle_frame]);
 		}
 		
 		if (cp_button_refresh[BUTTON_PLAY]) {
@@ -1102,8 +1389,10 @@ int game_explain (void) {
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+			SDL_UpdateRects (screen, 1, &rect);
 			cp_button_refresh[BUTTON_CLOSE] = 0;
 		}
+		
 		rect.x = MAP_X;
 		rect.y = MAP_Y;
 		rect.w = 456;
