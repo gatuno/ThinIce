@@ -63,6 +63,7 @@
 #include "cp-button.h"
 
 #define FPS (1000/18)
+#define MAX_RECTS 256
 
 #define RANDOM(x) ((int) (x ## .0 * rand () / (RAND_MAX + 1.0)))
 
@@ -84,6 +85,12 @@
 enum {
 	IMG_ARCADE,
 	IMG_PUFFLE_ON_ICE,
+	
+	IMG_PUFFLE_EXPLAIN,
+	IMG_EXPLAIN_1,
+	IMG_EXPLAIN_2,
+	
+	IMG_MONEY_BAG,
 	
 	IMG_BUTTON_1_UP,
 	IMG_BUTTON_1_OVER,
@@ -302,6 +309,12 @@ enum {
 const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/arcade.png",
 	GAMEDATA_DIR "images/puffle-on-ice.png",
+	
+	GAMEDATA_DIR "images/puffle-explain.png",
+	GAMEDATA_DIR "images/explain1.png",
+	GAMEDATA_DIR "images/explain2.png",
+	
+	GAMEDATA_DIR "images/moneybag.png",
 	
 	GAMEDATA_DIR "images/boton-ui-1-up.png",
 	GAMEDATA_DIR "images/boton-ui-1-over.png",
@@ -738,6 +751,7 @@ typedef struct {
 
 /* Prototipos de función */
 int game_intro (void);
+int game_explain (void);
 int game_loop (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
@@ -745,6 +759,7 @@ void copy_tile (SDL_Rect *rect, int tile);
 void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved, Warp *warps, Punto *movible);
 void area_secreta (int (*mapa)[19], int (*frames)[19], int solved_stages);
 int map_button_in_opening (int x, int y);
+int map_button_in_explain (int x, int y, int escena);
 int map_button_in_game (int x, int y);
 
 /* Variables globales */
@@ -757,19 +772,23 @@ Mix_Chunk * sounds[NUM_SOUNDS];
 Mix_Music * music_intro;
 Mix_Music * music_thinice;
 
+SDL_Rect rects[MAX_RECTS];
+int num_rects = 0;
 
 int main (int argc, char *argv[]) {
-	
 	setup ();
 	
 	cp_registrar_botones (NUM_BUTTONS);
 	cp_registrar_boton (BUTTON_START, IMG_BUTTON_1_UP);
 	cp_registrar_boton (BUTTON_CLOSE, IMG_BUTTON_CLOSE_UP);
+	cp_registrar_boton (BUTTON_PLAY, IMG_BUTTON_1_UP);
+	cp_registrar_boton (BUTTON_NEXT, IMG_BUTTON_1_UP);
+	cp_registrar_boton (BUTTON_PREV, IMG_BUTTON_1_UP);
 	cp_button_start ();
 	
 	do {
 		if (game_intro () == GAME_QUIT) break;
-		/*if (game_explain () == GAME_QUIT) break;*/
+		if (game_explain () == GAME_QUIT) break;
 		if (game_loop () == GAME_QUIT) break;
 	} while (1 == 0);
 	
@@ -798,7 +817,6 @@ int game_intro (void) {
 	
 	rect.x = 654; rect.y = 24;
 	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
-	
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
 	
 	/* Botones de arcade */
@@ -887,6 +905,211 @@ int game_intro (void) {
 			SDL_UpdateRects (screen, 1, &rect);
 			cp_button_refresh[BUTTON_CLOSE] = 0;
 		}
+		
+		now_time = SDL_GetTicks ();
+		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
+	} while (!done);
+	
+	return done;
+}
+
+int game_explain (void) {
+	int done = 0, g, h;
+	SDL_Event event;
+	Uint32 last_time, now_time;
+	SDL_Rect rect;
+	int map;
+	
+	int escena = 1;
+	int frame;
+	int refresh_escena = 0;
+	
+	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
+	
+	/* Imagen principal */
+	rect.x = 164; rect.y = 189;
+	rect.w = images[IMG_PUFFLE_EXPLAIN]->w; rect.h = images[IMG_PUFFLE_EXPLAIN]->h;
+	SDL_BlitSurface (images[IMG_PUFFLE_EXPLAIN], NULL, screen, &rect);
+	
+	/* Boton de play */
+	rect.x = 158; rect.y = 382;
+	rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
+	SDL_BlitSurface (images[IMG_BUTTON_1_UP], NULL, screen, &rect);
+	
+	/* Boton de cierre */
+	rect.x = 654; rect.y = 24;
+	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
+	
+	/* Boton de siguiente */
+	rect.x = 496; rect.y = 382;
+	rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
+	SDL_BlitSurface (images[IMG_BUTTON_1_UP], NULL, screen, &rect);
+	
+	/* Botones de arcade */
+	rect.x = 230; rect.y = 446;
+	rect.w = images[IMG_LEFT_1]->w;
+	rect.h = images[IMG_LEFT_1]->h;
+	SDL_BlitSurface (images[IMG_LEFT_1], NULL, screen, &rect);
+	
+	rect.x = 423;
+	SDL_BlitSurface (images[IMG_RIGHT_1], NULL, screen, &rect);
+	
+	rect.x = 328; rect.y = 435;
+	rect.w = images[IMG_UP_1]->w;
+	rect.h = images[IMG_UP_1]->h;
+	SDL_BlitSurface (images[IMG_UP_1], NULL, screen, &rect);
+	
+	rect.x = 324; rect.y = 457;
+	rect.w = images[IMG_DOWN_1]->w;
+	rect.h = images[IMG_DOWN_1]->h;
+	SDL_BlitSurface (images[IMG_DOWN_1], NULL, screen, &rect);
+	
+	/* Titulo
+	rect.x = 227; rect.y = 37*/
+	
+	SDL_Flip (screen);
+	
+	do {
+		last_time = SDL_GetTicks ();
+		
+		if (music_intro != NULL) {
+			if (!Mix_PlayingMusic ()) {
+				Mix_PlayMusic (music_thinice, -1);
+				Mix_FreeMusic (music_intro);
+				music_intro = NULL;
+			}
+		}
+		
+		while (SDL_PollEvent(&event) > 0) {
+			switch (event.type) {
+				case SDL_QUIT:
+					/* Vamos a cerrar la aplicación */
+					done = GAME_QUIT;
+					break;
+				case SDL_MOUSEMOTION:
+					map = map_button_in_explain (event.motion.x, event.motion.y, escena);
+					cp_button_motion (map);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					map = map_button_in_explain (event.button.x, event.button.y, escena);
+					cp_button_down (map);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					map = map_button_in_explain (event.button.x, event.button.y, escena);
+					map = cp_button_up (map);
+					
+					switch (map) {
+						case BUTTON_PLAY:
+							done = GAME_CONTINUE;
+							break;
+						case BUTTON_CLOSE:
+							done = GAME_QUIT;
+							break;
+						case BUTTON_NEXT:
+							escena++;
+							refresh_escena = 1;
+							break;
+						case BUTTON_PREV:
+							escena--;
+							refresh_escena = 1;
+							break;
+					}
+					break;
+			}
+		}
+		
+		if (refresh_escena) {
+			frame = 0;
+			
+			/* Borrar la explicación */
+			rect.x = MAP_X;
+			rect.y = MAP_Y;
+			rect.w = 456;
+			rect.h = 432;
+			
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			/* Redibujar las botones */
+			cp_button_refresh[BUTTON_PLAY] = 1;
+			cp_button_refresh[BUTTON_PREV] = 1;
+			cp_button_refresh[BUTTON_NEXT] = 1;
+			
+			if (escena == 1) {
+				/* Imagen principal */
+				rect.x = 164; rect.y = 189;
+				rect.w = images[IMG_PUFFLE_EXPLAIN]->w; rect.h = images[IMG_PUFFLE_EXPLAIN]->h;
+				SDL_BlitSurface (images[IMG_PUFFLE_EXPLAIN], NULL, screen, &rect);
+				
+			} else if (escena == 2) {
+				/* Preparar la segunda escena */
+				rect.x = rect.y = 192;
+				rect.w = images[IMG_EXPLAIN_1]->w;
+				rect.h = images[IMG_EXPLAIN_1]->h;
+				
+				SDL_BlitSurface (images[IMG_EXPLAIN_1], NULL, screen, &rect);
+			} else if (escena == 3) {
+				rect.x = rect.y = 192;
+				rect.w = images[IMG_EXPLAIN_2]->w;
+				rect.h = images[IMG_EXPLAIN_2]->h;
+				
+				SDL_BlitSurface (images[IMG_EXPLAIN_2], NULL, screen, &rect);
+			} else if (escena == 4) {
+				rect.x = 284;
+				rect.y = 196;
+				rect.w = images[IMG_MONEY_BAG]->w;
+				rect.h = images[IMG_MONEY_BAG]->h;
+				
+				SDL_BlitSurface (images[IMG_MONEY_BAG], NULL, screen, &rect);
+			}
+			refresh_escena = 0;
+		}
+		
+		if (escena == 2) {
+			
+		} else if (escena == 3) {
+			
+		}
+		
+		if (cp_button_refresh[BUTTON_PLAY]) {
+			rect.x = 158; rect.y = 382;
+			rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_PLAY]], NULL, screen, &rect);
+			cp_button_refresh[BUTTON_PLAY] = 0;
+		}
+		
+		if (escena > 1 && cp_button_refresh[BUTTON_PREV]) {
+			rect.x = 396; rect.y = 382;
+			rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_PREV]], NULL, screen, &rect);
+			cp_button_refresh[BUTTON_PREV] = 0;
+		}
+		
+		if (escena < 4 && cp_button_refresh[BUTTON_NEXT]) {
+			rect.x = 496; rect.y = 382;
+			rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_NEXT]], NULL, screen, &rect);
+			cp_button_refresh[BUTTON_NEXT] = 0;
+		}
+		
+		if (cp_button_refresh[BUTTON_CLOSE]) {
+			rect.x = 654; rect.y = 24;
+			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+			
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+			cp_button_refresh[BUTTON_CLOSE] = 0;
+		}
+		rect.x = MAP_X;
+		rect.y = MAP_Y;
+		rect.w = 456;
+		rect.h = 432;
+		
+		SDL_UpdateRects (screen, 1, &rect);
 		
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
@@ -2033,6 +2256,14 @@ void area_secreta (int (*mapa)[19], int (*frames)[19], int solved_stages) {
 int map_button_in_opening (int x, int y) {
 	if (x >= 324 && x < 421 && y >= 382 && y < 411) return BUTTON_START;
 	if (x >= 654 && x < 683 && y >= 24 && y < 53) return BUTTON_CLOSE;
+	return BUTTON_NONE;
+}
+
+int map_button_in_explain (int x, int y, int escena) {
+	if (x >= 654 && x < 683 && y >= 24 && y < 53) return BUTTON_CLOSE;
+	if (x >= 154 && x < 261 && y >= 382 && y < 411) return BUTTON_PLAY;
+	if (escena > 1 && x >= 396 && x < 493 && y >= 382 && y < 411) return BUTTON_PREV;
+	if (escena < 4 && x >= 496 && x < 592 && y >= 382 && y < 411) return BUTTON_NEXT;
 	return BUTTON_NONE;
 }
 
