@@ -63,7 +63,7 @@
 #include "cp-button.h"
 
 #define FPS (1000/18)
-#define MAX_RECTS 256
+#define MAX_RECTS 16
 
 #define RANDOM(x) ((int) (x ## .0 * rand () / (RAND_MAX + 1.0)))
 
@@ -847,6 +847,7 @@ int game_intro (void) {
 	
 	do {
 		last_time = SDL_GetTicks ();
+		num_rects = 0;
 		
 		if (music_intro != NULL) {
 			if (!Mix_PlayingMusic ()) {
@@ -891,7 +892,7 @@ int game_intro (void) {
 			rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_START]], NULL, screen, &rect);
-			SDL_UpdateRects (screen, 1, &rect);
+			rects[num_rects++] = rect;
 			cp_button_refresh[BUTTON_START] = 0;
 		}
 		
@@ -902,10 +903,11 @@ int game_intro (void) {
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
-			SDL_UpdateRects (screen, 1, &rect);
+			rects[num_rects++] = rect;
 			cp_button_refresh[BUTTON_CLOSE] = 0;
 		}
 		
+		SDL_UpdateRects (screen, num_rects, rects);
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 	} while (!done);
@@ -979,6 +981,8 @@ int game_explain (void) {
 	do {
 		last_time = SDL_GetTicks ();
 		
+		num_rects = 0;
+		
 		if (music_intro != NULL) {
 			if (!Mix_PlayingMusic ()) {
 				Mix_PlayMusic (music_thinice, -1);
@@ -1032,7 +1036,7 @@ int game_explain (void) {
 			rect.x = MAP_X;
 			rect.y = MAP_Y;
 			rect.w = 456;
-			rect.h = 432;
+			rect.h = 384;
 			
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 			
@@ -1389,17 +1393,18 @@ int game_explain (void) {
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
-			SDL_UpdateRects (screen, 1, &rect);
+			rects[num_rects++] = rect;
 			cp_button_refresh[BUTTON_CLOSE] = 0;
 		}
 		
 		rect.x = MAP_X;
 		rect.y = MAP_Y;
 		rect.w = 456;
-		rect.h = 432;
+		rect.h = 384;
 		
-		SDL_UpdateRects (screen, 1, &rect);
+		rects[num_rects++] = rect;
 		
+		SDL_UpdateRects (screen, num_rects, rects);
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 	} while (!done);
@@ -1501,6 +1506,7 @@ int game_loop (void) {
 	do {
 		last_time = SDL_GetTicks ();
 		
+		num_rects = 0;
 		if (music_intro != NULL) {
 			if (!Mix_PlayingMusic ()) {
 				Mix_PlayMusic (music_thinice, -1);
@@ -1982,7 +1988,7 @@ int game_loop (void) {
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
-			SDL_UpdateRects (screen, 1, &rect);
+			rects[num_rects++] = rect;
 			cp_button_refresh[BUTTON_CLOSE] = 0;
 		}
 		
@@ -1991,7 +1997,9 @@ int game_loop (void) {
 		rect.y = MAP_Y;
 		rect.w = 456;
 		rect.h = 432;
-		SDL_UpdateRects (screen, 1, &rect);
+		rects[num_rects++] = rect;
+		
+		SDL_UpdateRects (screen, num_rects, rects);
 		
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
