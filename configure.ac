@@ -1,6 +1,6 @@
-AC_INIT([Thin Ice], [0.7], [], [thin-ice])
+AC_INIT([Thin Ice], [0.8], [], [thin-ice])
 
-AC_REVISION([Revision 2])
+AC_REVISION([Revision 3])
 
 AC_CONFIG_AUX_DIR([build-aux])
 
@@ -32,10 +32,9 @@ AC_MSG_CHECKING([if you have SDL_image installed on your system])
 PKG_CHECK_EXISTS([SDL_image >= $SDL_IMAGE_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([SDL_image not found in your system])])
 PKG_CHECK_MODULES(SDL_image, [SDL_image >= $SDL_IMAGE_VERSION], [], [])
 
-# Aún no necesito la SDL TTF
-#AC_MSG_CHECKING([if you have SDL_ttf installed on your system])
-#PKG_CHECK_EXISTS([SDL_image >= $SDL_IMAGE_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([SDL_ttf not found in your system])])
-#PKG_CHECK_MODULES(SDL_ttf, [SDL_ttf >= $SDL_TTF_VERSION], [], [])
+AC_MSG_CHECKING([if you have SDL_ttf installed on your system])
+PKG_CHECK_EXISTS([SDL_image >= $SDL_IMAGE_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([SDL_ttf not found in your system])])
+PKG_CHECK_MODULES(SDL_ttf, [SDL_ttf >= $SDL_TTF_VERSION], [], [])
 
 # SDL_Mixer doesn't have pkg-config
 SDL_mixer_LIBS=""

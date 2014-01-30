@@ -37,6 +37,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+#include <SDL_ttf.h>
 
 #include "config.h"
 
@@ -61,6 +62,7 @@
 #include "mapa19.h"
 
 #include "cp-button.h"
+#include "draw-text.h"
 
 #define FPS (1000/18)
 #define MAX_RECTS 16
@@ -739,6 +741,16 @@ enum {
 	NUM_BUTTONS
 };
 
+enum {
+	TEXT_EXPLAIN_1,
+	TEXT_EXPLAIN_2,
+	TEXT_EXPLAIN_3,
+	TEXT_EXPLAIN_4,
+	TEXT_EXPLAIN_5,
+	
+	NUM_TEXTS
+};
+
 /* Estructuras */
 typedef struct {
 	int x, y;
@@ -774,6 +786,8 @@ Mix_Music * music_thinice;
 
 SDL_Rect rects[MAX_RECTS];
 int num_rects = 0;
+
+TTF_Font *ttf10_bold;
 
 int main (int argc, char *argv[]) {
 	setup ();
@@ -928,6 +942,24 @@ int game_explain (void) {
 	int refresh_escena = 0;
 	int puffle_frame = player_start [PLAYER_NORMAL];
 	SDL_Rect puffle;
+	SDL_Surface *texts[NUM_TEXTS];
+	
+	/* Cadenas traducibles */
+	const char * text_strings[NUM_TEXTS] = {	
+		"Melt ice on your way through each maze\nOnce the ice is melted you can't walk back\nMelt all the ice to solve the stage",
+		"Use the arrow keys to move \nyour character around.",
+		"Make your way to the red exit to finish the level.",
+		"More points are earned by walking over all ice in the stage.",
+		"Earn more points by solving each level on your first try.\nAlso, coin bags will appear if you are solving levels."
+	};
+	
+	SDL_Color negro;
+	
+	negro.r = negro.g = negro.b = 0;
+	
+	for (g = 0; g < NUM_TEXTS; g++) {
+		texts[g] = draw_text_low (ttf10_bold, text_strings [g], negro);
+	}
 	
 	puffle.w = TILE_WIDTH;
 	puffle.h = TILE_HEIGHT;
@@ -938,6 +970,11 @@ int game_explain (void) {
 	rect.x = 164; rect.y = 189;
 	rect.w = images[IMG_PUFFLE_EXPLAIN]->w; rect.h = images[IMG_PUFFLE_EXPLAIN]->h;
 	SDL_BlitSurface (images[IMG_PUFFLE_EXPLAIN], NULL, screen, &rect);
+	
+	rect.x = 142; rect.y = 115;
+	rect.w = texts[TEXT_EXPLAIN_1]->w; rect.h = texts[IMG_EXPLAIN_1]->h;
+	
+	SDL_BlitSurface (texts[TEXT_EXPLAIN_1], NULL, screen, &rect);
 	
 	/* Boton de play */
 	rect.x = 158; rect.y = 382;
@@ -1051,7 +1088,31 @@ int game_explain (void) {
 				rect.w = images[IMG_PUFFLE_EXPLAIN]->w; rect.h = images[IMG_PUFFLE_EXPLAIN]->h;
 				SDL_BlitSurface (images[IMG_PUFFLE_EXPLAIN], NULL, screen, &rect);
 				
+				rect.x = 142; rect.y = 115;
+				rect.w = texts[TEXT_EXPLAIN_1]->w; rect.h = texts[TEXT_EXPLAIN_1]->h;
+				
+				SDL_BlitSurface (texts[TEXT_EXPLAIN_1], NULL, screen, &rect);
+			} else if (escena == 2) {
+				rect.x = 317; rect.y = 129;
+				rect.w = texts[TEXT_EXPLAIN_2]->w; rect.h = texts[TEXT_EXPLAIN_2]->h;
+				
+				SDL_BlitSurface (texts[TEXT_EXPLAIN_2], NULL, screen, &rect);
+				
+				rect.x = 147; rect.y = 308;
+				rect.w = texts[TEXT_EXPLAIN_3]->w; rect.h = texts[TEXT_EXPLAIN_3]->h;
+				
+				SDL_BlitSurface (texts[TEXT_EXPLAIN_3], NULL, screen, &rect);
+			} else if (escena == 3) {
+				rect.x = 194; rect.y = 120;
+				rect.w = texts[TEXT_EXPLAIN_4]->w; rect.h = texts[TEXT_EXPLAIN_4]->h;
+				
+				SDL_BlitSurface (texts[TEXT_EXPLAIN_4], NULL, screen, &rect);
 			} else if (escena == 4) {
+				rect.x = 150; rect.y = 114;
+				rect.w = texts[TEXT_EXPLAIN_5]->w; rect.h = texts[TEXT_EXPLAIN_5]->h;
+				
+				SDL_BlitSurface (texts[TEXT_EXPLAIN_5], NULL, screen, &rect);
+				
 				rect.x = 284;
 				rect.y = 196;
 				rect.w = images[IMG_MONEY_BAG]->w;
@@ -2134,6 +2195,25 @@ void setup (void) {
 			SDL_Quit ();
 			exit (1);
 		}
+	}
+	
+	if (TTF_Init () < 0) {
+		fprintf (stderr,
+			"Error: Can't initialize the SDL TTF library\n"
+			"%s\n", TTF_GetError ());
+		SDL_Quit ();
+		exit (1);
+	}
+	
+	ttf10_bold = TTF_OpenFont (GAMEDATA_DIR "verdanab.ttf", 10);
+	
+	if (!ttf10_bold) {
+		fprintf (stderr,
+			"Failed to load font file 'CCFaceFront'\n"
+			"The error returned by SDL is:\n"
+			"%s\n", TTF_GetError ());
+		SDL_Quit ();
+		exit (1);
 	}
 	
 	srand (SDL_GetTicks ());

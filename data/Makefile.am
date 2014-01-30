@@ -28,6 +28,7 @@ nobase_dist_gamedata_DATA = images/tiles.png \
 	images/up-1.png \
 	images/up-2.png \
 	images/up-3.png \
+	verdanab.ttf \
 	sounds/complete.wav \
 	sounds/double.wav \
 	sounds/drown.wav \
