@@ -821,6 +821,12 @@ int game_intro (void) {
 	Uint32 last_time, now_time;
 	SDL_Rect rect;
 	int map;
+	SDL_Surface *play_text_button;
+	SDL_Color blanco;
+	
+	blanco.r = blanco.g = blanco.b = 0xff;
+	
+	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "PLAY", blanco);
 	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
 	
@@ -833,6 +839,12 @@ int game_intro (void) {
 	rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
 	
 	SDL_BlitSurface (images[IMG_BUTTON_1_UP], NULL, screen, &rect);
+	
+	rect.x = 324 + (rect.w - play_text_button->w) / 2;
+	rect.y = 382 + (rect.h - play_text_button->h) / 2;
+	rect.w = play_text_button->w; rect.h = play_text_button->h;
+	
+	SDL_BlitSurface (play_text_button, NULL, screen, &rect);
 	
 	rect.x = 663; rect.y = 24;
 	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
@@ -915,6 +927,13 @@ int game_intro (void) {
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_START]], NULL, screen, &rect);
 			rects[num_rects++] = rect;
+			
+			rect.x = 324 + (rect.w - play_text_button->w) / 2;
+			rect.y = 382 + (rect.h - play_text_button->h) / 2;
+			rect.w = play_text_button->w; rect.h = play_text_button->h;
+			
+			SDL_BlitSurface (play_text_button, NULL, screen, &rect);
+			
 			cp_button_refresh[BUTTON_START] = 0;
 		}
 		
@@ -934,6 +953,8 @@ int game_intro (void) {
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 	} while (!done);
 	
+	SDL_FreeSurface (play_text_button);
+	
 	return done;
 }
 
@@ -951,6 +972,14 @@ int game_explain (void) {
 	int puffle_frame = player_start [PLAYER_NORMAL];
 	SDL_Rect puffle;
 	SDL_Surface *texts[NUM_TEXTS];
+	SDL_Surface *play_text_button, *prev_text_button, *next_text_button;
+	SDL_Color blanco;
+	
+	blanco.r = blanco.g = blanco.b = 0xff;
+	
+	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "PLAY", blanco);
+	prev_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "PREV", blanco);
+	next_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "NEXT", blanco);
 	
 	/* Cadenas traducibles */
 	const char * text_strings[NUM_TEXTS] = {	
@@ -992,6 +1021,12 @@ int game_explain (void) {
 	rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
 	SDL_BlitSurface (images[IMG_BUTTON_1_UP], NULL, screen, &rect);
 	
+	rect.x = 158 + (rect.w - play_text_button->w) / 2;
+	rect.y = 382 + (rect.h - play_text_button->h) / 2;
+	rect.w = play_text_button->w; rect.h = play_text_button->h;
+	
+	SDL_BlitSurface (play_text_button, NULL, screen, &rect);
+	
 	/* Boton de cierre */
 	rect.x = 663; rect.y = 24;
 	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
@@ -1001,6 +1036,12 @@ int game_explain (void) {
 	rect.x = 496; rect.y = 382;
 	rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
 	SDL_BlitSurface (images[IMG_BUTTON_1_UP], NULL, screen, &rect);
+	
+	rect.x = 496 + (rect.w - next_text_button->w) / 2;
+	rect.y = 382 + (rect.h - next_text_button->h) / 2;
+	rect.w = next_text_button->w; rect.h = next_text_button->h;
+	
+	SDL_BlitSurface (next_text_button, NULL, screen, &rect);
 	
 	/* Botones de arcade */
 	rect.x = 230; rect.y = 446;
@@ -1426,6 +1467,12 @@ int game_explain (void) {
 			rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_PLAY]], NULL, screen, &rect);
+			
+			rect.x = 158 + (rect.w - play_text_button->w) / 2;
+			rect.y = 382 + (rect.h - play_text_button->h) / 2;
+			rect.w = play_text_button->w; rect.h = play_text_button->h;
+			
+			SDL_BlitSurface (play_text_button, NULL, screen, &rect);
 			cp_button_refresh[BUTTON_PLAY] = 0;
 		}
 		
@@ -1434,6 +1481,12 @@ int game_explain (void) {
 			rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_PREV]], NULL, screen, &rect);
+			
+			rect.x = 396 + (rect.w - prev_text_button->w) / 2;
+			rect.y = 382 + (rect.h - prev_text_button->h) / 2;
+			rect.w = prev_text_button->w; rect.h = prev_text_button->h;
+			
+			SDL_BlitSurface (prev_text_button, NULL, screen, &rect);
 			cp_button_refresh[BUTTON_PREV] = 0;
 		}
 		
@@ -1442,6 +1495,11 @@ int game_explain (void) {
 			rect.w = images[IMG_BUTTON_1_UP]->w; rect.h = images[IMG_BUTTON_1_UP]->h;
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_NEXT]], NULL, screen, &rect);
+			rect.x = 496 + (rect.w - next_text_button->w) / 2;
+			rect.y = 382 + (rect.h - next_text_button->h) / 2;
+			rect.w = next_text_button->w; rect.h = next_text_button->h;
+			
+			SDL_BlitSurface (next_text_button, NULL, screen, &rect);
 			cp_button_refresh[BUTTON_NEXT] = 0;
 		}
 		
@@ -1472,6 +1530,10 @@ int game_explain (void) {
 	for (g = 0; g < NUM_TEXTS; g++) {
 		SDL_FreeSurface (texts[g]);
 	}
+	
+	SDL_FreeSurface (play_text_button);
+	SDL_FreeSurface (prev_text_button);
+	SDL_FreeSurface (next_text_button);
 	
 	return done;
 }
