@@ -1538,6 +1538,7 @@ int game_loop (void) {
 	int map;
 	SDL_Surface *text;
 	char buf[20];
+	int update_text;
 	
 	/* tiles_flipped representa los tiles pisados. Se guardan por nivel
 	 * y se acumulan en save_tiles_flipped
@@ -2141,29 +2142,36 @@ int game_loop (void) {
 		
 		/* Redibujar los puntos */
 		score = tiles_flipped + save_tiles_flipped + solved_points + (bonus_point * 100) + save_bonus_point * 100 + first_try_points;// + timepoints;
+		update_text = 0;
 		if (tally < score - 110) {
+			update_text = 1;
 			tally = tally + 110;
 		} else if (tally < score - 11) {
+			update_text = 1;
 			tally = tally + 11;
 		} else if (tally < score) {
+			update_text = 1;
 			tally = tally + 1;
 		} else if (tally > score) {
+			update_text = 1;
 			tally = score;
 		}
 		
-		sprintf (buf, "%i", tally);
-		text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, buf, azul);
-		rect.y = 413;
-		rect.x = MAP_X + (TILE_WIDTH * 17);
-		rect.h = text->h;
-		rect.w = TILE_WIDTH * 4;
-		rects[num_rects++] = rect;
-		
-		SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
-		rect.w = text->w;
-		
-		SDL_BlitSurface (text, NULL, screen, &rect);
-		SDL_FreeSurface (text);
+		if (update_text) {
+			sprintf (buf, "%i", tally);
+			text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, buf, azul);
+			rect.y = 413;
+			rect.x = MAP_X + (TILE_WIDTH * 17);
+			rect.h = text->h;
+			rect.w = TILE_WIDTH * 4;
+			rects[num_rects++] = rect;
+			
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			rect.w = text->w;
+			
+			SDL_BlitSurface (text, NULL, screen, &rect);
+			SDL_FreeSurface (text);
+		}
 		
 		if (last_key & DOWN) {
 			arcade_button_down = 1;
