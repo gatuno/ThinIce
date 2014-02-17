@@ -783,6 +783,9 @@ SDL_Surface * screen;
 SDL_Surface * image_tiles;
 SDL_Surface * images [NUM_IMAGES];
 
+SDL_Color blanco = {0xff, 0xff, 0xff};
+SDL_Color azul = {0x00, 0x66, 0xcc};
+
 int use_sound;
 Mix_Chunk * sounds[NUM_SOUNDS];
 Mix_Music * music_intro;
@@ -822,9 +825,6 @@ int game_intro (void) {
 	SDL_Rect rect;
 	int map;
 	SDL_Surface *play_text_button;
-	SDL_Color blanco;
-	
-	blanco.r = blanco.g = blanco.b = 0xff;
 	
 	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "PLAY", blanco);
 	
@@ -973,9 +973,6 @@ int game_explain (void) {
 	SDL_Rect puffle;
 	SDL_Surface *texts[NUM_TEXTS];
 	SDL_Surface *play_text_button, *prev_text_button, *next_text_button;
-	SDL_Color blanco;
-	
-	blanco.r = blanco.g = blanco.b = 0xff;
 	
 	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "PLAY", blanco);
 	prev_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "PREV", blanco);
@@ -989,12 +986,6 @@ int game_explain (void) {
 		"More points are earned by walking over all ice in the\nstage.",
 		"Earn more points by solving each level on your first try. Also, coin\nbags will appear if you are solving levels."
 	};
-	
-	SDL_Color azul;
-	
-	azul.r = 0;
-	azul.g = 0x66;
-	azul.b = 0xcc;
 	
 	for (g = 0; g < NUM_TEXTS; g++) {
 		texts[g] = draw_text (ttf13_burbank_bold, text_strings [g], azul, (g == 1) ? ALIGN_LEFT : ALIGN_CENTER, 8);
@@ -1545,6 +1536,8 @@ int game_loop (void) {
 	Uint32 last_time, now_time;
 	SDL_Rect rect;
 	int map;
+	SDL_Surface *text;
+	char buf[20];
 	
 	/* tiles_flipped representa los tiles pisados. Se guardan por nivel
 	 * y se acumulan en save_tiles_flipped
@@ -1560,8 +1553,9 @@ int game_loop (void) {
 	 * intento.
 	 */
 	int tiles_flipped, save_tiles_flipped, snow_melted, save_snow_melted;
-	int bonus_point, save_bonus_point, solved_stages;
+	int bonus_point, save_bonus_point, solved_stages, solved_points;
 	int tries, first_try_points, first_try_count;
+	int score, tally;
 	
 	int mapa[15][19];
 	int frames[15][19];
@@ -1585,7 +1579,7 @@ int game_loop (void) {
 	int arcade_button_left = 0, arcade_button_right = 0, arcade_button_up = 0, arcade_button_down = 0;
 	
 	tiles_flipped = save_tiles_flipped = snow_melted = save_snow_melted = 0;
-	bonus_point = save_bonus_point = solved_stages = 0;
+	solved_points = bonus_point = save_bonus_point = solved_stages = 0;
 	first_try_points = first_try_count = 0;
 	tries = 1;
 	
@@ -1596,6 +1590,7 @@ int game_loop (void) {
 	slide_block = llave = 0;
 	player_die = FALSE;
 	last_key = 0;
+	score = tally = 0;
 	
 	player.x = save_player.x = 14;
 	player.y = save_player.y = 10;
@@ -1627,6 +1622,53 @@ int game_loop (void) {
 	rect.w = images[IMG_DOWN_1]->w;
 	rect.h = images[IMG_DOWN_1]->h;
 	SDL_BlitSurface (images[IMG_DOWN_1], NULL, screen, &rect);
+	
+	/* Textos estáticos en la pantalla */
+	TTF_SetFontStyle (ttf13_burbank_bold,  TTF_STYLE_BOLD);
+	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "LEVEL", azul);
+	rect.x = MAP_X - 4 + ((TILE_WIDTH * 4) - text->w);
+	rect.y = 30;
+	rect.w = text->w; rect.h = text->h;
+	
+	SDL_BlitSurface (text, NULL, screen, &rect);
+	SDL_FreeSurface (text);
+	
+	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "SOLVED", azul);
+	rect.x = MAP_X - 8 + ((TILE_WIDTH * 17) - text->w);
+	rect.y = 30;
+	rect.w = text->w; rect.h = text->h;
+	
+	SDL_BlitSurface (text, NULL, screen, &rect);
+	SDL_FreeSurface (text);
+	
+	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "POINTS", azul);
+	rect.x = MAP_X - 12 + ((TILE_WIDTH * 17) - text->w);
+	rect.y = 413;
+	rect.w = text->w; rect.h = text->h;
+	
+	SDL_BlitSurface (text, NULL, screen, &rect);
+	SDL_FreeSurface (text);
+	
+	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "1", azul);
+	
+	rect.h = text->h;
+	rect.w = text->w;
+	rect.x = MAP_X + (TILE_WIDTH * 4);
+	rect.y = 30;
+	SDL_BlitSurface (text, NULL, screen, &rect);
+	SDL_FreeSurface (text);
+	
+	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "0", azul);
+	
+	rect.h = text->h;
+	rect.w = text->w;
+	rect.x = MAP_X + (TILE_WIDTH * 17);
+	SDL_BlitSurface (text, NULL, screen, &rect);
+	
+	rect.y = 413;
+	SDL_BlitSurface (text, NULL, screen, &rect);
+	
+	SDL_FreeSurface (text);
 	
 	SDL_Flip (screen);
 	if (use_sound) Mix_PlayChannel (-1, sounds[SND_START], 0);
@@ -1868,10 +1910,40 @@ int game_loop (void) {
 			save_player.y = player.y;
 			nivel++;
 			
+			/* Actualizar el nivel */
+			sprintf (buf, "%i", nivel);
+			
+			text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, buf, azul);
+			rect.y = 30;
+			rect.x = MAP_X + (TILE_WIDTH * 4);
+			rect.h = text->h;
+			rect.w = TILE_WIDTH * 2;
+			rects[num_rects++] = rect;
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			rect.w = text->w;
+			SDL_BlitSurface (text, NULL, screen, &rect);
+			SDL_FreeSurface (text);
+			
 			if (tiles_flipped == goal) {
-				/* Sumar puntos por completo */
+				solved_points += tiles_flipped;
 				last_solved = TRUE;
 				solved_stages++;
+				sprintf (buf, "%i", solved_stages);
+				
+				/* Actualizar la cantidad de stages resueltos */
+				text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, buf, azul);
+				rect.y = 30;
+				rect.x = MAP_X + (TILE_WIDTH * 17);
+				rect.h = text->h;
+				rect.w = TILE_WIDTH * 2;
+				rects[num_rects++] = rect;
+				SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+				
+				rect.w = text->w;
+				SDL_BlitSurface (text, NULL, screen, &rect);
+				SDL_FreeSurface (text);
+				
 				if (nivel != 19) if (use_sound) Mix_PlayChannel (-1, sounds[SND_COMPLETE], 0);
 				if (tries == 1) {
 					first_try_points += tiles_flipped;
@@ -2066,6 +2138,32 @@ int game_loop (void) {
 			rect.y = MAP_Y + (movible.y * TILE_HEIGHT);
 			copy_tile (&rect, TILE_BLOCK);
 		}
+		
+		/* Redibujar los puntos */
+		score = tiles_flipped + save_tiles_flipped + solved_points + (bonus_point * 100) + save_bonus_point * 100 + first_try_points;// + timepoints;
+		if (tally < score - 110) {
+			tally = tally + 110;
+		} else if (tally < score - 11) {
+			tally = tally + 11;
+		} else if (tally < score) {
+			tally = tally + 1;
+		} else if (tally > score) {
+			tally = score;
+		}
+		
+		sprintf (buf, "%i", tally);
+		text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, buf, azul);
+		rect.y = 413;
+		rect.x = MAP_X + (TILE_WIDTH * 17);
+		rect.h = text->h;
+		rect.w = TILE_WIDTH * 4;
+		rects[num_rects++] = rect;
+		
+		SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+		rect.w = text->w;
+		
+		SDL_BlitSurface (text, NULL, screen, &rect);
+		SDL_FreeSurface (text);
 		
 		if (last_key & DOWN) {
 			arcade_button_down = 1;
