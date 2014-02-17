@@ -787,7 +787,8 @@ Mix_Music * music_thinice;
 SDL_Rect rects[MAX_RECTS];
 int num_rects = 0;
 
-TTF_Font *ttf10_bold;
+TTF_Font *ttf13_burbank_bold;
+TTF_Font *ttf13_big_black;
 
 int main (int argc, char *argv[]) {
 	setup ();
@@ -829,7 +830,7 @@ int game_intro (void) {
 	
 	SDL_BlitSurface (images[IMG_BUTTON_1_UP], NULL, screen, &rect);
 	
-	rect.x = 654; rect.y = 24;
+	rect.x = 663; rect.y = 24;
 	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
 	
@@ -911,7 +912,7 @@ int game_intro (void) {
 		}
 		
 		if (cp_button_refresh[BUTTON_CLOSE]) {
-			rect.x = 654; rect.y = 24;
+			rect.x = 663; rect.y = 24;
 			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 			
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
@@ -946,19 +947,21 @@ int game_explain (void) {
 	
 	/* Cadenas traducibles */
 	const char * text_strings[NUM_TEXTS] = {	
-		"Melt ice on your way through each maze\nOnce the ice is melted you can't walk back\nMelt all the ice to solve the stage",
-		"Use the arrow keys to move \nyour character around.",
+		"Melt ice on your way through each maze. Once the ice is melted you\ncan't walk back. Melt all the ice to solve the stage",
+		"Use the arrow keys to move your\ncharacter around.",
 		"Make your way to the red exit to finish the level.",
-		"More points are earned by walking over all ice in the stage.",
-		"Earn more points by solving each level on your first try.\nAlso, coin bags will appear if you are solving levels."
+		"More points are earned by walking over all ice in the\nstage.",
+		"Earn more points by solving each level on your first try. Also, coin\nbags will appear if you are solving levels."
 	};
 	
-	SDL_Color negro;
+	SDL_Color azul;
 	
-	negro.r = negro.g = negro.b = 0;
+	azul.r = 0;
+	azul.g = 0x66;
+	azul.b = 0xcc;
 	
 	for (g = 0; g < NUM_TEXTS; g++) {
-		texts[g] = draw_text_low (ttf10_bold, text_strings [g], negro);
+		texts[g] = draw_text (ttf13_burbank_bold, text_strings [g], azul, (g == 1) ? ALIGN_LEFT : ALIGN_CENTER, 8);
 	}
 	
 	puffle.w = TILE_WIDTH;
@@ -971,7 +974,8 @@ int game_explain (void) {
 	rect.w = images[IMG_PUFFLE_EXPLAIN]->w; rect.h = images[IMG_PUFFLE_EXPLAIN]->h;
 	SDL_BlitSurface (images[IMG_PUFFLE_EXPLAIN], NULL, screen, &rect);
 	
-	rect.x = 142; rect.y = 115;
+	rect.x = MAP_X + (456 - texts[TEXT_EXPLAIN_1]->w) / 2;;
+	rect.y = 115;
 	rect.w = texts[TEXT_EXPLAIN_1]->w; rect.h = texts[IMG_EXPLAIN_1]->h;
 	
 	SDL_BlitSurface (texts[TEXT_EXPLAIN_1], NULL, screen, &rect);
@@ -982,7 +986,7 @@ int game_explain (void) {
 	SDL_BlitSurface (images[IMG_BUTTON_1_UP], NULL, screen, &rect);
 	
 	/* Boton de cierre */
-	rect.x = 654; rect.y = 24;
+	rect.x = 663; rect.y = 24;
 	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
 	
@@ -1082,33 +1086,40 @@ int game_explain (void) {
 			cp_button_refresh[BUTTON_PREV] = 1;
 			cp_button_refresh[BUTTON_NEXT] = 1;
 			
+			puffle_frame = player_start [PLAYER_NORMAL];
+			
 			if (escena == 1) {
 				/* Imagen principal */
 				rect.x = 164; rect.y = 189;
 				rect.w = images[IMG_PUFFLE_EXPLAIN]->w; rect.h = images[IMG_PUFFLE_EXPLAIN]->h;
 				SDL_BlitSurface (images[IMG_PUFFLE_EXPLAIN], NULL, screen, &rect);
 				
-				rect.x = 142; rect.y = 115;
+				rect.x = MAP_X + (456 - texts[TEXT_EXPLAIN_1]->w) / 2;
+				rect.y = 115;
 				rect.w = texts[TEXT_EXPLAIN_1]->w; rect.h = texts[TEXT_EXPLAIN_1]->h;
 				
 				SDL_BlitSurface (texts[TEXT_EXPLAIN_1], NULL, screen, &rect);
 			} else if (escena == 2) {
-				rect.x = 317; rect.y = 129;
+				rect.x = 317;
+				rect.y = 129;
 				rect.w = texts[TEXT_EXPLAIN_2]->w; rect.h = texts[TEXT_EXPLAIN_2]->h;
 				
 				SDL_BlitSurface (texts[TEXT_EXPLAIN_2], NULL, screen, &rect);
 				
-				rect.x = 147; rect.y = 308;
+				rect.x = MAP_X + (456 - texts[TEXT_EXPLAIN_3]->w) / 2;;
+				rect.y = 308;
 				rect.w = texts[TEXT_EXPLAIN_3]->w; rect.h = texts[TEXT_EXPLAIN_3]->h;
 				
 				SDL_BlitSurface (texts[TEXT_EXPLAIN_3], NULL, screen, &rect);
 			} else if (escena == 3) {
-				rect.x = 194; rect.y = 120;
+				rect.x = MAP_X + (456 - texts[TEXT_EXPLAIN_4]->w) / 2;;
+				rect.y = 120;
 				rect.w = texts[TEXT_EXPLAIN_4]->w; rect.h = texts[TEXT_EXPLAIN_4]->h;
 				
 				SDL_BlitSurface (texts[TEXT_EXPLAIN_4], NULL, screen, &rect);
 			} else if (escena == 4) {
-				rect.x = 150; rect.y = 114;
+				rect.x = MAP_X + (456 - texts[TEXT_EXPLAIN_5]->w) / 2;;
+				rect.y = 114;
 				rect.w = texts[TEXT_EXPLAIN_5]->w; rect.h = texts[TEXT_EXPLAIN_5]->h;
 				
 				SDL_BlitSurface (texts[TEXT_EXPLAIN_5], NULL, screen, &rect);
@@ -1448,7 +1459,7 @@ int game_explain (void) {
 		}
 		
 		if (cp_button_refresh[BUTTON_CLOSE]) {
-			rect.x = 654; rect.y = 24;
+			rect.x = 663; rect.y = 24;
 			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 			
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
@@ -1469,6 +1480,11 @@ int game_explain (void) {
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 	} while (!done);
+	
+	/* Liberar los textos rederizados */
+	for (g = 0; g < NUM_TEXTS; g++) {
+		SDL_FreeSurface (texts[g]);
+	}
 	
 	return done;
 }
@@ -1539,7 +1555,7 @@ int game_loop (void) {
 	load_map (nivel, mapa, frames, &goal, random, FALSE, warps, &movible);
 	
 	/* Predibujar el boton de cierre */
-	rect.x = 654; rect.y = 24;
+	rect.x = 663; rect.y = 24;
 	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 	
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
@@ -2043,7 +2059,7 @@ int game_loop (void) {
 		
 		/* El botón de cierre */
 		if (cp_button_refresh[BUTTON_CLOSE]) {
-			rect.x = 654; rect.y = 24;
+			rect.x = 663; rect.y = 24;
 			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 			
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
@@ -2189,7 +2205,7 @@ void setup (void) {
 		
 		if (music_intro == NULL || music_thinice == NULL) {
 			fprintf (stderr,
-				"Failed to load a music file:\n"
+				"Failed to load a music file.\n"
 				"The error returned by SDL is:\n"
 				"%s\n", SDL_GetError ());
 			SDL_Quit ();
@@ -2205,11 +2221,23 @@ void setup (void) {
 		exit (1);
 	}
 	
-	ttf10_bold = TTF_OpenFont (GAMEDATA_DIR "verdanab.ttf", 10);
+	ttf13_burbank_bold = TTF_OpenFont (GAMEDATA_DIR "burbanksb.ttf", 13);
 	
-	if (!ttf10_bold) {
+	if (!ttf13_burbank_bold) {
 		fprintf (stderr,
-			"Failed to load font file 'CCFaceFront'\n"
+			"Failed to load font file 'Burbank Small Bold'\n"
+			"The error returned by SDL is:\n"
+			"%s\n", TTF_GetError ());
+		SDL_Quit ();
+		exit (1);
+	}
+	TTF_SetFontHinting (ttf13_burbank_bold, TTF_HINTING_LIGHT);
+	
+	ttf13_big_black = TTF_OpenFont (GAMEDATA_DIR "burbankbgbk.ttf", 13);
+	
+	if (!ttf13_big_black) {
+		fprintf (stderr,
+			"Failed to load font file 'Burbank Big Regular Black'\n"
 			"The error returned by SDL is:\n"
 			"%s\n", TTF_GetError ());
 		SDL_Quit ();
@@ -2632,12 +2660,12 @@ void area_secreta (int (*mapa)[19], int (*frames)[19], int solved_stages) {
 
 int map_button_in_opening (int x, int y) {
 	if (x >= 324 && x < 421 && y >= 382 && y < 411) return BUTTON_START;
-	if (x >= 654 && x < 683 && y >= 24 && y < 53) return BUTTON_CLOSE;
+	if (x >= 663 && x < 692 && y >= 24 && y < 53) return BUTTON_CLOSE;
 	return BUTTON_NONE;
 }
 
 int map_button_in_explain (int x, int y, int escena) {
-	if (x >= 654 && x < 683 && y >= 24 && y < 53) return BUTTON_CLOSE;
+	if (x >= 663 && x < 692 && y >= 24 && y < 53) return BUTTON_CLOSE;
 	if (x >= 154 && x < 261 && y >= 382 && y < 411) return BUTTON_PLAY;
 	if (escena > 1 && x >= 396 && x < 493 && y >= 382 && y < 411) return BUTTON_PREV;
 	if (escena < 4 && x >= 496 && x < 592 && y >= 382 && y < 411) return BUTTON_NEXT;
@@ -2645,7 +2673,7 @@ int map_button_in_explain (int x, int y, int escena) {
 }
 
 int map_button_in_game (int x, int y) {
-	if (x >= 654 && x < 683 && y >= 24 && y < 53) return BUTTON_CLOSE;
+	if (x >= 663 && x < 692 && y >= 24 && y < 53) return BUTTON_CLOSE;
 	return BUTTON_NONE;
 }
 

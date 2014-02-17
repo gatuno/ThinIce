@@ -23,25 +23,18 @@
 #ifndef __DRAW_TEXT_H__
 #define __DRAW_TEXT_H__
 
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#define RMASK 0xff000000
-#define GMASK 0x00ff0000
-#define BMASK 0x0000ff00
-#define AMASK 0x000000ff
-#else
-#define RMASK 0x000000ff
-#define GMASK 0x0000ff00
-#define BMASK 0x00ff0000
-#define AMASK 0xff000000
-#endif
-
 #define OUTLINE_TEXT 2
 
 #include <SDL.h>
 
+enum {
+	ALIGN_LEFT,
+	ALIGN_CENTER,
+	ALIGN_RIGHT
+};
+
 /* Prototipos de función */
-SDL_Surface *draw_text (TTF_Font *font, const char *cadena, SDL_Color color);
-SDL_Surface *draw_text_low (TTF_Font *font, const char *cadena, SDL_Color color);
+SDL_Surface *draw_text (TTF_Font *font, const char *cadena, SDL_Color color, int align, int height_line);
 
 #endif /* __DRAW_TEXT_H__ */
 
