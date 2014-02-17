@@ -353,6 +353,8 @@ enum {
 	SND_WARP,
 	SND_COMPLETE,
 	
+	SND_BUTTON,
+	
 	NUM_SOUNDS
 };
 
@@ -365,7 +367,9 @@ const char *sound_names[NUM_SOUNDS] = {
 	GAMEDATA_DIR "sounds/key.wav",
 	GAMEDATA_DIR "sounds/move.wav",
 	GAMEDATA_DIR "sounds/warp.wav",
-	GAMEDATA_DIR "sounds/complete.wav"
+	GAMEDATA_DIR "sounds/complete.wav",
+	
+	GAMEDATA_DIR "sounds/button-1.wav"
 };
 
 #define MUS_INTRO GAMEDATA_DIR "music/thinice1.ogg"
@@ -885,6 +889,9 @@ int game_intro (void) {
 				case SDL_MOUSEBUTTONDOWN:
 					map = map_button_in_opening (event.button.x, event.button.y);
 					cp_button_down (map);
+					if (map == BUTTON_START) {
+						if (use_sound) Mix_PlayChannel (-1, sounds[SND_BUTTON], 0);
+					}
 					break;
 				case SDL_MOUSEBUTTONUP:
 					map = map_button_in_opening (event.button.x, event.button.y);
@@ -1045,6 +1052,9 @@ int game_explain (void) {
 				case SDL_MOUSEBUTTONDOWN:
 					map = map_button_in_explain (event.button.x, event.button.y, escena);
 					cp_button_down (map);
+					if (map != BUTTON_NONE && map != BUTTON_CLOSE) {
+						if (use_sound) Mix_PlayChannel (-1, sounds[SND_BUTTON], 0);
+					}
 					break;
 				case SDL_MOUSEBUTTONUP:
 					map = map_button_in_explain (event.button.x, event.button.y, escena);
@@ -1130,6 +1140,7 @@ int game_explain (void) {
 				rect.h = images[IMG_MONEY_BAG]->h;
 				
 				SDL_BlitSurface (images[IMG_MONEY_BAG], NULL, screen, &rect);
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_MONEY], 0);
 			}
 			refresh_escena = 0;
 		}
@@ -1153,100 +1164,91 @@ int game_explain (void) {
 					puffle.y = 240;
 					break;
 				case 16:
-					puffle.x += 8;
 					mapa[1][0] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 17:
 				case 18:
 					puffle.x += 8;
 					break;
 				case 21:
-					puffle.x += 8;
 					mapa[1][1] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 22:
 				case 23:
 					puffle.x += 8;
 					break;
 				case 26:
-					puffle.x += 8;
 					mapa[1][2] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 27:
 				case 28:
 					puffle.x += 8;
 					break;
 				case 31:
-					puffle.x += 8;
 					mapa[1][3] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 32:
 				case 33:
 					puffle.x += 8;
 					break;
 				case 36:
-					puffle.x += 8;
 					mapa[1][4] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 37:
 				case 38:
 					puffle.x += 8;
 					break;
 				case 41:
-					puffle.x += 8;
 					mapa[1][5] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 42:
 				case 43:
 					puffle.x += 8;
 					break;
 				case 46:
-					puffle.x += 8;
 					mapa[1][6] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 47:
 				case 48:
 					puffle.x += 8;
 					break;
 				case 51:
-					puffle.x += 8;
 					mapa[1][7] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 52:
 				case 53:
 					puffle.x += 8;
 					break;
 				case 56:
-					puffle.x += 8;
 					mapa[1][8] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 57:
 				case 58:
 					puffle.x += 8;
 					break;
 				case 61:
-					puffle.x += 8;
 					mapa[1][9] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 62:
 				case 63:
 					puffle.x += 8;
 					break;
 				case 66:
-					puffle.x += 8;
 					mapa[1][10] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 67:
 				case 68:
 					puffle.x += 8;
 					break;
 				case 71:
-					puffle.x += 8;
 					mapa[1][11] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 72:
 				case 73:
 					puffle.x += 8;
+					break;
+				case 74:
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_COMPLETE], 0);
 					break;
 			}
 		} else if (escena == 3) {
@@ -1266,148 +1268,133 @@ int game_explain (void) {
 					puffle.y = 240;
 					break;
 				case 16:
-					puffle.x += 8;
 					mapa[1][0] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 17:
 				case 18:
 					puffle.x += 8;
 					break;
 				case 21:
-					puffle.x += 8;
 					mapa[1][1] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 22:
 				case 23:
 					puffle.x += 8;
 					break;
 				case 26:
-					puffle.x += 8;
 					mapa[1][2] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 27:
 				case 28:
 					puffle.x += 8;
 					break;
 				case 31:
-					puffle.x += 8;
 					mapa[1][3] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 32:
 				case 33:
 					puffle.x += 8;
 					break;
 				case 36:
-					puffle.x += 8;
 					mapa[1][4] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 37:
 				case 38:
 					puffle.x += 8;
 					break;
 				case 41:
-					puffle.x += 8;
 					mapa[1][5] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 42:
 				case 43:
 					puffle.x += 8;
 					break;
 				case 46:
-					puffle.x += 8;
 					mapa[1][6] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 47:
 				case 48:
 					puffle.x += 8;
 					break;
 				case 51:
-					puffle.y -= 8;
 					mapa[1][7] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 52:
 				case 53:
 					puffle.y -= 8;
 					break;
 				case 56:
-					puffle.x += 8;
 					mapa[0][7] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 57:
 				case 58:
 					puffle.x += 8;
 					break;
 				case 61:
-					puffle.x += 8;
 					mapa[0][8] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 62:
 				case 63:
 					puffle.x += 8;
 					break;
 				case 66:
-					puffle.y += 8;
 					mapa[0][9] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 67:
 				case 68:
 					puffle.y += 8;
 					break;
 				case 71:
-					puffle.x -= 8;
 					mapa[1][9] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 72:
 				case 73:
 					puffle.x -= 8;
 					break;
 				case 76:
-					puffle.y += 8;
 					mapa[1][8] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 77:
 				case 78:
 					puffle.y += 8;
 					break;
 				case 81:
-					puffle.x += 8;
 					mapa[2][8] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 82:
 				case 83:
 					puffle.x += 8;
 					break;
 				case 86:
-					puffle.x += 8;
 					mapa[2][9] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 87:
 				case 88:
 					puffle.x += 8;
 					break;
 				case 91:
-					puffle.y -= 8;
 					mapa[2][10] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 92:
 				case 93:
 					puffle.y -= 8;
 					break;
 				case 96:
-					puffle.x += 8;
 					mapa[1][10] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 97:
 				case 98:
 					puffle.x += 8;
 					break;
 				case 101:
-					puffle.x += 8;
 					mapa[1][11] = tiles_start[22];
-					break;
+					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 				case 102:
 				case 103:
 					puffle.x += 8;
+					break;
+				case 104:
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_COMPLETE], 0);
 					break;
 			}
 		}
@@ -1580,6 +1567,7 @@ int game_loop (void) {
 	SDL_BlitSurface (images[IMG_DOWN_1], NULL, screen, &rect);
 	
 	SDL_Flip (screen);
+	if (use_sound) Mix_PlayChannel (-1, sounds[SND_START], 0);
 	do {
 		last_time = SDL_GetTicks ();
 		
@@ -1735,6 +1723,7 @@ int game_loop (void) {
 			/* Matar al puffle */
 			puffle_frame = player_start[PLAYER_DROWN];
 			player_die = TRUE;
+			if (use_sound) Mix_PlayChannel (-1, sounds[SND_DROWN], 0);
 			mapa[player.y][player.x] = 12;
 			frames[player.y][player.x] = tiles_start[12];
 		}
@@ -2094,6 +2083,7 @@ int game_loop (void) {
 			if (nivel >= 17) warp_enable = TRUE;
 			if (nivel >= 13) warp_wall = TRUE;
 			player_die = FALSE;
+			if (use_sound) Mix_PlayChannel (-1, sounds[SND_START], 0);
 		}
 	} while (!done);
 	
