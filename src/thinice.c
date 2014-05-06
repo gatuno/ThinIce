@@ -1539,6 +1539,7 @@ int game_loop (void) {
 	SDL_Surface *text;
 	char buf[20];
 	int update_text;
+	int tiles_text_x;
 	
 	/* tiles_flipped representa los tiles pisados. Se guardan por nivel
 	 * y se acumulan en save_tiles_flipped
@@ -1634,6 +1635,7 @@ int game_loop (void) {
 	SDL_BlitSurface (text, NULL, screen, &rect);
 	SDL_FreeSurface (text);
 	
+	/* Nieveles resueltos */
 	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "SOLVED", azul);
 	rect.x = MAP_X - 8 + ((TILE_WIDTH * 17) - text->w);
 	rect.y = 30;
@@ -1642,6 +1644,7 @@ int game_loop (void) {
 	SDL_BlitSurface (text, NULL, screen, &rect);
 	SDL_FreeSurface (text);
 	
+	/* Puntos */
 	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "POINTS", azul);
 	rect.x = MAP_X - 12 + ((TILE_WIDTH * 17) - text->w);
 	rect.y = 413;
@@ -1650,6 +1653,25 @@ int game_loop (void) {
 	SDL_BlitSurface (text, NULL, screen, &rect);
 	SDL_FreeSurface (text);
 	
+	/* La "/" */
+	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "/", azul);
+	tiles_text_x = rect.x = MAP_X + ((TILE_WIDTH * 10) - text->w);
+	rect.y = 30;
+	rect.w = text->w; rect.h = text->h;
+	
+	SDL_BlitSurface (text, NULL, screen, &rect);
+	SDL_FreeSurface (text);
+	
+	/* El goal */
+	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "12", azul);
+	rect.x = MAP_X + (TILE_WIDTH * 10);
+	rect.y = 30;
+	rect.w = text->w; rect.h = text->h;
+	
+	SDL_BlitSurface (text, NULL, screen, &rect);
+	SDL_FreeSurface (text);
+	
+	/* El 1 de nivel 1 */
 	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "1", azul);
 	
 	rect.h = text->h;
@@ -1659,6 +1681,7 @@ int game_loop (void) {
 	SDL_BlitSurface (text, NULL, screen, &rect);
 	SDL_FreeSurface (text);
 	
+	/* Los múltiples 0 iniciales */
 	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "0", azul);
 	
 	rect.h = text->h;
@@ -1667,6 +1690,10 @@ int game_loop (void) {
 	SDL_BlitSurface (text, NULL, screen, &rect);
 	
 	rect.y = 413;
+	SDL_BlitSurface (text, NULL, screen, &rect);
+	
+	rect.y = 30;
+	rect.x = tiles_text_x - rect.w;
 	SDL_BlitSurface (text, NULL, screen, &rect);
 	
 	SDL_FreeSurface (text);
@@ -1967,13 +1994,6 @@ int game_loop (void) {
 			slide_block = 0;
 			random = RANDOM(2);
 			tries = 1;
-			printf ("-----\n");
-			printf ("Save Bonus Point: %i, Bonus point: %i\n", save_bonus_point, bonus_point);
-			printf ("Save tiles_flipped: %i, Tiles_flipped: %i\n", save_tiles_flipped, tiles_flipped);
-			printf ("Save Snow melted: %i, Snow melted: %i\n", save_snow_melted, snow_melted);
-			printf ("First try points: %i\n", first_try_points);
-			printf ("Solved stages count: %i\n", solved_stages);
-			printf ("-----\n\n");
 			if (nivel != 20) {
 				load_map (nivel, mapa, frames, &goal, random, last_solved, warps, &movible);
 				if (nivel >= 17) warp_enable = TRUE;
@@ -1982,6 +2002,38 @@ int game_loop (void) {
 				/* Poner en blanco la pantalla y salir del gameloop */
 				return GAME_QUIT; /* FIXME: Pantalla de salida */
 			}
+			
+			/* Actualizar los tiles flipped */
+			text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "0", azul);
+			rect.y = 30;
+			rect.w = TILE_WIDTH * 2;
+			rect.x = tiles_text_x - rect.w;
+			rect.h = text->h;
+			rects[num_rects++] = rect;
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			rect.w = text->w;
+			rect.x = tiles_text_x - rect.w;
+			
+			SDL_BlitSurface (text, NULL, screen, &rect);
+			SDL_FreeSurface (text);
+			
+			/* Actualizar el texto del goal */
+			sprintf (buf, "%i", goal);
+			
+			text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, buf, azul);
+			rect.y = 30;
+			rect.x = MAP_X + (TILE_WIDTH * 10);
+			rect.h = text->h;
+			rect.w = TILE_WIDTH * 2;
+			rects[num_rects++] = rect;
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			rect.w = text->w;
+			
+			SDL_BlitSurface (text, NULL, screen, &rect);
+			SDL_FreeSurface (text);
+			
 		} else if (*tile_actual == 14) {
 			area_secreta (mapa, frames, solved_stages);
 			if (use_sound) Mix_PlayChannel (-1, sounds[SND_WARP], 0);
@@ -2044,11 +2096,43 @@ int game_loop (void) {
 					/* if (save_snow_melted + snow_melted == 480) {
 						Disparar estampa
 					} */
+					
+					/* Actualizar los tiles flipped */
+					sprintf (buf, "%i", tiles_flipped);
+					text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, buf, azul);
+					rect.y = 30;
+					rect.w = TILE_WIDTH * 2;
+					rect.x = tiles_text_x - rect.w;
+					rect.h = text->h;
+					rects[num_rects++] = rect;
+					SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+					rect.w = text->w;
+					rect.x = tiles_text_x - rect.w;
+			
+					SDL_BlitSurface (text, NULL, screen, &rect);
+					SDL_FreeSurface (text);
 				} else if (*tile_actual == 4) {
 					mapa[player.y][player.x] = 2;
 					frames[player.y][player.x] = tiles_start [2];
 					tiles_flipped++;
 					if (use_sound) Mix_PlayChannel (0, sounds[SND_DOUBLE_ICE], 0);
+					/* Actualizar los tiles flipped */
+					
+					sprintf (buf, "%i", tiles_flipped);
+					text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, buf, azul);
+					rect.y = 30;
+					rect.w = TILE_WIDTH * 2;
+					rect.x = tiles_text_x - rect.w;
+					rect.h = text->h;
+					rects[num_rects++] = rect;
+					SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+					rect.w = text->w;
+					rect.x = tiles_text_x - rect.w;
+			
+					SDL_BlitSurface (text, NULL, screen, &rect);
+					SDL_FreeSurface (text);
 				}
 			}
 		}
@@ -2252,6 +2336,23 @@ int game_loop (void) {
 			if (nivel >= 13) warp_wall = TRUE;
 			player_die = FALSE;
 			if (use_sound) Mix_PlayChannel (-1, sounds[SND_START], 0);
+			
+			/* Actualizar los tiles flipped */
+			text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "0", azul);
+			rect.y = 30;
+			rect.w = TILE_WIDTH * 2;
+			rect.x = tiles_text_x - rect.w;
+			rect.h = text->h;
+			num_rects = 0;
+			rects[num_rects++] = rect;
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			rect.w = text->w;
+			rect.x = tiles_text_x - rect.w;
+			
+			SDL_BlitSurface (text, NULL, screen, &rect);
+			SDL_FreeSurface (text);
+			SDL_UpdateRects (screen, num_rects, rects);
 		}
 	} while (!done);
 	
