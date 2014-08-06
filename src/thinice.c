@@ -98,6 +98,10 @@ enum {
 	IMG_BUTTON_1_OVER,
 	IMG_BUTTON_1_DOWN,
 	
+	IMG_BUTTON_2_UP,
+	IMG_BUTTON_2_OVER,
+	IMG_BUTTON_2_DOWN,
+	
 	IMG_BUTTON_CLOSE_UP,
 	IMG_BUTTON_CLOSE_OVER,
 	IMG_BUTTON_CLOSE_DOWN,
@@ -321,6 +325,10 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/boton-ui-1-up.png",
 	GAMEDATA_DIR "images/boton-ui-1-over.png",
 	GAMEDATA_DIR "images/boton-ui-1-down.png",
+	
+	GAMEDATA_DIR "images/boton-ui-2-up.png",
+	GAMEDATA_DIR "images/boton-ui-2-over.png",
+	GAMEDATA_DIR "images/boton-ui-2-down.png",
 	
 	GAMEDATA_DIR "images/boton-close-up.png",
 	GAMEDATA_DIR "images/boton-close-over.png",
@@ -742,6 +750,8 @@ enum {
 	BUTTON_PREV,
 	BUTTON_NEXT,
 	
+	BUTTON_RESET,
+	
 	NUM_BUTTONS
 };
 
@@ -806,6 +816,7 @@ int main (int argc, char *argv[]) {
 	cp_registrar_boton (BUTTON_PLAY, IMG_BUTTON_1_UP);
 	cp_registrar_boton (BUTTON_NEXT, IMG_BUTTON_1_UP);
 	cp_registrar_boton (BUTTON_PREV, IMG_BUTTON_1_UP);
+	cp_registrar_boton (BUTTON_RESET, IMG_BUTTON_2_UP);
 	cp_button_start ();
 	
 	do {
@@ -1606,6 +1617,12 @@ int game_loop (void) {
 	
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
 	
+	/* Predibujar el botón de reset */
+	rect.x = 155; rect.y = 410;
+	rect.w = images[IMG_BUTTON_2_UP]->w; rect.h = images[IMG_BUTTON_2_UP]->h;
+	
+	SDL_BlitSurface (images[IMG_BUTTON_2_UP], NULL, screen, &rect);
+	
 	/* Botones de arcade */
 	rect.x = 230; rect.y = 446;
 	rect.w = images[IMG_LEFT_1]->w;
@@ -1747,6 +1764,41 @@ int game_loop (void) {
 				case SDL_MOUSEBUTTONDOWN:
 					map = map_button_in_game (event.button.x, event.button.y);
 					cp_button_down (map);
+					
+					switch (map) {
+						case BUTTON_RESET:
+							/* Reiniciar el nivel */
+							tiles_flipped = 0;
+							snow_melted = 0;
+							bonus_point = 0;
+							tries++;
+							player.y = save_player.y;
+							player.x = save_player.x;
+							puffle_frame = player_start [PLAYER_IGNITE];
+							player_moving = slide_block = llave = 0;
+							load_map (nivel, mapa, frames, &goal, random, last_solved, warps, &movible);
+							if (nivel >= 17) warp_enable = TRUE;
+							if (nivel >= 13) warp_wall = TRUE;
+							if (use_sound) Mix_PlayChannel (-1, sounds[SND_DROWN], 0);
+							
+							/* Actualizar los tiles flipped */
+							text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "0", azul);
+							rect.y = 30;
+							rect.w = TILE_WIDTH * 2;
+							rect.x = tiles_text_x - rect.w;
+							rect.h = text->h;
+							num_rects = 0;
+							rects[num_rects++] = rect;
+							SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+							
+							rect.w = text->w;
+							rect.x = tiles_text_x - rect.w;
+							
+							SDL_BlitSurface (text, NULL, screen, &rect);
+							SDL_FreeSurface (text);
+							SDL_Flip (screen);
+							break;
+					}
 					break;
 				case SDL_MOUSEBUTTONUP:
 					map = map_button_in_game (event.button.x, event.button.y);
@@ -2310,6 +2362,16 @@ int game_loop (void) {
 			cp_button_refresh[BUTTON_CLOSE] = 0;
 		}
 		
+		/* El botón de reinicio */
+		if (cp_button_refresh[BUTTON_RESET]) {
+			rect.x = 155; rect.y = 410;
+			rect.w = images[IMG_BUTTON_2_UP]->w; rect.h = images[IMG_BUTTON_2_UP]->h;
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_RESET]], NULL, screen, &rect);
+			rects[num_rects++] = rect;
+			cp_button_refresh[BUTTON_RESET] = 0;
+		}
+		
 		/* Actualizar la pantalla */
 		rect.x = MAP_X;
 		rect.y = MAP_Y;
@@ -2322,7 +2384,7 @@ int game_loop (void) {
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 		
-		if (player_die && puffle_frame == 92) {
+		if (player_die && puffle_frame >= 92) {
 			tiles_flipped = 0;
 			snow_melted = 0;
 			bonus_point = 0;
@@ -2933,6 +2995,7 @@ int map_button_in_explain (int x, int y, int escena) {
 
 int map_button_in_game (int x, int y) {
 	if (x >= 663 && x < 692 && y >= 24 && y < 53) return BUTTON_CLOSE;
+	if (x >= 155 && x < 244 && y >= 410 && y < 429) return BUTTON_RESET;
 	return BUTTON_NONE;
 }
 
