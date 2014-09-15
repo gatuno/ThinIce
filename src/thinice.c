@@ -122,6 +122,45 @@ enum {
 	IMG_UP_2,
 	IMG_UP_3,
 	
+	IMG_FIRE_1,
+	IMG_FIRE_2,
+	IMG_FIRE_3,
+	IMG_FIRE_4,
+	IMG_FIRE_5,
+	IMG_FIRE_6,
+	IMG_FIRE_7,
+	IMG_FIRE_8,
+	IMG_FIRE_9,
+	IMG_FIRE_10,
+	
+	IMG_PUFFLE_BLACK_1,
+	IMG_PUFFLE_BLACK_2,
+	IMG_PUFFLE_BLACK_3,
+	IMG_PUFFLE_BLACK_4,
+	IMG_PUFFLE_BLACK_5,
+	IMG_PUFFLE_BLACK_6,
+	IMG_PUFFLE_BLACK_7,
+	IMG_PUFFLE_BLACK_8,
+	IMG_PUFFLE_BLACK_9,
+	IMG_PUFFLE_BLACK_10,
+	IMG_PUFFLE_BLACK_11,
+	IMG_PUFFLE_BLACK_12,
+	IMG_PUFFLE_BLACK_13,
+	IMG_PUFFLE_BLACK_14,
+	IMG_PUFFLE_BLACK_15,
+	IMG_PUFFLE_BLACK_16,
+	
+	IMG_PUFFLE_OFF_1,
+	IMG_PUFFLE_OFF_2,
+	IMG_PUFFLE_OFF_3,
+	IMG_PUFFLE_OFF_4,
+	IMG_PUFFLE_OFF_5,
+	IMG_PUFFLE_OFF_6,
+	IMG_PUFFLE_OFF_7,
+	IMG_PUFFLE_OFF_8,
+	IMG_PUFFLE_OFF_9,
+	IMG_PUFFLE_OFF_10,
+	
 	NUM_IMAGES
 };
 
@@ -345,7 +384,46 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/right-3.png",
 	GAMEDATA_DIR "images/up-1.png",
 	GAMEDATA_DIR "images/up-2.png",
-	GAMEDATA_DIR "images/up-3.png"
+	GAMEDATA_DIR "images/up-3.png",
+	
+	GAMEDATA_DIR "images/fire1.png",
+	GAMEDATA_DIR "images/fire2.png",
+	GAMEDATA_DIR "images/fire3.png",
+	GAMEDATA_DIR "images/fire4.png",
+	GAMEDATA_DIR "images/fire5.png",
+	GAMEDATA_DIR "images/fire6.png",
+	GAMEDATA_DIR "images/fire7.png",
+	GAMEDATA_DIR "images/fire8.png",
+	GAMEDATA_DIR "images/fire9.png",
+	GAMEDATA_DIR "images/fire10.png",
+	
+	GAMEDATA_DIR "images/puffle_black_1.png",
+	GAMEDATA_DIR "images/puffle_black_2.png",
+	GAMEDATA_DIR "images/puffle_black_3.png",
+	GAMEDATA_DIR "images/puffle_black_4.png",
+	GAMEDATA_DIR "images/puffle_black_5.png",
+	GAMEDATA_DIR "images/puffle_black_6.png",
+	GAMEDATA_DIR "images/puffle_black_7.png",
+	GAMEDATA_DIR "images/puffle_black_8.png",
+	GAMEDATA_DIR "images/puffle_black_9.png",
+	GAMEDATA_DIR "images/puffle_black_10.png",
+	GAMEDATA_DIR "images/puffle_black_11.png",
+	GAMEDATA_DIR "images/puffle_black_12.png",
+	GAMEDATA_DIR "images/puffle_black_13.png",
+	GAMEDATA_DIR "images/puffle_black_14.png",
+	GAMEDATA_DIR "images/puffle_black_15.png",
+	GAMEDATA_DIR "images/puffle_black_16.png",
+	
+	GAMEDATA_DIR "images/puffle_off1.png",
+	GAMEDATA_DIR "images/puffle_off2.png",
+	GAMEDATA_DIR "images/puffle_off3.png",
+	GAMEDATA_DIR "images/puffle_off4.png",
+	GAMEDATA_DIR "images/puffle_off5.png",
+	GAMEDATA_DIR "images/puffle_off6.png",
+	GAMEDATA_DIR "images/puffle_off7.png",
+	GAMEDATA_DIR "images/puffle_off8.png",
+	GAMEDATA_DIR "images/puffle_off9.png",
+	GAMEDATA_DIR "images/puffle_off10.png"
 };
 
 #define IMG_TILE_NAME GAMEDATA_DIR "images/tiles.png"
@@ -779,6 +857,7 @@ typedef struct {
 int game_intro (void);
 int game_explain (void);
 int game_loop (void);
+int game_finish (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
 void copy_tile (SDL_Rect *rect, int tile);
@@ -806,6 +885,9 @@ int num_rects = 0;
 
 TTF_Font *ttf13_burbank_bold;
 TTF_Font *ttf13_big_black;
+TTF_Font *ttf10_burbank;
+
+int first_try_count, solved_stages, bonus_point, tiles_flipped, score;
 
 int main (int argc, char *argv[]) {
 	setup ();
@@ -823,6 +905,7 @@ int main (int argc, char *argv[]) {
 		if (game_intro () == GAME_QUIT) break;
 		if (game_explain () == GAME_QUIT) break;
 		if (game_loop () == GAME_QUIT) break;
+		if (game_finish () == GAME_QUIT) break;
 	} while (1 == 0);
 	
 	SDL_Quit ();
@@ -1565,10 +1648,10 @@ int game_loop (void) {
 	 * First_try_count cuando la cantidad de niveles resueltos en el primer
 	 * intento.
 	 */
-	int tiles_flipped, save_tiles_flipped, snow_melted, save_snow_melted;
-	int bonus_point, save_bonus_point, solved_stages, solved_points;
-	int tries, first_try_points, first_try_count;
-	int score, tally;
+	int save_tiles_flipped, snow_melted, save_snow_melted;
+	int save_bonus_point, solved_points;
+	int tries, first_try_points;
+	int tally;
 	
 	int mapa[15][19];
 	int frames[15][19];
@@ -2421,6 +2504,278 @@ int game_loop (void) {
 	return done;
 }
 
+//int first_try_count, solved_stages, bonus_point, tiles_flipped, score;
+int game_finish (void) {
+	int done = 0;
+	SDL_Event event;
+	Uint32 last_time, now_time;
+	SDL_Rect rect;
+	int map;
+	int end, image;
+	int timing = 1;
+	float temp = 372.2, temp2 = 14.02;
+	char buf[30];
+	SDL_Surface *texts_finish[7];
+	char *texts_finish[7] = {
+		
+	}
+	
+	if (solved_stages < 4) {
+		end = 1;
+	} else if (solved_stages < 18) {
+		end = 2;
+	} else {
+		end = 3;
+	}
+	
+	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
+	
+	/* Predibujar el boton de cierre */
+	rect.x = 663; rect.y = 24;
+	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
+	
+	
+	SDL_Flip (screen);
+	
+	do {
+		last_time = SDL_GetTicks ();
+		
+		num_rects = 0;
+		
+		while (SDL_PollEvent(&event) > 0) {
+			switch (event.type) {
+				case SDL_QUIT:
+					/* Vamos a cerrar la aplicación */
+					done = GAME_QUIT;
+					break;
+				case SDL_MOUSEMOTION:
+					map = map_button_in_game (event.motion.x, event.motion.y);
+					cp_button_motion (map);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					map = map_button_in_game (event.button.x, event.button.y);
+					cp_button_down (map);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					map = map_button_in_game (event.button.x, event.button.y);
+					map = cp_button_up (map);
+					
+					switch (map) {
+						case BUTTON_CLOSE:
+							done = GAME_QUIT;
+							break;
+					}
+					break;
+			}
+		}
+		
+		rect.x = MAP_X;
+		rect.y = MAP_Y;
+		rect.w = 456;
+		rect.h = 432;
+		SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+		rects[num_rects++] = rect;
+		
+		if (timing <= 60) {
+			rect.x = MAP_X;
+			rect.y = MAP_Y;
+			rect.w = 456;
+			rect.h = 432;
+	
+			SDL_SetClipRect (screen, &rect);
+			
+			/* Hacer el dibujado de fuego común a los 3 finales */
+			rect.x = 376 - (int) temp;
+			rect.y = 170;
+			image = IMG_FIRE_1 + (timing % 10);
+			
+			rect.w = images[image]->w;
+			rect.h = images[image]->h;
+			
+			SDL_BlitSurface (images[image], NULL, screen, &rect);
+			
+			if (timing == 60) {
+				rect.x = 362;
+				rect.y = 258;
+				rect.w = images[IMG_PUFFLE_OFF_1]->w;
+				rect.h = images[IMG_PUFFLE_OFF_1]->h;
+				
+				SDL_BlitSurface (images[IMG_PUFFLE_OFF_1], NULL, screen, &rect);
+			}
+			
+			if (timing <= 40) {
+				rect.x = (int) temp2;
+				rect.y = 281;
+				image = IMG_PUFFLE_BLACK_1 + (timing % 8);
+				
+				rect.w = images[image]->w;
+				rect.h = images[image]->h;
+				
+				SDL_BlitSurface (images[image], NULL, screen, &rect);
+				
+				if ((int) temp2 < 319) {
+					temp2 += 7.82;
+				}
+			} else {
+				rect.x = 325;
+				rect.y = 296;
+				rect.w = images[IMG_PUFFLE_BLACK_9]->w;
+				rect.h = images[IMG_PUFFLE_BLACK_9]->h;
+				
+				SDL_BlitSurface (images[IMG_PUFFLE_BLACK_9], NULL, screen, &rect);
+			}
+			
+			if ((int) temp > 68) {
+				temp -= 7.8;
+			}
+			
+			SDL_SetClipRect (screen, NULL);
+		} else if (timing <= 244) {
+			rect.x = 309;
+			rect.y = 246;
+			if (timing >= 64 && timing <= 70) {
+				rect.w = images[IMG_PUFFLE_BLACK_13]->w;
+				rect.h = images[IMG_PUFFLE_BLACK_13]->h;
+				
+				SDL_BlitSurface (images[IMG_PUFFLE_BLACK_13], NULL, screen, &rect);
+			} else if (timing >= 71 && timing <= 102) {
+				rect.w = images[IMG_PUFFLE_BLACK_14]->w;
+				rect.h = images[IMG_PUFFLE_BLACK_14]->h;
+				
+				SDL_BlitSurface (images[IMG_PUFFLE_BLACK_14], NULL, screen, &rect);
+			} else if (timing >= 103 && timing <= 106) {
+				rect.w = images[IMG_PUFFLE_BLACK_15]->w;
+				rect.h = images[IMG_PUFFLE_BLACK_15]->h;
+				
+				SDL_BlitSurface (images[IMG_PUFFLE_BLACK_15], NULL, screen, &rect);
+			} else if (timing >= 107 && timing <= 244) {
+				rect.w = images[IMG_PUFFLE_BLACK_16]->w;
+				rect.h = images[IMG_PUFFLE_BLACK_16]->h;
+				
+				SDL_BlitSurface (images[IMG_PUFFLE_BLACK_16], NULL, screen, &rect);
+			}
+			
+			switch (timing) {
+				case 61:
+					rect.x = 309;
+					rect.y = 246;
+					rect.w = images[IMG_PUFFLE_BLACK_10]->w;
+					rect.h = images[IMG_PUFFLE_BLACK_10]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_BLACK_10], NULL, screen, &rect);
+					
+					rect.x = 358;
+					rect.y = 230;
+					rect.w = images[IMG_PUFFLE_OFF_2]->w;
+					rect.h = images[IMG_PUFFLE_OFF_2]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_OFF_2], NULL, screen, &rect);
+					break;
+				case 62:
+					rect.x = 309;
+					rect.y = 246;
+					rect.w = images[IMG_PUFFLE_BLACK_11]->w;
+					rect.h = images[IMG_PUFFLE_BLACK_11]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_BLACK_11], NULL, screen, &rect);
+					
+					rect.x = 358;
+					rect.y = 230;
+					rect.w = images[IMG_PUFFLE_OFF_2]->w;
+					rect.h = images[IMG_PUFFLE_OFF_2]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_OFF_2], NULL, screen, &rect);
+					break;
+				case 63:
+					rect.x = 309;
+					rect.y = 246;
+					rect.w = images[IMG_PUFFLE_BLACK_12]->w;
+					rect.h = images[IMG_PUFFLE_BLACK_12]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_BLACK_12], NULL, screen, &rect);
+					
+					rect.x = 364;
+					rect.y = 216;
+					rect.w = images[IMG_PUFFLE_OFF_3]->w;
+					rect.h = images[IMG_PUFFLE_OFF_3]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_OFF_3], NULL, screen, &rect);
+					break;
+				case 64:
+					rect.x = 364;
+					rect.y = 216;
+					rect.w = images[IMG_PUFFLE_OFF_3]->w;
+					rect.h = images[IMG_PUFFLE_OFF_3]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_OFF_3], NULL, screen, &rect);
+					break;
+				case 65:
+				case 66:
+					rect.x = 364;
+					rect.y = 210;
+					rect.w = images[IMG_PUFFLE_OFF_4]->w;
+					rect.h = images[IMG_PUFFLE_OFF_4]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_OFF_4], NULL, screen, &rect);
+					break;
+				case 67:
+				case 68:
+					rect.x = 364;
+					rect.y = 204;
+					rect.w = images[IMG_PUFFLE_OFF_5]->w;
+					rect.h = images[IMG_PUFFLE_OFF_5]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_OFF_5], NULL, screen, &rect);
+					break;
+				case 69:
+				case 70:
+					rect.x = 362;
+					rect.y = 192;
+					rect.w = images[IMG_PUFFLE_OFF_6]->w;
+					rect.h = images[IMG_PUFFLE_OFF_6]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_OFF_6], NULL, screen, &rect);
+					break;
+			}
+		}
+		
+		/* Dibujar los textos */
+		if (timing == 91) {
+			
+			rect.x = 152;
+			rect.y = 28;
+			rect.w = texts->w;
+			rect.h = texts->h;
+			
+			SDL_BlitSurface (texts, NULL, screen, &rect);
+			
+			sprintf (buf, "%i", solved_stages);
+			
+		}
+		
+		timing++;
+		/* El botón de cierre */
+		if (cp_button_refresh[BUTTON_CLOSE]) {
+			rect.x = 663; rect.y = 24;
+			rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
+			
+			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
+			rects[num_rects++] = rect;
+			cp_button_refresh[BUTTON_CLOSE] = 0;
+		}
+		
+		SDL_UpdateRects (screen, num_rects, rects);
+		
+		now_time = SDL_GetTicks ();
+		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
+	} while (!done);
+	
+	return done;
+}
+
 /* Set video mode: */
 /* Mattias Engdegard <f91-men@nada.kth.se> */
 SDL_Surface * set_video_mode (unsigned flags) {
@@ -2559,6 +2914,17 @@ void setup (void) {
 	if (!ttf13_big_black) {
 		fprintf (stderr,
 			"Failed to load font file 'Burbank Big Regular Black'\n"
+			"The error returned by SDL is:\n"
+			"%s\n", TTF_GetError ());
+		SDL_Quit ();
+		exit (1);
+	}
+	
+	ttf10_burbank = TTF_OpenFont (GAMEDATA_DIR "burbanksb.ttf", 10);
+	
+	if (!ttf10_burbank_bold) {
+		fprintf (stderr,
+			"Failed to load font file 'Burbank Small Bold'\n"
 			"The error returned by SDL is:\n"
 			"%s\n", TTF_GetError ());
 		SDL_Quit ();

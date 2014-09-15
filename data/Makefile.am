@@ -28,6 +28,42 @@ nobase_dist_gamedata_DATA = images/tiles.png \
 	images/up-1.png \
 	images/up-2.png \
 	images/up-3.png \
+	images/fire1.png \
+	images/fire2.png \
+	images/fire3.png \
+	images/fire4.png \
+	images/fire5.png \
+	images/fire6.png \
+	images/fire7.png \
+	images/fire8.png \
+	images/fire9.png \
+	images/fire10.png \
+	images/puffle_black_1.png \
+	images/puffle_black_2.png \
+	images/puffle_black_3.png \
+	images/puffle_black_4.png \
+	images/puffle_black_5.png \
+	images/puffle_black_6.png \
+	images/puffle_black_7.png \
+	images/puffle_black_8.png \
+	images/puffle_black_9.png \
+	images/puffle_black_10.png \
+	images/puffle_black_11.png \
+	images/puffle_black_12.png \
+	images/puffle_black_13.png \
+	images/puffle_black_14.png \
+	images/puffle_black_15.png \
+	images/puffle_black_16.png \
+	images/puffle_off1.png \
+	images/puffle_off2.png \
+	images/puffle_off3.png \
+	images/puffle_off4.png \
+	images/puffle_off5.png \
+	images/puffle_off6.png \
+	images/puffle_off7.png \
+	images/puffle_off8.png \
+	images/puffle_off9.png \
+	images/puffle_off10.png \
 	burbanksb.ttf \
 	burbankbgbk.ttf \
 	sounds/complete.wav \
