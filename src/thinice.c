@@ -87,6 +87,7 @@
 /* Enumerar las imágenes */
 enum {
 	IMG_ARCADE,
+	IMG_TITLE,
 	IMG_PUFFLE_ON_ICE,
 	
 	IMG_PUFFLE_EXPLAIN,
@@ -373,6 +374,7 @@ enum {
 
 const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/arcade.png",
+	GAMEDATA_DIR "images/title.png",
 	GAMEDATA_DIR "images/puffle-on-ice.png",
 	
 	GAMEDATA_DIR "images/puffle-explain.png",
@@ -963,7 +965,7 @@ int game_intro (void) {
 	int map;
 	SDL_Surface *play_text_button;
 	
-	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "PLAY", blanco);
+	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "Play", blanco);
 	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
 	
@@ -1006,8 +1008,12 @@ int game_intro (void) {
 	rect.h = images[IMG_DOWN_1]->h;
 	SDL_BlitSurface (images[IMG_DOWN_1], NULL, screen, &rect);
 	
-	/* Titulo
-	rect.x = 227; rect.y = 37*/
+	/* Titulo */
+	rect.x = 227; rect.y = 37;
+	rect.w = images[IMG_TITLE]->w;
+	rect.h = images[IMG_TITLE]->h;
+	
+	SDL_BlitSurface (images[IMG_TITLE], NULL, screen, &rect);
 	
 	SDL_Flip (screen);
 	
@@ -1111,9 +1117,9 @@ int game_explain (void) {
 	SDL_Surface *texts[NUM_TEXTS];
 	SDL_Surface *play_text_button, *prev_text_button, *next_text_button;
 	
-	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "PLAY", blanco);
-	prev_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "BACK", blanco);
-	next_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "NEXT", blanco);
+	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "Play", blanco);
+	prev_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "Back", blanco);
+	next_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "Next", blanco);
 	
 	/* Cadenas traducibles */
 	const char * text_strings[NUM_TEXTS] = {	
@@ -1132,6 +1138,13 @@ int game_explain (void) {
 	puffle.h = TILE_HEIGHT;
 	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
+	
+	/* Titulo */
+	rect.x = 227; rect.y = 37;
+	rect.w = images[IMG_TITLE]->w;
+	rect.h = images[IMG_TITLE]->h;
+	
+	SDL_BlitSurface (images[IMG_TITLE], NULL, screen, &rect);
 	
 	/* Imagen principal */
 	rect.x = 164; rect.y = 189;
@@ -1259,6 +1272,13 @@ int game_explain (void) {
 			rect.h = 384;
 			
 			SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
+			
+			/* Titulo */
+			rect.x = 227; rect.y = 37;
+			rect.w = images[IMG_TITLE]->w;
+			rect.h = images[IMG_TITLE]->h;
+			
+			SDL_BlitSurface (images[IMG_TITLE], NULL, screen, &rect);
 			
 			/* Redibujar las botones */
 			cp_button_refresh[BUTTON_PLAY] = 1;

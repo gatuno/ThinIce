@@ -2,6 +2,7 @@ gamedatadir = $(pkgdatadir)/data
 
 nobase_dist_gamedata_DATA = images/tiles.png \
 	images/arcade.png \
+	images/title.png \
 	images/puffle-on-ice.png \
 	images/puffle-explain.png \
 	images/moneybag.png \
