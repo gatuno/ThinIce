@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -885,7 +886,7 @@ int num_rects = 0;
 
 TTF_Font *ttf13_burbank_bold;
 TTF_Font *ttf13_big_black;
-TTF_Font *ttf10_burbank;
+TTF_Font *ttf13_burbank_small;
 
 int first_try_count, solved_stages, bonus_point, tiles_flipped, score;
 
@@ -2505,20 +2506,28 @@ int game_loop (void) {
 }
 
 //int first_try_count, solved_stages, bonus_point, tiles_flipped, score;
+/* TODO: La secuencia de salida está poco optimazada con respecto a los refrescos en pantalla */
 int game_finish (void) {
 	int done = 0;
 	SDL_Event event;
 	Uint32 last_time, now_time;
 	SDL_Rect rect;
 	int map;
-	int end, image;
+	int end, image, coins;
 	int timing = 1;
 	float temp = 372.2, temp2 = 14.02;
 	char buf[30];
 	SDL_Surface *texts_finish[7];
-	char *texts_finish[7] = {
-		
-	}
+	SDL_Surface *numero[7];
+	char *texts_finish_string[7] = {
+		"Levels solved",
+		"Levels solved on first try",
+		"Coins bags collected",
+		"Total ice melted",
+		"SOLVED GAME QUICKLY BONUS",
+		"Total points",
+		"Coins earned"
+	};
 	
 	if (solved_stages < 4) {
 		end = 1;
@@ -2528,13 +2537,41 @@ int game_finish (void) {
 		end = 3;
 	}
 	
+	/* Generar los textos */
+	for (image = 0; image < 7; image++) {
+		texts_finish[image] = TTF_RenderUTF8_Blended (ttf13_burbank_small, texts_finish_string[image], azul);
+	}
+	/* JUMP */
+	/* Generar los puntos */
+	sprintf (buf, "%i", solved_stages);
+	numero[0] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
+	
+	sprintf (buf, "%i", first_try_count);
+	numero[1] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
+	
+	sprintf (buf, "%i", bonus_point);
+	numero[2] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
+	
+	sprintf (buf, "%i tiles", tiles_flipped);
+	numero[3] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
+	
+	sprintf (buf, "%i", -1); /* FIXME: Quickly bonus */
+	numero[4] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
+	
+	sprintf (buf, "%i", score);
+	numero[5] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
+	
+	coins = (int) round (score * 0.10);
+	
+	sprintf (buf, "%i", coins);
+	numero[6] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
+	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
 	
 	/* Predibujar el boton de cierre */
 	rect.x = 663; rect.y = 24;
 	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
-	
 	
 	SDL_Flip (screen);
 	
@@ -2571,12 +2608,13 @@ int game_finish (void) {
 		}
 		
 		rect.x = MAP_X;
-		rect.y = MAP_Y;
+		rect.y = MAP_Y - 32;
 		rect.w = 456;
 		rect.h = 432;
 		SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 		rects[num_rects++] = rect;
 		
+		/* Hacer el dibujado de fuego común a los 3 finales */
 		if (timing <= 60) {
 			rect.x = MAP_X;
 			rect.y = MAP_Y;
@@ -2585,7 +2623,6 @@ int game_finish (void) {
 	
 			SDL_SetClipRect (screen, &rect);
 			
-			/* Hacer el dibujado de fuego común a los 3 finales */
 			rect.x = 376 - (int) temp;
 			rect.y = 170;
 			image = IMG_FIRE_1 + (timing % 10);
@@ -2737,21 +2774,140 @@ int game_finish (void) {
 					
 					SDL_BlitSurface (images[IMG_PUFFLE_OFF_6], NULL, screen, &rect);
 					break;
+				case 71:
+				case 72:
+					rect.x = 366;
+					rect.y = 192;
+					rect.w = images[IMG_PUFFLE_OFF_7]->w;
+					rect.h = images[IMG_PUFFLE_OFF_7]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_OFF_7], NULL, screen, &rect);
+					break;
+				case 73:
+				case 74:
+					rect.x = 362;
+					rect.y = 186;
+					rect.w = images[IMG_PUFFLE_OFF_8]->w;
+					rect.h = images[IMG_PUFFLE_OFF_8]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_OFF_8], NULL, screen, &rect);
+					break;
+				case 75:
+				case 76:
+					rect.x = 358;
+					rect.y = 182;
+					rect.w = images[IMG_PUFFLE_OFF_9]->w;
+					rect.h = images[IMG_PUFFLE_OFF_9]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_OFF_9], NULL, screen, &rect);
+					break;
+				case 77:
+				case 78:
+					rect.x = 360;
+					rect.y = 178;
+					rect.w = images[IMG_PUFFLE_OFF_10]->w;
+					rect.h = images[IMG_PUFFLE_OFF_10]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_OFF_10], NULL, screen, &rect);
+					break;
 			}
 		}
 		
 		/* Dibujar los textos */
-		if (timing == 91) {
+		if (timing > 91) {
+			rect.x = 158;
+			rect.y = 32;
+			rect.w = texts_finish[0]->w;
+			rect.h = texts_finish[0]->h;
 			
-			rect.x = 152;
-			rect.y = 28;
-			rect.w = texts->w;
-			rect.h = texts->h;
+			SDL_BlitSurface (texts_finish[0], NULL, screen, &rect);
 			
-			SDL_BlitSurface (texts, NULL, screen, &rect);
+			rect.x = 410 + (175 - numero[0]->w);
+			rect.y = 32;
+			rect.w = numero[0]->w;
+			rect.h = numero[0]->h;
 			
-			sprintf (buf, "%i", solved_stages);
+			SDL_BlitSurface (numero[0], NULL, screen, &rect);
+		}
+		
+		if (timing > 111) {
+			rect.x = 158;
+			rect.y = 57;
+			rect.w = texts_finish[1]->w;
+			rect.h = texts_finish[1]->h;
 			
+			SDL_BlitSurface (texts_finish[1], NULL, screen, &rect);
+			
+			rect.x = 410 + (175 - numero[1]->w);
+			rect.y = 57;
+			rect.w = numero[1]->w;
+			rect.h = numero[1]->h;
+			
+			SDL_BlitSurface (numero[1], NULL, screen, &rect);
+		}
+		
+		if (timing > 131) {
+			rect.x = 158;
+			rect.y = 82;
+			rect.w = texts_finish[2]->w;
+			rect.h = texts_finish[2]->h;
+			
+			SDL_BlitSurface (texts_finish[2], NULL, screen, &rect);
+			
+			rect.x = 410 + (175 - numero[2]->w);
+			rect.y = 82;
+			rect.w = numero[2]->w;
+			rect.h = numero[2]->h;
+			
+			SDL_BlitSurface (numero[2], NULL, screen, &rect);
+		}
+		
+		if (timing > 151) {
+			rect.x = 158 + (427 - texts_finish[3]->w) / 2;
+			rect.y = 132;
+			rect.w = texts_finish[3]->w;
+			rect.h = texts_finish[3]->h;
+			
+			SDL_BlitSurface (texts_finish[3], NULL, screen, &rect);
+			
+			rect.x = 158 + (427 - numero[3]->w) / 2;
+			rect.y = 156;
+			rect.w = numero[3]->w;
+			rect.h = numero[3]->h;
+			
+			SDL_BlitSurface (numero[3], NULL, screen, &rect);
+		}
+		
+		if (timing > 171) {
+			rect.x = 158;
+			rect.y = 288;
+			rect.w = texts_finish[5]->w;
+			rect.h = texts_finish[5]->h;
+			
+			SDL_BlitSurface (texts_finish[5], NULL, screen, &rect);
+			
+			rect.x = 410 + (175 - numero[5]->w);
+			rect.y = 288;
+			rect.w = numero[5]->w;
+			rect.h = numero[5]->h;
+			
+			SDL_BlitSurface (numero[5], NULL, screen, &rect);
+		}
+		
+		if (timing > 191) {
+			rect.x = 158;
+			rect.y = 314;
+			rect.w = texts_finish[6]->w;
+			rect.h = texts_finish[6]->h;
+			
+			SDL_BlitSurface (texts_finish[6], NULL, screen, &rect);
+			
+			rect.x = 410 + (175 - numero[6]->w);
+			rect.y = 314;
+			rect.w = numero[6]->w;
+			rect.h = numero[6]->h;
+			
+			SDL_BlitSurface (numero[6], NULL, screen, &rect);
 		}
 		
 		timing++;
@@ -2909,22 +3065,23 @@ void setup (void) {
 	}
 	TTF_SetFontHinting (ttf13_burbank_bold, TTF_HINTING_LIGHT);
 	
-	ttf13_big_black = TTF_OpenFont (GAMEDATA_DIR "burbankbgbk.ttf", 13);
+	ttf13_burbank_small = TTF_OpenFont (GAMEDATA_DIR "burbanksb.ttf", 13);
 	
-	if (!ttf13_big_black) {
+	if (!ttf13_burbank_small) {
 		fprintf (stderr,
-			"Failed to load font file 'Burbank Big Regular Black'\n"
+			"Failed to load font file 'Burbank Small Bold'\n"
 			"The error returned by SDL is:\n"
 			"%s\n", TTF_GetError ());
 		SDL_Quit ();
 		exit (1);
 	}
+	TTF_SetFontStyle (ttf13_burbank_bold, TTF_STYLE_BOLD);
 	
-	ttf10_burbank = TTF_OpenFont (GAMEDATA_DIR "burbanksb.ttf", 10);
+	ttf13_big_black = TTF_OpenFont (GAMEDATA_DIR "burbankbgbk.ttf", 13);
 	
-	if (!ttf10_burbank_bold) {
+	if (!ttf13_big_black) {
 		fprintf (stderr,
-			"Failed to load font file 'Burbank Small Bold'\n"
+			"Failed to load font file 'Burbank Big Regular Black'\n"
 			"The error returned by SDL is:\n"
 			"%s\n", TTF_GetError ());
 		SDL_Quit ();
