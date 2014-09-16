@@ -1,4 +1,4 @@
-AC_INIT([Thin Ice], [0.9], [], [thin-ice])
+AC_INIT([Thin Ice], [0.9.2], [], [thin-ice])
 
 AC_REVISION([Revision 4])
 
