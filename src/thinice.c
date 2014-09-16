@@ -923,7 +923,7 @@ TTF_Font *ttf13_burbank_bold;
 TTF_Font *ttf13_big_black;
 TTF_Font *ttf13_burbank_small;
 
-int first_try_count, solved_stages, bonus_point, tiles_flipped, score;
+int first_try_count, solved_stages, save_bonus_point, save_tiles_flipped, score, timepoints = 0;
 
 int main (int argc, char *argv[]) {
 	setup ();
@@ -1665,6 +1665,7 @@ int game_loop (void) {
 	SDL_Event event;
 	int last_key;
 	Uint32 last_time, now_time;
+	Uint32 timer;
 	SDL_Rect rect;
 	int map;
 	SDL_Surface *text;
@@ -1685,8 +1686,8 @@ int game_loop (void) {
 	 * First_try_count cuando la cantidad de niveles resueltos en el primer
 	 * intento.
 	 */
-	int save_tiles_flipped, snow_melted, save_snow_melted;
-	int save_bonus_point, solved_points;
+	int tiles_flipped, snow_melted, save_snow_melted;
+	int bonus_point, solved_points;
 	int tries, first_try_points;
 	int tally;
 	
@@ -1845,6 +1846,7 @@ int game_loop (void) {
 	SDL_FreeSurface (text);
 	
 	SDL_Flip (screen);
+	timer = SDL_GetTicks ();
 	if (use_sound) Mix_PlayChannel (-1, sounds[SND_START], 0);
 	do {
 		last_time = SDL_GetTicks ();
@@ -2161,11 +2163,12 @@ int game_loop (void) {
 			} else {
 				last_solved = FALSE;
 			}
-			/* if (solved_stages == 19) {
-				Calcular puntos de tiempo
-				Disparar estampa 71
-			   }
-			*/
+			
+			if (solved_stages == 19) {
+				timepoints = ((SDL_GetTicks () - timer) / 1000) * 6;
+				/* Disparar estampa 71 */
+			}
+			
 			save_tiles_flipped += tiles_flipped;
 			tiles_flipped = 0;
 			save_snow_melted += snow_melted;
@@ -2181,6 +2184,7 @@ int game_loop (void) {
 				if (nivel >= 13) warp_wall = TRUE;
 			} else {
 				/* Poner en blanco la pantalla y salir del gameloop */
+				score = tiles_flipped + save_tiles_flipped + solved_points + (bonus_point * 100) + save_bonus_point * 100 + first_try_points + timepoints;
 				return GAME_CONTINUE;
 			}
 			
@@ -2593,7 +2597,7 @@ int game_finish (void) {
 	for (image = 0; image < 7; image++) {
 		texts_finish[image] = TTF_RenderUTF8_Blended (ttf13_burbank_small, texts_finish_string[image], azul);
 	}
-	/* JUMP */
+	
 	/* Generar los puntos */
 	sprintf (buf, "%i", solved_stages);
 	numero[0] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
@@ -2601,13 +2605,13 @@ int game_finish (void) {
 	sprintf (buf, "%i", first_try_count);
 	numero[1] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
 	
-	sprintf (buf, "%i", bonus_point);
+	sprintf (buf, "%i", save_bonus_point);
 	numero[2] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
 	
-	sprintf (buf, "%i tiles", tiles_flipped);
+	sprintf (buf, "%i tiles", save_tiles_flipped);
 	numero[3] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
 	
-	sprintf (buf, "%i points", -1); /* FIXME: Quickly bonus */
+	sprintf (buf, "%i points", timepoints);
 	numero[4] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
 	
 	sprintf (buf, "%i", score);
