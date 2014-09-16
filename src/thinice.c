@@ -103,6 +103,10 @@ enum {
 	IMG_BUTTON_2_OVER,
 	IMG_BUTTON_2_DOWN,
 	
+	IMG_BUTTON_3_UP,
+	IMG_BUTTON_3_OVER,
+	IMG_BUTTON_3_DOWN,
+	
 	IMG_BUTTON_CLOSE_UP,
 	IMG_BUTTON_CLOSE_OVER,
 	IMG_BUTTON_CLOSE_DOWN,
@@ -150,6 +154,18 @@ enum {
 	IMG_PUFFLE_BLACK_14,
 	IMG_PUFFLE_BLACK_15,
 	IMG_PUFFLE_BLACK_16,
+	IMG_PUFFLE_BLACK_END1_1,
+	IMG_PUFFLE_BLACK_END1_2,
+	IMG_PUFFLE_BLACK_END1_3,
+	IMG_PUFFLE_BLACK_END1_4,
+	IMG_PUFFLE_BLACK_END2_1,
+	IMG_PUFFLE_BLACK_END2_2,
+	IMG_PUFFLE_BLACK_END2_3,
+	IMG_PUFFLE_BLACK_END2_4,
+	IMG_PUFFLE_BLACK_END3_1,
+	IMG_PUFFLE_BLACK_END3_2,
+	IMG_PUFFLE_BLACK_END3_3,
+	IMG_PUFFLE_BLACK_END3_4,
 	
 	IMG_PUFFLE_OFF_1,
 	IMG_PUFFLE_OFF_2,
@@ -370,6 +386,10 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/boton-ui-2-over.png",
 	GAMEDATA_DIR "images/boton-ui-2-down.png",
 	
+	GAMEDATA_DIR "images/boton-ui-3-up.png",
+	GAMEDATA_DIR "images/boton-ui-3-over.png",
+	GAMEDATA_DIR "images/boton-ui-3-down.png",
+	
 	GAMEDATA_DIR "images/boton-close-up.png",
 	GAMEDATA_DIR "images/boton-close-over.png",
 	GAMEDATA_DIR "images/boton-close-down.png",
@@ -414,6 +434,18 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/puffle_black_14.png",
 	GAMEDATA_DIR "images/puffle_black_15.png",
 	GAMEDATA_DIR "images/puffle_black_16.png",
+	GAMEDATA_DIR "images/puffle_black_end1_1.png",
+	GAMEDATA_DIR "images/puffle_black_end1_2.png",
+	GAMEDATA_DIR "images/puffle_black_end1_3.png",
+	GAMEDATA_DIR "images/puffle_black_end1_4.png",
+	GAMEDATA_DIR "images/puffle_black_end2_1.png",
+	GAMEDATA_DIR "images/puffle_black_end2_2.png",
+	GAMEDATA_DIR "images/puffle_black_end2_3.png",
+	GAMEDATA_DIR "images/puffle_black_end2_4.png",
+	GAMEDATA_DIR "images/puffle_black_end3_1.png",
+	GAMEDATA_DIR "images/puffle_black_end3_2.png",
+	GAMEDATA_DIR "images/puffle_black_end3_3.png",
+	GAMEDATA_DIR "images/puffle_black_end3_4.png",
 	
 	GAMEDATA_DIR "images/puffle_off1.png",
 	GAMEDATA_DIR "images/puffle_off2.png",
@@ -831,6 +863,8 @@ enum {
 	
 	BUTTON_RESET,
 	
+	BUTTON_GET_COINS,
+	
 	NUM_BUTTONS
 };
 
@@ -867,6 +901,7 @@ void area_secreta (int (*mapa)[19], int (*frames)[19], int solved_stages);
 int map_button_in_opening (int x, int y);
 int map_button_in_explain (int x, int y, int escena);
 int map_button_in_game (int x, int y);
+int map_button_in_finish (int x, int y);
 
 /* Variables globales */
 SDL_Surface * screen;
@@ -900,6 +935,7 @@ int main (int argc, char *argv[]) {
 	cp_registrar_boton (BUTTON_NEXT, IMG_BUTTON_1_UP);
 	cp_registrar_boton (BUTTON_PREV, IMG_BUTTON_1_UP);
 	cp_registrar_boton (BUTTON_RESET, IMG_BUTTON_2_UP);
+	cp_registrar_boton (BUTTON_GET_COINS, IMG_BUTTON_3_UP);
 	cp_button_start ();
 	
 	do {
@@ -1070,7 +1106,7 @@ int game_explain (void) {
 	SDL_Surface *play_text_button, *prev_text_button, *next_text_button;
 	
 	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "PLAY", blanco);
-	prev_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "PREV", blanco);
+	prev_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "BACK", blanco);
 	next_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "NEXT", blanco);
 	
 	/* Cadenas traducibles */
@@ -1672,6 +1708,7 @@ int game_loop (void) {
 	int slide_block;
 	Punto player, save_player, next_player, movible, old_movible;
 	Warp warps[2];
+	SDL_Surface *reset_text_button;
 	
 	int arcade_button_left = 0, arcade_button_right = 0, arcade_button_up = 0, arcade_button_down = 0;
 	
@@ -1701,11 +1738,19 @@ int game_loop (void) {
 	
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
 	
+	reset_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "RESET", blanco);
+	
 	/* Predibujar el botón de reset */
 	rect.x = 155; rect.y = 410;
 	rect.w = images[IMG_BUTTON_2_UP]->w; rect.h = images[IMG_BUTTON_2_UP]->h;
 	
 	SDL_BlitSurface (images[IMG_BUTTON_2_UP], NULL, screen, &rect);
+	
+	rect.x = 155 + (rect.w - reset_text_button->w) / 2;
+	rect.y = 411 + (rect.h - reset_text_button->h) / 2;
+	rect.w = reset_text_button->w; rect.h = reset_text_button->h;
+	
+	SDL_BlitSurface (reset_text_button, NULL, screen, &rect);
 	
 	/* Botones de arcade */
 	rect.x = 230; rect.y = 446;
@@ -2136,7 +2181,7 @@ int game_loop (void) {
 				if (nivel >= 13) warp_wall = TRUE;
 			} else {
 				/* Poner en blanco la pantalla y salir del gameloop */
-				return GAME_QUIT; /* FIXME: Pantalla de salida */
+				return GAME_CONTINUE;
 			}
 			
 			/* Actualizar los tiles flipped */
@@ -2453,6 +2498,12 @@ int game_loop (void) {
 			
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_RESET]], NULL, screen, &rect);
 			rects[num_rects++] = rect;
+			
+			rect.x = 155 + (rect.w - reset_text_button->w) / 2;
+			rect.y = 411 + (rect.h - reset_text_button->h) / 2;
+			rect.w = reset_text_button->w; rect.h = reset_text_button->h;
+			
+			SDL_BlitSurface (reset_text_button, NULL, screen, &rect);
 			cp_button_refresh[BUTTON_RESET] = 0;
 		}
 		
@@ -2502,6 +2553,7 @@ int game_loop (void) {
 		}
 	} while (!done);
 	
+	SDL_FreeSurface (reset_text_button);
 	return done;
 }
 
@@ -2517,14 +2569,14 @@ int game_finish (void) {
 	int timing = 1;
 	float temp = 372.2, temp2 = 14.02;
 	char buf[30];
-	SDL_Surface *texts_finish[7];
+	SDL_Surface *texts_finish[7], *get_coins_text_button;
 	SDL_Surface *numero[7];
 	char *texts_finish_string[7] = {
 		"Levels solved",
 		"Levels solved on first try",
 		"Coins bags collected",
 		"Total ice melted",
-		"SOLVED GAME QUICKLY BONUS",
+		"Solved game quickly bonus",
 		"Total points",
 		"Coins earned"
 	};
@@ -2555,7 +2607,7 @@ int game_finish (void) {
 	sprintf (buf, "%i tiles", tiles_flipped);
 	numero[3] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
 	
-	sprintf (buf, "%i", -1); /* FIXME: Quickly bonus */
+	sprintf (buf, "%i points", -1); /* FIXME: Quickly bonus */
 	numero[4] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
 	
 	sprintf (buf, "%i", score);
@@ -2573,6 +2625,39 @@ int game_finish (void) {
 	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
 	
+	get_coins_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "GET COINS", blanco);
+	
+	/* Predibujar el botón de get coins */
+	rect.x = 455; rect.y = 400;
+	rect.w = images[IMG_BUTTON_3_UP]->w; rect.h = images[IMG_BUTTON_3_UP]->h;
+	
+	SDL_BlitSurface (images[IMG_BUTTON_3_UP], NULL, screen, &rect);
+	
+	rect.x = 455 + (rect.w - get_coins_text_button->w) / 2;
+	rect.y = 400 + (rect.h - get_coins_text_button->h) / 2;
+	rect.w = get_coins_text_button->w; rect.h = get_coins_text_button->h;
+	
+	SDL_BlitSurface (get_coins_text_button, NULL, screen, &rect);
+	
+	/* Botones de arcade */
+	rect.x = 230; rect.y = 446;
+	rect.w = images[IMG_LEFT_1]->w;
+	rect.h = images[IMG_LEFT_1]->h;
+	SDL_BlitSurface (images[IMG_LEFT_1], NULL, screen, &rect);
+	
+	rect.x = 423;
+	SDL_BlitSurface (images[IMG_RIGHT_1], NULL, screen, &rect);
+	
+	rect.x = 328; rect.y = 435;
+	rect.w = images[IMG_UP_1]->w;
+	rect.h = images[IMG_UP_1]->h;
+	SDL_BlitSurface (images[IMG_UP_1], NULL, screen, &rect);
+	
+	rect.x = 324; rect.y = 457;
+	rect.w = images[IMG_DOWN_1]->w;
+	rect.h = images[IMG_DOWN_1]->h;
+	SDL_BlitSurface (images[IMG_DOWN_1], NULL, screen, &rect);
+	
 	SDL_Flip (screen);
 	
 	do {
@@ -2587,19 +2672,22 @@ int game_finish (void) {
 					done = GAME_QUIT;
 					break;
 				case SDL_MOUSEMOTION:
-					map = map_button_in_game (event.motion.x, event.motion.y);
+					map = map_button_in_finish (event.motion.x, event.motion.y);
 					cp_button_motion (map);
 					break;
 				case SDL_MOUSEBUTTONDOWN:
-					map = map_button_in_game (event.button.x, event.button.y);
+					map = map_button_in_finish (event.button.x, event.button.y);
 					cp_button_down (map);
 					break;
 				case SDL_MOUSEBUTTONUP:
-					map = map_button_in_game (event.button.x, event.button.y);
+					map = map_button_in_finish (event.button.x, event.button.y);
 					map = cp_button_up (map);
 					
 					switch (map) {
 						case BUTTON_CLOSE:
+							done = GAME_QUIT;
+							break;
+						case BUTTON_GET_COINS:
 							done = GAME_QUIT;
 							break;
 					}
@@ -2610,7 +2698,7 @@ int game_finish (void) {
 		rect.x = MAP_X;
 		rect.y = MAP_Y - 32;
 		rect.w = 456;
-		rect.h = 432;
+		rect.h = 376;
 		SDL_BlitSurface (images[IMG_ARCADE], &rect, screen, &rect);
 		rects[num_rects++] = rect;
 		
@@ -2668,7 +2756,7 @@ int game_finish (void) {
 			}
 			
 			SDL_SetClipRect (screen, NULL);
-		} else if (timing <= 244) {
+		} else if (timing <= 240 || (end != 3 && timing <= 244)) {
 			rect.x = 309;
 			rect.y = 246;
 			if (timing >= 64 && timing <= 70) {
@@ -2811,6 +2899,55 @@ int game_finish (void) {
 					SDL_BlitSurface (images[IMG_PUFFLE_OFF_10], NULL, screen, &rect);
 					break;
 			}
+		} else {
+			rect.x = 309;
+			rect.y = 246;
+			if (end != 3) {
+				image = (end == 1) ? IMG_PUFFLE_BLACK_END1_1 : IMG_PUFFLE_BLACK_END2_1;
+				if (timing >= 245 && timing <= 247) {
+					rect.w = images[image + 0]->w;
+					rect.h = images[image + 0]->h;
+					
+					SDL_BlitSurface (images[image + 0], NULL, screen, &rect);
+				} else if (timing >= 248 && timing <= 277) {
+					rect.w = images[image + 1]->w;
+					rect.h = images[image + 1]->h;
+					
+					SDL_BlitSurface (images[image + 1], NULL, screen, &rect);
+				} else if (timing == 278 || timing == 279) {
+					rect.w = images[image + 2]->w;
+					rect.h = images[image + 2]->h;
+					
+					SDL_BlitSurface (images[image + 2], NULL, screen, &rect);
+				} else {
+					rect.w = images[image + 3]->w;
+					rect.h = images[image + 3]->h;
+					
+					SDL_BlitSurface (images[image + 3], NULL, screen, &rect);
+				}
+			} else if (end == 3) {
+				if (timing >= 240 && timing <= 242) {
+					rect.w = images[IMG_PUFFLE_BLACK_END3_1]->w;
+					rect.h = images[IMG_PUFFLE_BLACK_END3_1]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_BLACK_END3_1], NULL, screen, &rect);
+				} else if (timing >= 243 && timing <= 272) {
+					rect.w = images[IMG_PUFFLE_BLACK_END3_2]->w;
+					rect.h = images[IMG_PUFFLE_BLACK_END3_2]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_BLACK_END3_2], NULL, screen, &rect);
+				} else if (timing >= 273 && timing <= 277) {
+					rect.w = images[IMG_PUFFLE_BLACK_END3_3]->w;
+					rect.h = images[IMG_PUFFLE_BLACK_END3_3]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_BLACK_END3_3], NULL, screen, &rect);
+				} else {
+					rect.w = images[IMG_PUFFLE_BLACK_END3_4]->w;
+					rect.h = images[IMG_PUFFLE_BLACK_END3_4]->h;
+					
+					SDL_BlitSurface (images[IMG_PUFFLE_BLACK_END3_4], NULL, screen, &rect);
+				}
+			}
 		}
 		
 		/* Dibujar los textos */
@@ -2910,6 +3047,22 @@ int game_finish (void) {
 			SDL_BlitSurface (numero[6], NULL, screen, &rect);
 		}
 		
+		if (end == 3 && timing > 211) {
+			rect.x = 158 + (427 - texts_finish[4]->w) / 2;
+			rect.y = 205;
+			rect.w = texts_finish[4]->w;
+			rect.h = texts_finish[4]->h;
+			
+			SDL_BlitSurface (texts_finish[4], NULL, screen, &rect);
+			
+			rect.x = 158 + (427 - numero[4]->w) / 2;
+			rect.y = 230;
+			rect.w = numero[4]->w;
+			rect.h = numero[4]->h;
+			
+			SDL_BlitSurface (numero[4], NULL, screen, &rect);
+		}
+		
 		timing++;
 		/* El botón de cierre */
 		if (cp_button_refresh[BUTTON_CLOSE]) {
@@ -2921,6 +3074,22 @@ int game_finish (void) {
 			SDL_BlitSurface (images[cp_button_frames[BUTTON_CLOSE]], NULL, screen, &rect);
 			rects[num_rects++] = rect;
 			cp_button_refresh[BUTTON_CLOSE] = 0;
+		}
+		
+		/* El botón de get coins */
+		if (cp_button_refresh[BUTTON_GET_COINS]) {
+			rect.x = 455; rect.y = 400;
+			rect.w = images[IMG_BUTTON_3_UP]->w; rect.h = images[IMG_BUTTON_3_UP]->h;
+			
+			SDL_BlitSurface (images[cp_button_frames[BUTTON_GET_COINS]], NULL, screen, &rect);
+			rects[num_rects++] = rect;
+			
+			rect.x = 455 + (rect.w - get_coins_text_button->w) / 2;
+			rect.y = 400 + (rect.h - get_coins_text_button->h) / 2;
+			rect.w = get_coins_text_button->w; rect.h = get_coins_text_button->h;
+
+			SDL_BlitSurface (get_coins_text_button, NULL, screen, &rect);
+			cp_button_refresh[BUTTON_GET_COINS] = 0;
 		}
 		
 		SDL_UpdateRects (screen, num_rects, rects);
@@ -3510,7 +3679,7 @@ int map_button_in_opening (int x, int y) {
 
 int map_button_in_explain (int x, int y, int escena) {
 	if (x >= 663 && x < 692 && y >= 24 && y < 53) return BUTTON_CLOSE;
-	if (x >= 154 && x < 261 && y >= 382 && y < 411) return BUTTON_PLAY;
+	if (x >= 158 && x < 255 && y >= 382 && y < 411) return BUTTON_PLAY;
 	if (escena > 1 && x >= 396 && x < 493 && y >= 382 && y < 411) return BUTTON_PREV;
 	if (escena < 4 && x >= 496 && x < 592 && y >= 382 && y < 411) return BUTTON_NEXT;
 	return BUTTON_NONE;
@@ -3522,3 +3691,8 @@ int map_button_in_game (int x, int y) {
 	return BUTTON_NONE;
 }
 
+int map_button_in_finish (int x, int y) {
+	if (x >= 663 && x < 692 && y >= 24 && y < 53) return BUTTON_CLOSE;
+	if (x >= 455 && x < 597 && y >= 400 && y < 429) return BUTTON_GET_COINS;
+	return BUTTON_NONE;
+}

@@ -13,6 +13,9 @@ nobase_dist_gamedata_DATA = images/tiles.png \
 	images/boton-ui-2-down.png \
 	images/boton-ui-2-over.png \
 	images/boton-ui-2-up.png \
+	images/boton-ui-3-down.png \
+	images/boton-ui-3-over.png \
+	images/boton-ui-3-up.png \
 	images/boton-close-down.png \
 	images/boton-close-over.png \
 	images/boton-close-up.png \
@@ -54,6 +57,18 @@ nobase_dist_gamedata_DATA = images/tiles.png \
 	images/puffle_black_14.png \
 	images/puffle_black_15.png \
 	images/puffle_black_16.png \
+	images/puffle_black_end1_1.png \
+	images/puffle_black_end1_2.png \
+	images/puffle_black_end1_3.png \
+	images/puffle_black_end1_4.png \
+	images/puffle_black_end2_1.png \
+	images/puffle_black_end2_2.png \
+	images/puffle_black_end2_3.png \
+	images/puffle_black_end2_4.png \
+	images/puffle_black_end3_1.png \
+	images/puffle_black_end3_2.png \
+	images/puffle_black_end3_3.png \
+	images/puffle_black_end3_4.png \
 	images/puffle_off1.png \
 	images/puffle_off2.png \
 	images/puffle_off3.png \
