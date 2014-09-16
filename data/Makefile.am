@@ -79,6 +79,8 @@ nobase_dist_gamedata_DATA = images/tiles.png \
 	images/puffle_off8.png \
 	images/puffle_off9.png \
 	images/puffle_off10.png \
+	images/keys1.png \
+	images/keys2.png \
 	burbanksb.ttf \
 	burbankbgbk.ttf \
 	sounds/complete.wav \

@@ -138,6 +138,9 @@ enum {
 	IMG_FIRE_9,
 	IMG_FIRE_10,
 	
+	IMG_KEYS1,
+	IMG_KEYS2,
+	
 	IMG_PUFFLE_BLACK_1,
 	IMG_PUFFLE_BLACK_2,
 	IMG_PUFFLE_BLACK_3,
@@ -417,6 +420,9 @@ const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/fire8.png",
 	GAMEDATA_DIR "images/fire9.png",
 	GAMEDATA_DIR "images/fire10.png",
+	
+	GAMEDATA_DIR "images/keys1.png",
+	GAMEDATA_DIR "images/keys2.png",
 	
 	GAMEDATA_DIR "images/puffle_black_1.png",
 	GAMEDATA_DIR "images/puffle_black_2.png",
@@ -1284,6 +1290,12 @@ int game_explain (void) {
 				rect.w = texts[TEXT_EXPLAIN_3]->w; rect.h = texts[TEXT_EXPLAIN_3]->h;
 				
 				SDL_BlitSurface (texts[TEXT_EXPLAIN_3], NULL, screen, &rect);
+				
+				rect.x = 192;
+				rect.y = 136;
+				rect.w = images[IMG_KEYS1]->w; rect.h = images[IMG_KEYS1]->h;
+				
+				SDL_BlitSurface (images[IMG_KEYS1], NULL, screen, &rect);
 			} else if (escena == 3) {
 				rect.x = MAP_X + (456 - texts[TEXT_EXPLAIN_4]->w) / 2;;
 				rect.y = 120;
@@ -1413,6 +1425,23 @@ int game_explain (void) {
 				case 74:
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_COMPLETE], 0);
 					break;
+			}
+			
+			if (frame > 14 && frame < 75) {
+				g = frame - 15;
+				if ((g % 5) == 1 || (g % 5) == 2) {
+					rect.x = 192;
+					rect.y = 136;
+					rect.w = images[IMG_KEYS2]->w; rect.h = images[IMG_KEYS2]->h;
+				
+					SDL_BlitSurface (images[IMG_KEYS2], NULL, screen, &rect);
+				} else {
+					rect.x = 192;
+					rect.y = 136;
+					rect.w = images[IMG_KEYS1]->w; rect.h = images[IMG_KEYS1]->h;
+				
+					SDL_BlitSurface (images[IMG_KEYS1], NULL, screen, &rect);
+				}
 			}
 		} else if (escena == 3) {
 			rect.x = rect.y = 192;
