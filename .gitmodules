@@ -1,0 +1,3 @@
+[submodule "libcpstamp"]
+	path = libcpstamp
+	url = git://github.com/gatuno/libcpstamp

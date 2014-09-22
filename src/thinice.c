@@ -65,6 +65,8 @@
 #include "cp-button.h"
 #include "draw-text.h"
 
+#include "cpstamp.h"
+
 #define FPS (1000/18)
 #define MAX_RECTS 16
 
@@ -931,10 +933,13 @@ TTF_Font *ttf13_burbank_bold;
 TTF_Font *ttf13_big_black;
 TTF_Font *ttf13_burbank_small;
 
+Categoria *c;
+
 int first_try_count, solved_stages, save_bonus_point, save_tiles_flipped, score, timepoints = 0;
 
 int main (int argc, char *argv[]) {
 	setup ();
+	iniciarCPStamp ();
 	
 	cp_registrar_botones (NUM_BUTTONS);
 	cp_registrar_boton (BUTTON_START, IMG_BUTTON_1_UP);
@@ -945,6 +950,22 @@ int main (int argc, char *argv[]) {
 	cp_registrar_boton (BUTTON_RESET, IMG_BUTTON_2_UP);
 	cp_registrar_boton (BUTTON_GET_COINS, IMG_BUTTON_3_UP);
 	cp_button_start ();
+	
+	c = abrir_cat (STAMP_TYPE_GAME, "Thin Ice", "thin-ice");
+	
+	if (c == NULL) {
+		printf ("La categoria no fué encontrada\n");
+		
+		c = crear_cat (STAMP_TYPE_GAME, "Thin Ice", "thin-ice");
+		
+		registrar_estampa (c, 63, "1 coin bag", STAMP_TYPE_GAME, STAMP_EASY);
+		registrar_estampa (c, 64, "3 coin bags", STAMP_TYPE_GAME, STAMP_NORMAL);
+		registrar_estampa (c, 65, "6 coin bags", STAMP_TYPE_GAME, STAMP_NORMAL);
+		registrar_estampa (c, 67, "10 coin bags", STAMP_TYPE_GAME, STAMP_HARD);
+		registrar_estampa (c, 70, "33 coin bags", STAMP_TYPE_GAME, STAMP_EXTREME);
+		
+		cerrar_registro (c);
+	}
 	
 	do {
 		if (game_intro () == GAME_QUIT) break;
@@ -1014,6 +1035,11 @@ int game_intro (void) {
 	rect.h = images[IMG_TITLE]->h;
 	
 	SDL_BlitSurface (images[IMG_TITLE], NULL, screen, &rect);
+	earn_stamp (c, 63);
+	earn_stamp (c, 64);
+	earn_stamp (c, 65);
+	earn_stamp (c, 67);
+	earn_stamp (c, 70);
 	
 	SDL_Flip (screen);
 	
@@ -1022,6 +1048,8 @@ int game_intro (void) {
 	do {
 		last_time = SDL_GetTicks ();
 		num_rects = 0;
+		
+		restaurar_dibujado (screen);
 		
 		if (music_intro != NULL) {
 			if (!Mix_PlayingMusic ()) {
@@ -1091,7 +1119,9 @@ int game_intro (void) {
 			cp_button_refresh[BUTTON_CLOSE] = 0;
 		}
 		
-		SDL_UpdateRects (screen, num_rects, rects);
+		dibujar_estampa (screen, TRUE);
+		SDL_Flip (screen);
+		//SDL_UpdateRects (screen, num_rects, rects);
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 	} while (!done);

@@ -15,6 +15,9 @@ AC_PROG_CC
 # and automake
 AM_INIT_AUTOMAKE([-Wall -Werror])
 
+# Hay una libreria, necesitamos libtool
+LT_INIT
+
 AM_PROG_CC_C_O
 
 # Check for pkg-config
@@ -52,5 +55,8 @@ AC_CONFIG_FILES([
                  src/Makefile
                  data/Makefile
 ])
+
+# Necesito la librería de estampas
+AC_CONFIG_SUBDIRS([libcpstamp])
 
 AC_OUTPUT

@@ -18,6 +18,7 @@ Makefile
 config.log
 config.status
 .deps
+.libs
 src/thin-ice
 *.o
 stamp-h1
