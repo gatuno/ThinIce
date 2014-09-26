@@ -1056,11 +1056,6 @@ int game_intro (void) {
 	rect.h = images[IMG_TITLE]->h;
 	
 	SDL_BlitSurface (images[IMG_TITLE], NULL, screen, &rect);
-	earn_stamp (c, 63);
-	earn_stamp (c, 64);
-	earn_stamp (c, 65);
-	earn_stamp (c, 67);
-	earn_stamp (c, 70);
 	
 	SDL_Flip (screen);
 	
@@ -1140,9 +1135,7 @@ int game_intro (void) {
 			cp_button_refresh[BUTTON_CLOSE] = 0;
 		}
 		
-		dibujar_estampa (screen, c, TRUE);
-		SDL_Flip (screen);
-		//SDL_UpdateRects (screen, num_rects, rects);
+		SDL_UpdateRects (screen, num_rects, rects);
 		now_time = SDL_GetTicks ();
 		if (now_time < last_time + FPS) SDL_Delay(last_time + FPS - now_time);
 	} while (!done);
@@ -1793,6 +1786,8 @@ int game_loop (void) {
 	
 	int mapa[15][19];
 	int frames[15][19];
+	int movibles_hechos[7] = {0, 0, 0, 0, 0, 0, 0};
+	int movibles = 0;
 	int nivel = 1;
 	int puffle_frame;
 	int player_moving, slide_moving;
@@ -1959,6 +1954,8 @@ int game_loop (void) {
 				music_intro = NULL;
 			}
 		}
+		
+		restaurar_dibujado (screen);
 		
 		while (SDL_PollEvent(&event) > 0) {
 			switch (event.type) {
@@ -2188,19 +2185,19 @@ int game_loop (void) {
 			bonus_point++;
 			
 			if (use_sound) Mix_PlayChannel (-1, sounds[SND_MONEY], 0);
-			/*
+			
 			int suma_bolsas = save_bonus_point + bonus_point;
 			if (suma_bolsas == 1) {
-				Disparar estampa 63
+				earn_stamp (c, 63);
 			} else if (suma_bolsas == 3) {
-				Disparar estampa 64
+				earn_stamp (c, 64);
 			} else if (suma_bolsas == 6) {
-				Disparar estampa 65
+				earn_stamp (c, 65);
 			} else if (suma_bolsas == 10) {
-				Disparar estampa 67
+				earn_stamp (c, 67);
 			} else if (suma_bolsas == 33) {
-				Disparar estampa 70
-			}*/
+				earn_stamp (c, 70);
+			}
 		} else if (*tile_actual == 8) {
 			mapa[player.y][player.x] = 3;
 			frames[player.y][player.x] = tiles_start[3];
@@ -2266,7 +2263,7 @@ int game_loop (void) {
 			
 			if (solved_stages == 19) {
 				timepoints = ((SDL_GetTicks () - timer) / 1000) * 6;
-				/* Disparar estampa 71 */
+				earn_stamp (c, 71);
 			}
 			
 			save_tiles_flipped += tiles_flipped;
@@ -2322,6 +2319,7 @@ int game_loop (void) {
 		} else if (*tile_actual == 14) {
 			area_secreta (mapa, frames, solved_stages);
 			if (use_sound) Mix_PlayChannel (-1, sounds[SND_WARP], 0);
+			earn_stamp (c, 66);
 		}
 		
 		if (player_moving == 0) {
@@ -2378,9 +2376,9 @@ int game_loop (void) {
 					tiles_flipped++;
 					snow_melted++;
 					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
-					/* if (save_snow_melted + snow_melted == 480) {
-						Disparar estampa
-					} */
+					if (save_snow_melted + snow_melted == 480) {
+						earn_stamp (c, 68);
+					}
 					
 					/* Actualizar los tiles flipped */
 					sprintf (buf, "%i", tiles_flipped);
@@ -2494,6 +2492,17 @@ int game_loop (void) {
 				slide_moving = 3;
 			} else {
 				slide_block = 0;
+			}
+		}
+		
+		if (mapa[movible.y][movible.x] == 3 || mapa[movible.y][movible.x] == 8) {
+			if (movibles_hechos[nivel - 13] == 0) {
+				movibles_hechos[nivel - 13] = 1;
+				movibles++;
+				
+				if (movibles == 7) {
+					earn_stamp (c, 69);
+				}
 			}
 		}
 		
@@ -2617,6 +2626,11 @@ int game_loop (void) {
 		rect.w = 456;
 		rect.h = 432;
 		rects[num_rects++] = rect;
+		
+		if (activar_estampa) {
+			dibujar_estampa (screen, c, TRUE);
+			rects[num_rects++] = stamp_rect;
+		}
 		
 		SDL_UpdateRects (screen, num_rects, rects);
 		
@@ -2768,6 +2782,8 @@ int game_finish (void) {
 		last_time = SDL_GetTicks ();
 		
 		num_rects = 0;
+		
+		restaurar_dibujado (screen);
 		
 		while (SDL_PollEvent(&event) > 0) {
 			switch (event.type) {
@@ -3194,6 +3210,11 @@ int game_finish (void) {
 
 			SDL_BlitSurface (get_coins_text_button, NULL, screen, &rect);
 			cp_button_refresh[BUTTON_GET_COINS] = 0;
+		}
+		
+		if (activar_estampa) {
+			dibujar_estampa (screen, c, TRUE);
+			rects[num_rects++] = stamp_rect;
 		}
 		
 		SDL_UpdateRects (screen, num_rects, rects);
