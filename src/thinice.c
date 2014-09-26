@@ -941,6 +941,7 @@ int main (int argc, char *argv[]) {
 	setup ();
 	iniciarCPStamp ();
 	
+	/* Registrar botones */
 	cp_registrar_botones (NUM_BUTTONS);
 	cp_registrar_boton (BUTTON_START, IMG_BUTTON_1_UP);
 	cp_registrar_boton (BUTTON_CLOSE, IMG_BUTTON_CLOSE_UP);
@@ -951,28 +952,48 @@ int main (int argc, char *argv[]) {
 	cp_registrar_boton (BUTTON_GET_COINS, IMG_BUTTON_3_UP);
 	cp_button_start ();
 	
+	/* Registrar las estampas */
 	c = abrir_cat (STAMP_TYPE_GAME, "Thin Ice", "thin-ice");
 	
 	if (c == NULL) {
-		printf ("La categoria no fué encontrada\n");
-		
-		c = crear_cat (STAMP_TYPE_GAME, "Thin Ice", "thin-ice");
-		
-		registrar_estampa (c, 63, "1 coin bag", STAMP_TYPE_GAME, STAMP_EASY);
-		registrar_estampa (c, 64, "3 coin bags", STAMP_TYPE_GAME, STAMP_NORMAL);
-		registrar_estampa (c, 65, "6 coin bags", STAMP_TYPE_GAME, STAMP_NORMAL);
-		registrar_estampa (c, 67, "10 coin bags", STAMP_TYPE_GAME, STAMP_HARD);
-		registrar_estampa (c, 70, "33 coin bags", STAMP_TYPE_GAME, STAMP_EXTREME);
-		
-		cerrar_registro (c);
+		printf ("Falló al inicializar las estampas\n");
 	}
 	
+	if (!esta_registrada (c, 63)) {
+		registrar_estampa (c, 63, "1 coin bag", "Collect 1 coin bag", GAMEDATA_DIR "images/stamps/63.png", STAMP_TYPE_GAME, STAMP_EASY);
+	}
+	if (!esta_registrada (c, 64)) {
+		registrar_estampa (c, 64, "3 coin bags", "Collect 3 coin bags", GAMEDATA_DIR "images/stamps/64.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	}
+	if (!esta_registrada (c, 65)) {
+		registrar_estampa (c, 65, "6 coin bags", "Collect 6 coin bags", GAMEDATA_DIR "images/stamps/65.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	}
+	if (!esta_registrada (c, 66)) {
+		registrar_estampa (c, 66, "Iced Treasure", "Find the hidden treasure room", GAMEDATA_DIR "images/stamps/66.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	}
+	if (!esta_registrada (c, 67)) {
+		registrar_estampa (c, 67, "10 coin bags", "Collect 10 coin bags", GAMEDATA_DIR "images/stamps/67.png", STAMP_TYPE_GAME, STAMP_HARD);
+	}
+	if (!esta_registrada (c, 68)) {
+		registrar_estampa (c, 68, "Ice Bonus", "Completely melt 480 ice tiles", GAMEDATA_DIR "images/stamps/68.png", STAMP_TYPE_GAME, STAMP_HARD);
+	}
+	if (!esta_registrada (c, 69)) {
+		registrar_estampa (c, 69, "Ice Trekker", "Push all blocks to the correct position", GAMEDATA_DIR "images/stamps/69.png", STAMP_TYPE_GAME, STAMP_HARD);
+	}
+	if (!esta_registrada (c, 70)) {
+		registrar_estampa (c, 70, "33 coin bags", "Collect all coin bags on every level", GAMEDATA_DIR "images/stamps/70.png", STAMP_TYPE_GAME, STAMP_EXTREME);
+	}
+	if (!esta_registrada (c, 71)) {
+		registrar_estampa (c, 71, "Ice Master", "Master all the mazes", GAMEDATA_DIR "images/stamps/71.png", STAMP_TYPE_GAME, STAMP_EXTREME);
+	}
 	do {
 		if (game_intro () == GAME_QUIT) break;
 		if (game_explain () == GAME_QUIT) break;
 		if (game_loop () == GAME_QUIT) break;
 		if (game_finish () == GAME_QUIT) break;
 	} while (1 == 0);
+	
+	cerrar_registro (c);
 	
 	SDL_Quit ();
 	return EXIT_SUCCESS;
@@ -1119,7 +1140,7 @@ int game_intro (void) {
 			cp_button_refresh[BUTTON_CLOSE] = 0;
 		}
 		
-		dibujar_estampa (screen, TRUE);
+		dibujar_estampa (screen, c, TRUE);
 		SDL_Flip (screen);
 		//SDL_UpdateRects (screen, num_rects, rects);
 		now_time = SDL_GetTicks ();
