@@ -1,6 +1,6 @@
 AC_INIT([Thin Ice], [0.9.5], [], [thin-ice])
 
-AC_REVISION([Revision 4])
+AC_REVISION([Revision 5])
 
 AC_CONFIG_AUX_DIR([build-aux])
 
