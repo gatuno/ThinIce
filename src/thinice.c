@@ -374,6 +374,11 @@ enum {
 	TILE_MELT_45
 };
 
+#ifdef WIN32
+#	undef GAMEDATA_DIR
+#	define GAMEDATA_DIR "./"
+#endif
+
 const char *images_names[NUM_IMAGES] = {
 	GAMEDATA_DIR "images/arcade.png",
 	GAMEDATA_DIR "images/title.png",

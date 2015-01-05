@@ -135,10 +135,11 @@ install-data-hook:
 	touch $(DESTDIR)$(datadir)/icons/hicolor
 
 EXTRA_DIST = \
-	desktop/thinice.desktop	\
-	desktop/24x24/thinice.png		\
-	desktop/32x32/thinice.png		\
-	desktop/48x48/thinice.png		\
-	desktop/64x64/thinice.png		\
-	desktop/128x128/thinice.png		\
-	desktop/256x256/thinice.png
+	desktop/thinice.desktop \
+	desktop/24x24/thinice.png \
+	desktop/32x32/thinice.png \
+	desktop/48x48/thinice.png \
+	desktop/64x64/thinice.png \
+	desktop/128x128/thinice.png \
+	desktop/256x256/thinice.png \
+	thinice.ico

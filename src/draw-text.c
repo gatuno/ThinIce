@@ -42,13 +42,42 @@
 #define AMASK 0xff000000
 #endif
 
+#ifdef WIN32
+char *strsep(char **from, const char *delim) {
+    char *s, *dp, *ret;
+
+    if ((s = *from) == NULL)
+        return NULL;
+
+    ret = s;
+    while (*s != '\0') {
+        /* loop until the end of s, checking against each delimiting character,
+         * if we find a delimiter set **s to '\0' and return our previous token
+         * to the user. */
+        dp = (char *)delim;
+        while (*dp != '\0') {
+            if (*s == *dp) {
+                *s = '\0';
+                *from = s + 1;
+                return ret;
+            }
+            dp++;
+        }
+        s++;
+    }
+    /* end of string case */
+    *from = NULL;
+    return ret;
+}
+#endif
+
 SDL_Surface *draw_text (TTF_Font *font, const char *cadena, SDL_Color color, int align, int height_line) {
 	SDL_Surface *final, **text;
 	SDL_Rect dest_rect;
 	int n_tokens;
 	int g, len, maxw;
 	Uint32 pixel;
-	char *dup, *str_token;
+	char *dup, *str_token, *original;
 	
 	/* Si no contiene saltos de linea, llamar a la otra función */
 	if (strchr (cadena, '\n') != NULL) {
@@ -59,7 +88,7 @@ SDL_Surface *draw_text (TTF_Font *font, const char *cadena, SDL_Color color, int
 		len =  (TTF_FontLineSkip (font) + height_line) * n_tokens;
 		
 		text = (SDL_Surface **) malloc (sizeof (SDL_Surface *) * n_tokens);
-		dup = strdupa (cadena);
+		original = dup = strdup (cadena);
 		
 		str_token = strsep (&dup, "\n");
 		g = 0; maxw = 0;
@@ -97,6 +126,7 @@ SDL_Surface *draw_text (TTF_Font *font, const char *cadena, SDL_Color color, int
 		}
 		SDL_SetAlpha(final, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
 		free (text);
+		free (original);
 		return final;	
 	} else {
 		/* En caso contrario, renderizarla nosotros mismos */

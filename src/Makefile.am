@@ -26,7 +26,17 @@ EXTRA_DIST = cp-button.h \
 	mapa18.h \
 	mapa19.h
 
-thin_ice_CPPFLAGS = -DGAMEDATA_DIR=\"$(gamedatadir)/\" -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/../libcpstamp/src $(AM_CPPFLAGS)
-thin_ice_CFLAGS = $(SDL_CFLAGS) $(SDL_image_CFLAGS) $(SDL_mixer_CFLAGS) $(SDL_ttf_LIBS) $(AM_CFLAGS)
-thin_ice_LDADD = $(SDL_LIBS) $(SDL_image_LIBS) $(SDL_mixer_LIBS) $(SDL_ttf_LIBS) $(builddir)/../libcpstamp/src/libcpstamp.la
+if MINGW32
+thinice_ico.o: thinice.rc ../data/thinice.ico
+	$(WINDRES) $(srcdir)/thinice.rc -O coff -o thinice_ico.o
+
+mingw_ldadd = thinice_ico.o
+
+else # NOT MINGW
+mingw_ldadd =
+endif
+
+thin_ice_CPPFLAGS = -DGAMEDATA_DIR=\"$(gamedatadir)/\" -DLOCALEDIR=\"$(localedir)\" $(AM_CPPFLAGS)
+thin_ice_CFLAGS = $(SDL_CFLAGS) $(SDL_image_CFLAGS) $(SDL_mixer_CFLAGS) $(SDL_ttf_LIBS) $(CPSTAMP_CFLAGS) $(AM_CFLAGS)
+thin_ice_LDADD = $(SDL_LIBS) $(SDL_image_LIBS) $(SDL_mixer_LIBS) $(SDL_ttf_LIBS) $(CPSTAMP_LIBS) $(mingw_ldadd)
 

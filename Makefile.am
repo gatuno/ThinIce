@@ -1,1 +1,1 @@
-SUBDIRS = libcpstamp src data
+SUBDIRS = src data
