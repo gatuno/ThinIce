@@ -105,6 +105,8 @@ nobase_dist_gamedata_DATA = images/tiles.png \
 	sounds/start.wav \
 	sounds/warp.wav \
 	sounds/button-1.wav \
+	sounds/sound_1.wav \
+	sounds/sound_2.wav \
 	music/thinice1.ogg \
 	music/thinice2.ogg
 

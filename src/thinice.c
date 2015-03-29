@@ -489,6 +489,10 @@ enum {
 	
 	SND_BUTTON,
 	
+	SND_POINTS,
+	SND_1,
+	SND_2,
+	
 	NUM_SOUNDS
 };
 
@@ -503,7 +507,11 @@ const char *sound_names[NUM_SOUNDS] = {
 	GAMEDATA_DIR "sounds/warp.wav",
 	GAMEDATA_DIR "sounds/complete.wav",
 	
-	GAMEDATA_DIR "sounds/button-1.wav"
+	GAMEDATA_DIR "sounds/button-1.wav",
+	
+	GAMEDATA_DIR "sounds/points.wav",
+	GAMEDATA_DIR "sounds/sound_1.wav",
+	GAMEDATA_DIR "sounds/sound_2.wav"
 };
 
 #define MUS_INTRO GAMEDATA_DIR "music/thinice1.ogg"
@@ -3076,7 +3084,8 @@ int game_finish (void) {
 		}
 		
 		/* Dibujar los textos */
-		if (timing > 91) {
+		if (timing >= 91) {
+			if (timing == 91 && use_sound) Mix_PlayChannel (-1, sounds[SND_POINTS], 0);
 			rect.x = 158;
 			rect.y = 32;
 			rect.w = texts_finish[0]->w;
@@ -3092,7 +3101,8 @@ int game_finish (void) {
 			SDL_BlitSurface (numero[0], NULL, screen, &rect);
 		}
 		
-		if (timing > 111) {
+		if (timing >= 111) {
+			if (timing == 111 && use_sound) Mix_PlayChannel (-1, sounds[SND_POINTS], 0);
 			rect.x = 158;
 			rect.y = 57;
 			rect.w = texts_finish[1]->w;
@@ -3108,7 +3118,8 @@ int game_finish (void) {
 			SDL_BlitSurface (numero[1], NULL, screen, &rect);
 		}
 		
-		if (timing > 131) {
+		if (timing >= 131) {
+			if (timing == 131 && use_sound) Mix_PlayChannel (-1, sounds[SND_POINTS], 0);
 			rect.x = 158;
 			rect.y = 82;
 			rect.w = texts_finish[2]->w;
@@ -3124,7 +3135,8 @@ int game_finish (void) {
 			SDL_BlitSurface (numero[2], NULL, screen, &rect);
 		}
 		
-		if (timing > 151) {
+		if (timing >= 151) {
+			if (timing == 151 && use_sound) Mix_PlayChannel (-1, sounds[SND_POINTS], 0);
 			rect.x = 158 + (427 - texts_finish[3]->w) / 2;
 			rect.y = 132;
 			rect.w = texts_finish[3]->w;
@@ -3140,7 +3152,8 @@ int game_finish (void) {
 			SDL_BlitSurface (numero[3], NULL, screen, &rect);
 		}
 		
-		if (timing > 171) {
+		if (timing >= 171) {
+			if (timing == 171 && use_sound) Mix_PlayChannel (-1, sounds[SND_POINTS], 0);
 			rect.x = 158;
 			rect.y = 288;
 			rect.w = texts_finish[5]->w;
@@ -3156,7 +3169,8 @@ int game_finish (void) {
 			SDL_BlitSurface (numero[5], NULL, screen, &rect);
 		}
 		
-		if (timing > 191) {
+		if (timing >= 191) {
+			if (timing == 191 && use_sound) Mix_PlayChannel (-1, sounds[SND_POINTS], 0);
 			rect.x = 158;
 			rect.y = 314;
 			rect.w = texts_finish[6]->w;
@@ -3172,7 +3186,8 @@ int game_finish (void) {
 			SDL_BlitSurface (numero[6], NULL, screen, &rect);
 		}
 		
-		if (end == 3 && timing > 211) {
+		if (timing == 211 && use_sound) Mix_PlayChannel (-1, sounds[SND_1], 0);
+		if (end == 3 && timing >= 211) {
 			rect.x = 158 + (427 - texts_finish[4]->w) / 2;
 			rect.y = 205;
 			rect.w = texts_finish[4]->w;
@@ -3187,6 +3202,11 @@ int game_finish (void) {
 			
 			SDL_BlitSurface (numero[4], NULL, screen, &rect);
 		}
+		
+		if (end > 2 && timing == 248 && use_sound) Mix_PlayChannel (-1, sounds[SND_COMPLETE], 0);
+		if (end == 1 && timing == 248 && use_sound) Mix_PlayChannel (-1, sounds[SND_2], 0);
+		if (end == 1 && timing == 280 && use_sound) Mix_PlayChannel (-1, sounds[SND_DROWN], 0);
+		if (end == 3 && timing == 278 && use_sound) Mix_PlayChannel (-1, sounds[SND_WARP], 0);
 		
 		timing++;
 		/* El botón de cierre */
