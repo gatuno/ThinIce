@@ -144,6 +144,8 @@ enum {
 	IMG_KEYS1,
 	IMG_KEYS2,
 	
+	IMG_SMOKE,
+	
 	IMG_PUFFLE_BLACK_1,
 	IMG_PUFFLE_BLACK_2,
 	IMG_PUFFLE_BLACK_3,
@@ -432,6 +434,8 @@ const char *images_names[NUM_IMAGES] = {
 	
 	GAMEDATA_DIR "images/keys1.png",
 	GAMEDATA_DIR "images/keys2.png",
+	
+	GAMEDATA_DIR "images/smoke.png",
 	
 	GAMEDATA_DIR "images/puffle_black_1.png",
 	GAMEDATA_DIR "images/puffle_black_2.png",
@@ -2463,6 +2467,22 @@ int game_loop (void) {
 		
 		puffle_frame = player_frames [puffle_frame];
 		copy_tile (&rect, player_outputs[puffle_frame]);
+		
+		if (player_die && puffle_frame >= player_start[PLAYER_DROWN] && puffle_frame < player_start[PLAYER_DROWN] + 19) {
+			/* Pegar el humo que sale */
+			SDL_Rect rect2;
+			rect2.x = (puffle_frame - player_start[PLAYER_DROWN] - 1) / 2 * 8;
+			rect2.y = 0;
+			rect2.w = 8;
+			rect2.h = 30;
+			
+			rect.x = MAP_X + (player.x * TILE_WIDTH) + 10;
+			rect.y = MAP_Y + (player.y * TILE_HEIGHT) -19;
+			rect.w = 8;
+			rect.h = 30;
+			
+			SDL_BlitSurface (images[IMG_SMOKE], &rect2, screen, &rect);
+		}
 		
 		/* Colisiones de la caja contra el portal, luego continuar su movimiento */
 		if (movible.x == warps[0].x && movible.y == warps[0].y && warp_wall && slide_moving == 0) {

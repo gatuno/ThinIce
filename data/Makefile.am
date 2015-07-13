@@ -83,6 +83,7 @@ nobase_dist_gamedata_DATA = images/tiles.png \
 	images/puffle_off10.png \
 	images/keys1.png \
 	images/keys2.png \
+	images/smoke.png \
 	images/stamps/63.png \
 	images/stamps/64.png \
 	images/stamps/65.png \
