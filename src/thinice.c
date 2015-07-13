@@ -919,7 +919,7 @@ int game_finish (void);
 void setup (void);
 SDL_Surface * set_video_mode(unsigned);
 void copy_tile (SDL_Rect *rect, int tile);
-void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved, Warp *warps, Punto *movible);
+void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved, Warp *warps, Punto *movible, int *warp_enable);
 void area_secreta (int (*mapa)[19], int (*frames)[19], int solved_stages);
 int map_button_in_opening (int x, int y);
 int map_button_in_explain (int x, int y, int escena);
@@ -1839,7 +1839,8 @@ int game_loop (void) {
 	player.y = save_player.y = 10;
 	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
-	load_map (nivel, mapa, frames, &goal, random, FALSE, warps, &movible);
+	load_map (nivel, mapa, frames, &goal, random, FALSE, warps, &movible, &warp_enable);
+	warp_wall = warp_enable;
 	
 	/* Predibujar el boton de cierre */
 	rect.x = 663; rect.y = 24;
@@ -2017,9 +2018,8 @@ int game_loop (void) {
 							player.x = save_player.x;
 							puffle_frame = player_start [PLAYER_IGNITE];
 							player_moving = slide_block = llave = 0;
-							load_map (nivel, mapa, frames, &goal, random, last_solved, warps, &movible);
-							if (nivel >= 17) warp_enable = TRUE;
-							if (nivel >= 13) warp_wall = TRUE;
+							load_map (nivel, mapa, frames, &goal, random, last_solved, warps, &movible, &warp_enable);
+							warp_wall = warp_enable;
 							if (use_sound) Mix_PlayChannel (-1, sounds[SND_DROWN], 0);
 							
 							/* Actualizar los tiles flipped */
@@ -2136,6 +2136,7 @@ int game_loop (void) {
 			*warps[0].frame = tiles_start [11];
 			*warps[1].frame = tiles_start [11];
 			warp_enable = FALSE;
+			warp_wall = FALSE;
 		} else if (warps[1].x == player.x && warps[1].y == player.y && warp_enable && player_moving == 0) {
 			if (use_sound) Mix_PlayChannel (-1, sounds[SND_WARP], 0);
 			wall_up = wall_down = wall_left = wall_right = TRUE;
@@ -2144,6 +2145,7 @@ int game_loop (void) {
 			*warps[0].frame = tiles_start [11];
 			*warps[1].frame = tiles_start [11];
 			warp_enable = FALSE;
+			warp_wall = FALSE;
 		} else if (wall_up && wall_down && wall_left && wall_right && player_moving == 0 && *tile_actual != 5 && !player_die) {
 			/* Matar al puffle */
 			puffle_frame = player_start[PLAYER_DROWN];
@@ -2289,9 +2291,8 @@ int game_loop (void) {
 			random = RANDOM(2);
 			tries = 1;
 			if (nivel != 20) {
-				load_map (nivel, mapa, frames, &goal, random, last_solved, warps, &movible);
-				if (nivel >= 17) warp_enable = TRUE;
-				if (nivel >= 13) warp_wall = TRUE;
+				load_map (nivel, mapa, frames, &goal, random, last_solved, warps, &movible, &warp_enable);
+				warp_wall = warp_enable;
 			} else {
 				/* Poner en blanco la pantalla y salir del gameloop */
 				score = tiles_flipped + save_tiles_flipped + solved_points + (bonus_point * 100) + save_bonus_point * 100 + first_try_points + timepoints;
@@ -2659,9 +2660,8 @@ int game_loop (void) {
 			player.x = save_player.x;
 			puffle_frame = player_start [PLAYER_IGNITE];
 			slide_block = llave = 0;
-			load_map (nivel, mapa, frames, &goal, random, last_solved, warps, &movible);
-			if (nivel >= 17) warp_enable = TRUE;
-			if (nivel >= 13) warp_wall = TRUE;
+			load_map (nivel, mapa, frames, &goal, random, last_solved, warps, &movible, &warp_enable);
+			warp_wall = warp_enable;
 			player_die = FALSE;
 			if (use_sound) Mix_PlayChannel (-1, sounds[SND_START], 0);
 			
@@ -3428,7 +3428,7 @@ void copy_tile (SDL_Rect *rect, int tile) {
 	SDL_BlitSurface (image_tiles, &r_tile, screen, rect);
 }
 
-void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved, Warp *warps, Punto *movible) {
+void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, int last_solved, Warp *warps, Punto *movible, int *warp_enable) {
 	const int (*copiar)[19];
 	int g, h;
 	
@@ -3659,6 +3659,7 @@ void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, 
 	}
 	
 	warps[0].x = warps[0].y = warps[1].x = warps[1].y = -1;
+	*warp_enable = FALSE;
 	
 	r = 0;
 	for (g = 0; g < 15; g++) {
@@ -3666,6 +3667,7 @@ void load_map (int nivel, int (*mapa)[19], int (*frames)[19], int *goal, int r, 
 			frames[g][h] = tiles_start [mapa[g][h]];
 			
 			if (mapa[g][h] == 11) {
+				*warp_enable = TRUE;
 				warps[r].x = h;
 				warps[r].y = g;
 				warps[r].frame = &frames[g][h];
