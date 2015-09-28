@@ -40,7 +40,13 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 
+#ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#include <locale.h>
+#include "gettext.h"
+#define _(string) gettext (string)
 
 #include "mapa1.h"
 #include "mapa2.h"
@@ -955,6 +961,12 @@ Categoria *c;
 int first_try_count, solved_stages, save_bonus_point, save_tiles_flipped, score, timepoints = 0;
 
 int main (int argc, char *argv[]) {
+	/* Inicializar l18n */
+	setlocale (LC_ALL, "");
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	
+	textdomain (PACKAGE);
+	
 	setup ();
 	iniciarCPStamp ();
 	
@@ -973,7 +985,7 @@ int main (int argc, char *argv[]) {
 	c = abrir_cat (STAMP_TYPE_GAME, "Thin Ice", "thin-ice");
 	
 	if (c == NULL) {
-		printf ("Falló al inicializar las estampas\n");
+		printf (_("Failed to init the substamp system\n"));
 	}
 	
 	if (!esta_registrada (c, 63)) {
@@ -1024,7 +1036,7 @@ int game_intro (void) {
 	int map;
 	SDL_Surface *play_text_button;
 	
-	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "Play", blanco);
+	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, _("Start"), blanco);
 	
 	SDL_BlitSurface (images[IMG_ARCADE], NULL, screen, NULL);
 	
@@ -1178,17 +1190,17 @@ int game_explain (void) {
 	SDL_Surface *texts[NUM_TEXTS];
 	SDL_Surface *play_text_button, *prev_text_button, *next_text_button;
 	
-	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "Play", blanco);
-	prev_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "Back", blanco);
-	next_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "Next", blanco);
+	play_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, _("Play"), blanco);
+	prev_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, _("Back"), blanco);
+	next_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, _("Next"), blanco);
 	
 	/* Cadenas traducibles */
 	const char * text_strings[NUM_TEXTS] = {	
-		"Melt ice on your way through each maze. Once the ice is melted you\ncan't walk back. Melt all the ice to solve the stage",
-		"Use the arrow keys to move your\ncharacter around.",
-		"Make your way to the red exit to finish the level.",
-		"More points are earned by walking over all ice in the\nstage.",
-		"Earn more points by solving each level on your first try. Also, coin\nbags will appear if you are solving levels."
+		_("Melt ice on your way through each maze. Once the ice is melted you\ncan't walk back. Melt all the ice to solve the stage"),
+		_("Use the arrow keys to move your\ncharacter around."),
+		_("Make your way to the red exit to finish the level."),
+		_("More points are earned by walking over all ice in the\nstage."),
+		_("Earn more points by solving each level on your first try. Also, coin\nbags will appear if you are solving levels.")
 	};
 	
 	for (g = 0; g < NUM_TEXTS; g++) {
@@ -1852,7 +1864,7 @@ int game_loop (void) {
 	
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
 	
-	reset_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "RESET", blanco);
+	reset_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, _("Reset"), blanco);
 	
 	/* Predibujar el botón de reset */
 	rect.x = 155; rect.y = 410;
@@ -1887,7 +1899,7 @@ int game_loop (void) {
 	
 	/* Textos estáticos en la pantalla */
 	TTF_SetFontStyle (ttf13_burbank_bold,  TTF_STYLE_BOLD);
-	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "LEVEL", azul);
+	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, _("Level"), azul);
 	rect.x = MAP_X - 4 + ((TILE_WIDTH * 4) - text->w);
 	rect.y = 30;
 	rect.w = text->w; rect.h = text->h;
@@ -1896,7 +1908,7 @@ int game_loop (void) {
 	SDL_FreeSurface (text);
 	
 	/* Nieveles resueltos */
-	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "SOLVED", azul);
+	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, _("Solved"), azul);
 	rect.x = MAP_X - 8 + ((TILE_WIDTH * 17) - text->w);
 	rect.y = 30;
 	rect.w = text->w; rect.h = text->h;
@@ -1905,7 +1917,7 @@ int game_loop (void) {
 	SDL_FreeSurface (text);
 	
 	/* Puntos */
-	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, "POINTS", azul);
+	text = TTF_RenderUTF8_Blended (ttf13_burbank_bold, _("Points"), azul);
 	rect.x = MAP_X - 12 + ((TILE_WIDTH * 17) - text->w);
 	rect.y = 413;
 	rect.w = text->w; rect.h = text->h;
@@ -2723,13 +2735,13 @@ int game_finish (void) {
 	SDL_Surface *texts_finish[7], *get_coins_text_button;
 	SDL_Surface *numero[7];
 	char *texts_finish_string[7] = {
-		"Levels solved",
-		"Levels solved on first try",
-		"Coins bags collected",
-		"Total ice melted",
-		"Solved game quickly bonus",
-		"Total points",
-		"Coins earned"
+		_("Levels solved"),
+		_("Levels solved on first try"),
+		_("Coins bags collected"),
+		_("Total ice melted"),
+		_("Solved game quickly bonus"),
+		_("Total points"),
+		_("Coins earned")
 	};
 	
 	if (solved_stages < 4) {
@@ -2755,10 +2767,10 @@ int game_finish (void) {
 	sprintf (buf, "%i", save_bonus_point);
 	numero[2] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
 	
-	sprintf (buf, "%i tiles", save_tiles_flipped);
+	sprintf (buf, _("%i tiles"), save_tiles_flipped);
 	numero[3] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
 	
-	sprintf (buf, "%i points", timepoints);
+	sprintf (buf, _("%i points"), timepoints);
 	numero[4] = TTF_RenderUTF8_Blended (ttf13_burbank_small, buf, azul);
 	
 	sprintf (buf, "%i", score);
@@ -2776,7 +2788,7 @@ int game_finish (void) {
 	rect.w = images[IMG_BUTTON_CLOSE_UP]->w; rect.h = images[IMG_BUTTON_CLOSE_UP]->h;
 	SDL_BlitSurface (images[IMG_BUTTON_CLOSE_UP], NULL, screen, &rect);
 	
-	get_coins_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, "GET COINS", blanco);
+	get_coins_text_button = TTF_RenderUTF8_Blended (ttf13_big_black, _("Finish"), blanco);
 	
 	/* Predibujar el botón de get coins */
 	rect.x = 455; rect.y = 400;
@@ -3288,9 +3300,9 @@ void setup (void) {
 	/* Inicializar el Video SDL */
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf (stderr,
-			"Error: Can't initialize the video subsystem\n"
+			_("Error: Can't initialize the video subsystem\n"
 			"The error returned by SDL is:\n"
-			"%s\n", SDL_GetError());
+			"%s\n"), SDL_GetError());
 		exit (1);
 	}
 	
@@ -3299,24 +3311,24 @@ void setup (void) {
 		SDL_WM_SetIcon (image, NULL);
 		SDL_FreeSurface (image);
 	}
-	SDL_WM_SetCaption ("Thin Ice", "Thin ice");
+	SDL_WM_SetCaption (_("Thin Ice"), _("Thin Ice"));
 	
 	/* Crear la pantalla de dibujado */
 	screen = set_video_mode (0);
 	
 	if (screen == NULL) {
 		fprintf (stderr,
-			"Error: Can't setup 760x480 video mode.\n"
+			_("Error: Can't setup 760x480 video mode.\n"
 			"The error returned by SDL is:\n"
-			"%s\n", SDL_GetError());
+			"%s\n"), SDL_GetError());
 		exit (1);
 	}
 	
 	use_sound = 1;
 	if (SDL_InitSubSystem (SDL_INIT_AUDIO) < 0) {
 		fprintf (stdout,
-			"Warning: Can't initialize the audio subsystem\n"
-			"Continuing...\n");
+			_("Warning: Can't initialize the audio subsystem\n"
+			"Continuing...\n"));
 		use_sound = 0;
 	}
 	
@@ -3324,7 +3336,7 @@ void setup (void) {
 		/* Inicializar el sonido */
 		if (Mix_OpenAudio (22050, AUDIO_S16, 2, 4096) < 0) {
 			fprintf (stdout,
-				"Warning: Can't initialize the SDL Mixer library\n");
+				_("Warning: Can't initialize the SDL Mixer library\n"));
 			use_sound = 0;
 		} else {
 			Mix_AllocateChannels (3);
@@ -3336,10 +3348,10 @@ void setup (void) {
 		
 		if (image == NULL) {
 			fprintf (stderr,
-				"Failed to load data file:\n"
+				_("Failed to load data file:\n"
 				"%s\n"
 				"The error returned by SDL is:\n"
-				"%s\n", images_names[g], SDL_GetError());
+				"%s\n"), images_names[g], SDL_GetError());
 			SDL_Quit ();
 			exit (1);
 		}
@@ -3353,10 +3365,10 @@ void setup (void) {
 	
 	if (image_tiles == NULL) {
 		fprintf (stderr,
-				"Failed to load data file:\n"
+				_("Failed to load data file:\n"
 				"%s\n"
 				"The error returned by SDL is:\n"
-				"%s\n", images_names[g], SDL_GetError());
+				"%s\n"), images_names[g], SDL_GetError());
 			SDL_Quit ();
 			exit (1);
 	}
@@ -3367,10 +3379,10 @@ void setup (void) {
 			
 			if (sounds[g] == NULL) {
 				fprintf (stderr,
-					"Failed to load data file:\n"
+					_("Failed to load data file:\n"
 					"%s\n"
 					"The error returned by SDL is:\n"
-					"%s\n", sound_names [g], SDL_GetError ());
+					"%s\n"), sound_names [g], SDL_GetError ());
 				SDL_Quit ();
 				exit (1);
 			}
@@ -3383,9 +3395,9 @@ void setup (void) {
 		
 		if (music_intro == NULL || music_thinice == NULL) {
 			fprintf (stderr,
-				"Failed to load a music file.\n"
+				_("Failed to load a music file.\n"
 				"The error returned by SDL is:\n"
-				"%s\n", SDL_GetError ());
+				"%s\n"), SDL_GetError ());
 			SDL_Quit ();
 			exit (1);
 		}
@@ -3393,8 +3405,8 @@ void setup (void) {
 	
 	if (TTF_Init () < 0) {
 		fprintf (stderr,
-			"Error: Can't initialize the SDL TTF library\n"
-			"%s\n", TTF_GetError ());
+			_("Error: Can't initialize the SDL TTF library\n"
+			"%s\n"), TTF_GetError ());
 		SDL_Quit ();
 		exit (1);
 	}
@@ -3403,9 +3415,9 @@ void setup (void) {
 	
 	if (!ttf13_burbank_bold) {
 		fprintf (stderr,
-			"Failed to load font file 'Burbank Small Bold'\n"
+			_("Failed to load font file 'Burbank Small Bold'\n"
 			"The error returned by SDL is:\n"
-			"%s\n", TTF_GetError ());
+			"%s\n"), TTF_GetError ());
 		SDL_Quit ();
 		exit (1);
 	}
@@ -3415,9 +3427,9 @@ void setup (void) {
 	
 	if (!ttf13_burbank_small) {
 		fprintf (stderr,
-			"Failed to load font file 'Burbank Small Bold'\n"
+			_("Failed to load font file 'Burbank Small Bold'\n"
 			"The error returned by SDL is:\n"
-			"%s\n", TTF_GetError ());
+			"%s\n"), TTF_GetError ());
 		SDL_Quit ();
 		exit (1);
 	}
@@ -3427,9 +3439,9 @@ void setup (void) {
 	
 	if (!ttf13_big_black) {
 		fprintf (stderr,
-			"Failed to load font file 'Burbank Big Regular Black'\n"
+			_("Failed to load font file 'Burbank Big Regular Black'\n"
 			"The error returned by SDL is:\n"
-			"%s\n", TTF_GetError ());
+			"%s\n"), TTF_GetError ());
 		SDL_Quit ();
 		exit (1);
 	}

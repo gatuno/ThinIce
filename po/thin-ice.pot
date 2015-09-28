@@ -1,0 +1,197 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Félix Arreola Rodríguez
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: thin-ice 0.9.9\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-09-27 23:26-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/thinice.c:988
+#, c-format
+msgid "Failed to init the substamp system\n"
+msgstr ""
+
+#: src/thinice.c:1039
+msgid "Start"
+msgstr ""
+
+#: src/thinice.c:1193
+msgid "Play"
+msgstr ""
+
+#: src/thinice.c:1194
+msgid "Back"
+msgstr ""
+
+#: src/thinice.c:1195
+msgid "Next"
+msgstr ""
+
+#: src/thinice.c:1199
+msgid ""
+"Melt ice on your way through each maze. Once the ice is melted you\n"
+"can't walk back. Melt all the ice to solve the stage"
+msgstr ""
+
+#: src/thinice.c:1200
+msgid ""
+"Use the arrow keys to move your\n"
+"character around."
+msgstr ""
+
+#: src/thinice.c:1201
+msgid "Make your way to the red exit to finish the level."
+msgstr ""
+
+#: src/thinice.c:1202
+msgid ""
+"More points are earned by walking over all ice in the\n"
+"stage."
+msgstr ""
+
+#: src/thinice.c:1203
+msgid ""
+"Earn more points by solving each level on your first try. Also, coin\n"
+"bags will appear if you are solving levels."
+msgstr ""
+
+#: src/thinice.c:1867
+msgid "Reset"
+msgstr ""
+
+#: src/thinice.c:1902
+msgid "Level"
+msgstr ""
+
+#: src/thinice.c:1911
+msgid "Solved"
+msgstr ""
+
+#: src/thinice.c:1920
+msgid "Points"
+msgstr ""
+
+#: src/thinice.c:2738
+msgid "Levels solved"
+msgstr ""
+
+#: src/thinice.c:2739
+msgid "Levels solved on first try"
+msgstr ""
+
+#: src/thinice.c:2740
+msgid "Coins bags collected"
+msgstr ""
+
+#: src/thinice.c:2741
+msgid "Total ice melted"
+msgstr ""
+
+#: src/thinice.c:2742
+msgid "Solved game quickly bonus"
+msgstr ""
+
+#: src/thinice.c:2743
+msgid "Total points"
+msgstr ""
+
+#: src/thinice.c:2744
+msgid "Coins earned"
+msgstr ""
+
+#: src/thinice.c:2770
+#, c-format
+msgid "%i tiles"
+msgstr ""
+
+#: src/thinice.c:2773
+#, c-format
+msgid "%i points"
+msgstr ""
+
+#: src/thinice.c:2791
+msgid "Finish"
+msgstr ""
+
+#: src/thinice.c:3303
+#, c-format
+msgid ""
+"Error: Can't initialize the video subsystem\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3314
+msgid "Thin Ice"
+msgstr ""
+
+#: src/thinice.c:3321
+#, c-format
+msgid ""
+"Error: Can't setup 760x480 video mode.\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3330
+#, c-format
+msgid ""
+"Warning: Can't initialize the audio subsystem\n"
+"Continuing...\n"
+msgstr ""
+
+#: src/thinice.c:3339
+#, c-format
+msgid "Warning: Can't initialize the SDL Mixer library\n"
+msgstr ""
+
+#: src/thinice.c:3351 src/thinice.c:3368 src/thinice.c:3382
+#, c-format
+msgid ""
+"Failed to load data file:\n"
+"%s\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3398
+#, c-format
+msgid ""
+"Failed to load a music file.\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3408
+#, c-format
+msgid ""
+"Error: Can't initialize the SDL TTF library\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3418 src/thinice.c:3430
+#, c-format
+msgid ""
+"Failed to load font file 'Burbank Small Bold'\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3442
+#, c-format
+msgid ""
+"Failed to load font file 'Burbank Big Regular Black'\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""

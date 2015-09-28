@@ -3,9 +3,7 @@
 gamedatadir = $(pkgdatadir)/data
 
 bin_PROGRAMS = thin-ice
-thin_ice_SOURCES = thinice.c cp-button.c draw-text.c
-EXTRA_DIST = cp-button.h \
-	draw-text.h \
+thin_ice_SOURCES = thinice.c cp-button.c draw-text.c cp-button.h draw-text.h gettext.h \
 	mapa1.h \
 	mapa2.h \
 	mapa3.h \
@@ -39,4 +37,5 @@ endif
 thin_ice_CPPFLAGS = -DGAMEDATA_DIR=\"$(gamedatadir)/\" -DLOCALEDIR=\"$(localedir)\" $(AM_CPPFLAGS)
 thin_ice_CFLAGS = $(SDL_CFLAGS) $(SDL_image_CFLAGS) $(SDL_mixer_CFLAGS) $(SDL_ttf_LIBS) $(CPSTAMP_CFLAGS) $(AM_CFLAGS)
 thin_ice_LDADD = $(SDL_LIBS) $(SDL_image_LIBS) $(SDL_mixer_LIBS) $(SDL_ttf_LIBS) $(CPSTAMP_LIBS) $(mingw_ldadd)
+LDADD = $(LIBINTL)
 

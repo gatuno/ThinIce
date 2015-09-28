@@ -1,0 +1,206 @@
+# German translations for thin-ice package.
+# Copyright (C) 2015 Félix Arreola Rodríguez
+# This file is distributed under the same license as the thin-ice package.
+# Félix Arreola Rodríguez <gatuno_123@esdebian.org>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: thin-ice 0.9.9\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-09-27 23:26-0500\n"
+"PO-Revision-Date: 2015-09-27 22:41-0500\n"
+"Last-Translator: Félix Arreola Rodríguez <gatuno_123@esdebian.org>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/thinice.c:988
+#, c-format
+msgid "Failed to init the substamp system\n"
+msgstr ""
+
+#: src/thinice.c:1039
+msgid "Start"
+msgstr "Start"
+
+#: src/thinice.c:1193
+msgid "Play"
+msgstr "Spielen"
+
+#: src/thinice.c:1194
+msgid "Back"
+msgstr "Zurück"
+
+#: src/thinice.c:1195
+msgid "Next"
+msgstr "Weiter"
+
+#: src/thinice.c:1199
+msgid ""
+"Melt ice on your way through each maze. Once the ice is melted you\n"
+"can't walk back. Melt all the ice to solve the stage"
+msgstr ""
+"Schmelze Eis auf dem Weg durch die Labyrinthe.\n"
+" Wenn das Eis weg ist, kannst du nicht mehr zurück.\n"
+"Zum Lösen des Levels muss das ganze Eis weg sein."
+
+#: src/thinice.c:1200
+msgid ""
+"Use the arrow keys to move your\n"
+"character around."
+msgstr ""
+"Benutze die Pfeiltasten,\n"
+"um deine Figur zu bewegen."
+
+#: src/thinice.c:1201
+msgid "Make your way to the red exit to finish the level."
+msgstr "Bewege dich zum roten Ausgang, um das Level zu lösen."
+
+#: src/thinice.c:1202
+msgid ""
+"More points are earned by walking over all ice in the\n"
+"stage."
+msgstr ""
+"Du bekommst mehr Punkte, wenn du über\n"
+"das ganze Eis im Level läufst."
+
+#: src/thinice.c:1203
+msgid ""
+"Earn more points by solving each level on your first try. Also, coin\n"
+"bags will appear if you are solving levels."
+msgstr ""
+"Du bekommst mehr Punkte, wenn du das Level beim ersten Versuch löst.\n"
+"Wenn du ein Level erfolgreich löst, tauchen Münzsäcke auf."
+
+#: src/thinice.c:1867
+msgid "Reset"
+msgstr "Neu Starten"
+
+#: src/thinice.c:1902
+msgid "Level"
+msgstr "Level"
+
+#: src/thinice.c:1911
+msgid "Solved"
+msgstr "Gelöst"
+
+#: src/thinice.c:1920
+msgid "Points"
+msgstr "Punkte"
+
+#: src/thinice.c:2738
+msgid "Levels solved"
+msgstr "Gelöste Levels"
+
+#: src/thinice.c:2739
+msgid "Levels solved on first try"
+msgstr "Beim ersten Versuch gelöste Levels"
+
+#: src/thinice.c:2740
+msgid "Coins bags collected"
+msgstr "Gesammelte Münzsäcke"
+
+#: src/thinice.c:2741
+msgid "Total ice melted"
+msgstr "Gesamtes geschmolzenes Eis"
+
+#: src/thinice.c:2742
+msgid "Solved game quickly bonus"
+msgstr "Bonus für schnelles Spiel"
+
+#: src/thinice.c:2743
+msgid "Total points"
+msgstr "Gesamtpunktzahl"
+
+#: src/thinice.c:2744
+msgid "Coins earned"
+msgstr "Gefundene Münzen"
+
+#: src/thinice.c:2770
+#, c-format
+msgid "%i tiles"
+msgstr "%i Ziegel"
+
+#: src/thinice.c:2773
+#, c-format
+msgid "%i points"
+msgstr "%i Punkte"
+
+#: src/thinice.c:2791
+msgid "Finish"
+msgstr "Beenden"
+
+#: src/thinice.c:3303
+#, c-format
+msgid ""
+"Error: Can't initialize the video subsystem\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3314
+msgid "Thin Ice"
+msgstr "Dünnes Eis"
+
+#: src/thinice.c:3321
+#, c-format
+msgid ""
+"Error: Can't setup 760x480 video mode.\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3330
+#, c-format
+msgid ""
+"Warning: Can't initialize the audio subsystem\n"
+"Continuing...\n"
+msgstr ""
+
+#: src/thinice.c:3339
+#, c-format
+msgid "Warning: Can't initialize the SDL Mixer library\n"
+msgstr ""
+
+#: src/thinice.c:3351 src/thinice.c:3368 src/thinice.c:3382
+#, c-format
+msgid ""
+"Failed to load data file:\n"
+"%s\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3398
+#, c-format
+msgid ""
+"Failed to load a music file.\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3408
+#, c-format
+msgid ""
+"Error: Can't initialize the SDL TTF library\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3418 src/thinice.c:3430
+#, c-format
+msgid ""
+"Failed to load font file 'Burbank Small Bold'\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
+
+#: src/thinice.c:3442
+#, c-format
+msgid ""
+"Failed to load font file 'Burbank Big Regular Black'\n"
+"The error returned by SDL is:\n"
+"%s\n"
+msgstr ""
