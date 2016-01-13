@@ -73,6 +73,8 @@
 
 #include "cpstamp.h"
 
+#include "path.h"
+
 #define FPS (1000/18)
 #define MAX_RECTS 16
 
@@ -382,109 +384,104 @@ enum {
 	TILE_MELT_45
 };
 
-#ifdef WIN32
-#	undef GAMEDATA_DIR
-#	define GAMEDATA_DIR "./"
-#endif
-
 const char *images_names[NUM_IMAGES] = {
-	GAMEDATA_DIR "images/arcade.png",
-	GAMEDATA_DIR "images/title.png",
-	GAMEDATA_DIR "images/puffle-on-ice.png",
+	"images/arcade.png",
+	"images/title.png",
+	"images/puffle-on-ice.png",
 	
-	GAMEDATA_DIR "images/puffle-explain.png",
-	GAMEDATA_DIR "images/explain1.png",
-	GAMEDATA_DIR "images/explain2.png",
+	"images/puffle-explain.png",
+	"images/explain1.png",
+	"images/explain2.png",
 	
-	GAMEDATA_DIR "images/moneybag.png",
+	"images/moneybag.png",
 	
-	GAMEDATA_DIR "images/boton-ui-1-up.png",
-	GAMEDATA_DIR "images/boton-ui-1-over.png",
-	GAMEDATA_DIR "images/boton-ui-1-down.png",
+	"images/boton-ui-1-up.png",
+	"images/boton-ui-1-over.png",
+	"images/boton-ui-1-down.png",
 	
-	GAMEDATA_DIR "images/boton-ui-2-up.png",
-	GAMEDATA_DIR "images/boton-ui-2-over.png",
-	GAMEDATA_DIR "images/boton-ui-2-down.png",
+	"images/boton-ui-2-up.png",
+	"images/boton-ui-2-over.png",
+	"images/boton-ui-2-down.png",
 	
-	GAMEDATA_DIR "images/boton-ui-3-up.png",
-	GAMEDATA_DIR "images/boton-ui-3-over.png",
-	GAMEDATA_DIR "images/boton-ui-3-down.png",
+	"images/boton-ui-3-up.png",
+	"images/boton-ui-3-over.png",
+	"images/boton-ui-3-down.png",
 	
-	GAMEDATA_DIR "images/boton-close-up.png",
-	GAMEDATA_DIR "images/boton-close-over.png",
-	GAMEDATA_DIR "images/boton-close-down.png",
+	"images/boton-close-up.png",
+	"images/boton-close-over.png",
+	"images/boton-close-down.png",
 	
-	GAMEDATA_DIR "images/down-1.png",
-	GAMEDATA_DIR "images/down-2.png",
-	GAMEDATA_DIR "images/down-3.png",
-	GAMEDATA_DIR "images/left-1.png",
-	GAMEDATA_DIR "images/left-2.png",
-	GAMEDATA_DIR "images/left-3.png",
-	GAMEDATA_DIR "images/right-1.png",
-	GAMEDATA_DIR "images/right-2.png",
-	GAMEDATA_DIR "images/right-3.png",
-	GAMEDATA_DIR "images/up-1.png",
-	GAMEDATA_DIR "images/up-2.png",
-	GAMEDATA_DIR "images/up-3.png",
+	"images/down-1.png",
+	"images/down-2.png",
+	"images/down-3.png",
+	"images/left-1.png",
+	"images/left-2.png",
+	"images/left-3.png",
+	"images/right-1.png",
+	"images/right-2.png",
+	"images/right-3.png",
+	"images/up-1.png",
+	"images/up-2.png",
+	"images/up-3.png",
 	
-	GAMEDATA_DIR "images/fire1.png",
-	GAMEDATA_DIR "images/fire2.png",
-	GAMEDATA_DIR "images/fire3.png",
-	GAMEDATA_DIR "images/fire4.png",
-	GAMEDATA_DIR "images/fire5.png",
-	GAMEDATA_DIR "images/fire6.png",
-	GAMEDATA_DIR "images/fire7.png",
-	GAMEDATA_DIR "images/fire8.png",
-	GAMEDATA_DIR "images/fire9.png",
-	GAMEDATA_DIR "images/fire10.png",
+	"images/fire1.png",
+	"images/fire2.png",
+	"images/fire3.png",
+	"images/fire4.png",
+	"images/fire5.png",
+	"images/fire6.png",
+	"images/fire7.png",
+	"images/fire8.png",
+	"images/fire9.png",
+	"images/fire10.png",
 	
-	GAMEDATA_DIR "images/keys1.png",
-	GAMEDATA_DIR "images/keys2.png",
+	"images/keys1.png",
+	"images/keys2.png",
 	
-	GAMEDATA_DIR "images/smoke.png",
+	"images/smoke.png",
 	
-	GAMEDATA_DIR "images/puffle_black_1.png",
-	GAMEDATA_DIR "images/puffle_black_2.png",
-	GAMEDATA_DIR "images/puffle_black_3.png",
-	GAMEDATA_DIR "images/puffle_black_4.png",
-	GAMEDATA_DIR "images/puffle_black_5.png",
-	GAMEDATA_DIR "images/puffle_black_6.png",
-	GAMEDATA_DIR "images/puffle_black_7.png",
-	GAMEDATA_DIR "images/puffle_black_8.png",
-	GAMEDATA_DIR "images/puffle_black_9.png",
-	GAMEDATA_DIR "images/puffle_black_10.png",
-	GAMEDATA_DIR "images/puffle_black_11.png",
-	GAMEDATA_DIR "images/puffle_black_12.png",
-	GAMEDATA_DIR "images/puffle_black_13.png",
-	GAMEDATA_DIR "images/puffle_black_14.png",
-	GAMEDATA_DIR "images/puffle_black_15.png",
-	GAMEDATA_DIR "images/puffle_black_16.png",
-	GAMEDATA_DIR "images/puffle_black_end1_1.png",
-	GAMEDATA_DIR "images/puffle_black_end1_2.png",
-	GAMEDATA_DIR "images/puffle_black_end1_3.png",
-	GAMEDATA_DIR "images/puffle_black_end1_4.png",
-	GAMEDATA_DIR "images/puffle_black_end2_1.png",
-	GAMEDATA_DIR "images/puffle_black_end2_2.png",
-	GAMEDATA_DIR "images/puffle_black_end2_3.png",
-	GAMEDATA_DIR "images/puffle_black_end2_4.png",
-	GAMEDATA_DIR "images/puffle_black_end3_1.png",
-	GAMEDATA_DIR "images/puffle_black_end3_2.png",
-	GAMEDATA_DIR "images/puffle_black_end3_3.png",
-	GAMEDATA_DIR "images/puffle_black_end3_4.png",
+	"images/puffle_black_1.png",
+	"images/puffle_black_2.png",
+	"images/puffle_black_3.png",
+	"images/puffle_black_4.png",
+	"images/puffle_black_5.png",
+	"images/puffle_black_6.png",
+	"images/puffle_black_7.png",
+	"images/puffle_black_8.png",
+	"images/puffle_black_9.png",
+	"images/puffle_black_10.png",
+	"images/puffle_black_11.png",
+	"images/puffle_black_12.png",
+	"images/puffle_black_13.png",
+	"images/puffle_black_14.png",
+	"images/puffle_black_15.png",
+	"images/puffle_black_16.png",
+	"images/puffle_black_end1_1.png",
+	"images/puffle_black_end1_2.png",
+	"images/puffle_black_end1_3.png",
+	"images/puffle_black_end1_4.png",
+	"images/puffle_black_end2_1.png",
+	"images/puffle_black_end2_2.png",
+	"images/puffle_black_end2_3.png",
+	"images/puffle_black_end2_4.png",
+	"images/puffle_black_end3_1.png",
+	"images/puffle_black_end3_2.png",
+	"images/puffle_black_end3_3.png",
+	"images/puffle_black_end3_4.png",
 	
-	GAMEDATA_DIR "images/puffle_off1.png",
-	GAMEDATA_DIR "images/puffle_off2.png",
-	GAMEDATA_DIR "images/puffle_off3.png",
-	GAMEDATA_DIR "images/puffle_off4.png",
-	GAMEDATA_DIR "images/puffle_off5.png",
-	GAMEDATA_DIR "images/puffle_off6.png",
-	GAMEDATA_DIR "images/puffle_off7.png",
-	GAMEDATA_DIR "images/puffle_off8.png",
-	GAMEDATA_DIR "images/puffle_off9.png",
-	GAMEDATA_DIR "images/puffle_off10.png"
+	"images/puffle_off1.png",
+	"images/puffle_off2.png",
+	"images/puffle_off3.png",
+	"images/puffle_off4.png",
+	"images/puffle_off5.png",
+	"images/puffle_off6.png",
+	"images/puffle_off7.png",
+	"images/puffle_off8.png",
+	"images/puffle_off9.png",
+	"images/puffle_off10.png"
 };
 
-#define IMG_TILE_NAME GAMEDATA_DIR "images/tiles.png"
+#define IMG_TILE_NAME "images/tiles.png"
 
 enum {
 	SND_START,
@@ -507,25 +504,25 @@ enum {
 };
 
 const char *sound_names[NUM_SOUNDS] = {
-	GAMEDATA_DIR "sounds/start.wav",
-	GAMEDATA_DIR "sounds/ice.wav",
-	GAMEDATA_DIR "sounds/double.wav",
-	GAMEDATA_DIR "sounds/drown.wav",
-	GAMEDATA_DIR "sounds/money.wav",
-	GAMEDATA_DIR "sounds/key.wav",
-	GAMEDATA_DIR "sounds/move.wav",
-	GAMEDATA_DIR "sounds/warp.wav",
-	GAMEDATA_DIR "sounds/complete.wav",
+	"sounds/start.wav",
+	"sounds/ice.wav",
+	"sounds/double.wav",
+	"sounds/drown.wav",
+	"sounds/money.wav",
+	"sounds/key.wav",
+	"sounds/move.wav",
+	"sounds/warp.wav",
+	"sounds/complete.wav",
 	
-	GAMEDATA_DIR "sounds/button-1.wav",
+	"sounds/button-1.wav",
 	
-	GAMEDATA_DIR "sounds/points.wav",
-	GAMEDATA_DIR "sounds/sound_1.wav",
-	GAMEDATA_DIR "sounds/sound_2.wav"
+	"sounds/points.wav",
+	"sounds/sound_1.wav",
+	"sounds/sound_2.wav"
 };
 
-#define MUS_INTRO GAMEDATA_DIR "music/thinice1.ogg"
-#define MUS_THINICE GAMEDATA_DIR "music/thinice2.ogg"
+#define MUS_INTRO "music/thinice1.ogg"
+#define MUS_THINICE "music/thinice2.ogg"
 
 static int tiles_frames [] = {
 	1, /* 0 => 1 Portal normal */
@@ -956,19 +953,22 @@ TTF_Font *ttf13_burbank_bold;
 TTF_Font *ttf13_big_black;
 TTF_Font *ttf13_burbank_small;
 
-Categoria *c;
+CPStampCategory *c;
 
 int first_try_count, solved_stages, save_bonus_point, save_tiles_flipped, score, timepoints = 0;
 
 int main (int argc, char *argv[]) {
+	
+	initSystemPaths (argv[0]);
+	
 	/* Inicializar l18n */
 	setlocale (LC_ALL, "");
-	bindtextdomain (PACKAGE, LOCALEDIR);
+	bindtextdomain (PACKAGE, l10n_path);
 	
 	textdomain (PACKAGE);
 	
 	setup ();
-	iniciarCPStamp ();
+	CPStamp_Init (argc, argv);
 	
 	/* Registrar botones */
 	cp_registrar_botones (NUM_BUTTONS);
@@ -982,38 +982,38 @@ int main (int argc, char *argv[]) {
 	cp_button_start ();
 	
 	/* Registrar las estampas */
-	c = abrir_cat (STAMP_TYPE_GAME, "Thin Ice", "thin-ice");
+	c = CPStamp_Open (STAMP_TYPE_GAME, "Thin Ice", "thin-ice");
 	
 	if (c == NULL) {
 		printf (_("Failed to init the substamp system\n"));
 	}
 	
-	if (!esta_registrada (c, 63)) {
-		registrar_estampa (c, 63, "1 coin bag", "Collect 1 coin bag", GAMEDATA_DIR "images/stamps/63.png", STAMP_TYPE_GAME, STAMP_EASY);
+	if (!CPStamp_IsRegistered (c, 63)) {
+		CPStamp_Register (c, 63, "1 coin bag", "Collect 1 coin bag", "images/stamps/63.png", STAMP_TYPE_GAME, STAMP_EASY);
 	}
-	if (!esta_registrada (c, 64)) {
-		registrar_estampa (c, 64, "3 coin bags", "Collect 3 coin bags", GAMEDATA_DIR "images/stamps/64.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	if (!CPStamp_IsRegistered (c, 64)) {
+		CPStamp_Register (c, 64, "3 coin bags", "Collect 3 coin bags", "images/stamps/64.png", STAMP_TYPE_GAME, STAMP_NORMAL);
 	}
-	if (!esta_registrada (c, 65)) {
-		registrar_estampa (c, 65, "6 coin bags", "Collect 6 coin bags", GAMEDATA_DIR "images/stamps/65.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	if (!CPStamp_IsRegistered (c, 65)) {
+		CPStamp_Register (c, 65, "6 coin bags", "Collect 6 coin bags", "images/stamps/65.png", STAMP_TYPE_GAME, STAMP_NORMAL);
 	}
-	if (!esta_registrada (c, 66)) {
-		registrar_estampa (c, 66, "Iced Treasure", "Find the hidden treasure room", GAMEDATA_DIR "images/stamps/66.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+	if (!CPStamp_IsRegistered (c, 66)) {
+		CPStamp_Register (c, 66, "Iced Treasure", "Find the hidden treasure room", "images/stamps/66.png", STAMP_TYPE_GAME, STAMP_NORMAL);
 	}
-	if (!esta_registrada (c, 67)) {
-		registrar_estampa (c, 67, "10 coin bags", "Collect 10 coin bags", GAMEDATA_DIR "images/stamps/67.png", STAMP_TYPE_GAME, STAMP_HARD);
+	if (!CPStamp_IsRegistered (c, 67)) {
+		CPStamp_Register (c, 67, "10 coin bags", "Collect 10 coin bags", "images/stamps/67.png", STAMP_TYPE_GAME, STAMP_HARD);
 	}
-	if (!esta_registrada (c, 68)) {
-		registrar_estampa (c, 68, "Ice Bonus", "Completely melt 480 ice tiles", GAMEDATA_DIR "images/stamps/68.png", STAMP_TYPE_GAME, STAMP_HARD);
+	if (!CPStamp_IsRegistered (c, 68)) {
+		CPStamp_Register (c, 68, "Ice Bonus", "Completely melt 480 ice tiles", "images/stamps/68.png", STAMP_TYPE_GAME, STAMP_HARD);
 	}
-	if (!esta_registrada (c, 69)) {
-		registrar_estampa (c, 69, "Ice Trekker", "Push all blocks to the correct position", GAMEDATA_DIR "images/stamps/69.png", STAMP_TYPE_GAME, STAMP_HARD);
+	if (!CPStamp_IsRegistered (c, 69)) {
+		CPStamp_Register (c, 69, "Ice Trekker", "Push all blocks to the correct position", "images/stamps/69.png", STAMP_TYPE_GAME, STAMP_HARD);
 	}
-	if (!esta_registrada (c, 70)) {
-		registrar_estampa (c, 70, "33 coin bags", "Collect all coin bags on every level", GAMEDATA_DIR "images/stamps/70.png", STAMP_TYPE_GAME, STAMP_EXTREME);
+	if (!CPStamp_IsRegistered (c, 70)) {
+		CPStamp_Register (c, 70, "33 coin bags", "Collect all coin bags on every level", "images/stamps/70.png", STAMP_TYPE_GAME, STAMP_EXTREME);
 	}
-	if (!esta_registrada (c, 71)) {
-		registrar_estampa (c, 71, "Ice Master", "Master all the mazes", GAMEDATA_DIR "images/stamps/71.png", STAMP_TYPE_GAME, STAMP_EXTREME);
+	if (!CPStamp_IsRegistered (c, 71)) {
+		CPStamp_Register (c, 71, "Ice Master", "Master all the mazes", "images/stamps/71.png", STAMP_TYPE_GAME, STAMP_EXTREME);
 	}
 	do {
 		if (game_intro () == GAME_QUIT) break;
@@ -1022,7 +1022,7 @@ int main (int argc, char *argv[]) {
 		if (game_finish () == GAME_QUIT) break;
 	} while (1 == 0);
 	
-	cerrar_registro (c);
+	CPStamp_Close (c);
 	
 	SDL_Quit ();
 	return EXIT_SUCCESS;
@@ -1094,7 +1094,7 @@ int game_intro (void) {
 		last_time = SDL_GetTicks ();
 		num_rects = 0;
 		
-		restaurar_dibujado (screen);
+		CPStamp_Restore (screen);
 		
 		if (music_intro != NULL) {
 			if (!Mix_PlayingMusic ()) {
@@ -1985,7 +1985,7 @@ int game_loop (void) {
 			}
 		}
 		
-		restaurar_dibujado (screen);
+		CPStamp_Restore (screen);
 		
 		while (SDL_PollEvent(&event) > 0) {
 			switch (event.type) {
@@ -2219,15 +2219,15 @@ int game_loop (void) {
 			
 			int suma_bolsas = save_bonus_point + bonus_point;
 			if (suma_bolsas == 1) {
-				earn_stamp (c, 63);
+				CPStamp_Earn (c, 63);
 			} else if (suma_bolsas == 3) {
-				earn_stamp (c, 64);
+				CPStamp_Earn (c, 64);
 			} else if (suma_bolsas == 6) {
-				earn_stamp (c, 65);
+				CPStamp_Earn (c, 65);
 			} else if (suma_bolsas == 10) {
-				earn_stamp (c, 67);
+				CPStamp_Earn (c, 67);
 			} else if (suma_bolsas == 33) {
-				earn_stamp (c, 70);
+				CPStamp_Earn (c, 70);
 			}
 		} else if (*tile_actual == 8) {
 			mapa[player.y][player.x] = 3;
@@ -2294,7 +2294,7 @@ int game_loop (void) {
 			
 			if (solved_stages == 19) {
 				timepoints = ((SDL_GetTicks () - timer) / 1000) * 6;
-				earn_stamp (c, 71);
+				CPStamp_Earn (c, 71);
 			}
 			
 			save_tiles_flipped += tiles_flipped;
@@ -2349,7 +2349,7 @@ int game_loop (void) {
 		} else if (*tile_actual == 14) {
 			area_secreta (mapa, frames, solved_stages);
 			if (use_sound) Mix_PlayChannel (-1, sounds[SND_WARP], 0);
-			earn_stamp (c, 66);
+			CPStamp_Earn (c, 66);
 		}
 		
 		if (player_moving == 0) {
@@ -2407,7 +2407,7 @@ int game_loop (void) {
 					snow_melted++;
 					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
 					if (save_snow_melted + snow_melted == 480) {
-						earn_stamp (c, 68);
+						CPStamp_Earn (c, 68);
 					}
 					
 					/* Actualizar los tiles flipped */
@@ -2547,7 +2547,7 @@ int game_loop (void) {
 				movibles++;
 				
 				if (movibles == 7) {
-					earn_stamp (c, 69);
+					CPStamp_Earn (c, 69);
 				}
 			}
 		}
@@ -2673,9 +2673,9 @@ int game_loop (void) {
 		rect.h = 432;
 		rects[num_rects++] = rect;
 		
-		if (activar_estampa) {
-			dibujar_estampa (screen, c, TRUE);
-			rects[num_rects++] = stamp_rect;
+		if (cpstamp_activate) {
+			CPStamp_Draw (screen, c, TRUE);
+			rects[num_rects++] = cpstamp_rect;
 		}
 		
 		SDL_UpdateRects (screen, num_rects, rects);
@@ -2828,7 +2828,7 @@ int game_finish (void) {
 		
 		num_rects = 0;
 		
-		restaurar_dibujado (screen);
+		CPStamp_Restore (screen);
 		
 		while (SDL_PollEvent(&event) > 0) {
 			switch (event.type) {
@@ -3269,9 +3269,9 @@ int game_finish (void) {
 			cp_button_refresh[BUTTON_GET_COINS] = 0;
 		}
 		
-		if (activar_estampa) {
-			dibujar_estampa (screen, c, TRUE);
-			rects[num_rects++] = stamp_rect;
+		if (cpstamp_activate) {
+			CPStamp_Draw (screen, c, TRUE);
+			rects[num_rects++] = cpstamp_rect;
 		}
 		
 		SDL_UpdateRects (screen, num_rects, rects);
@@ -3296,6 +3296,7 @@ SDL_Surface * set_video_mode (unsigned flags) {
 void setup (void) {
 	SDL_Surface * image;
 	int g;
+	char buffer_file[8192];
 	
 	/* Inicializar el Video SDL */
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -3306,7 +3307,8 @@ void setup (void) {
 		exit (1);
 	}
 	
-	image = IMG_Load (GAMEDATA_DIR "images/icon.png");
+	sprintf (buffer_file, "%simages/icon.png", systemdata_path);
+	image = IMG_Load (buffer_file);
 	if (image) {
 		SDL_WM_SetIcon (image, NULL);
 		SDL_FreeSurface (image);
@@ -3344,14 +3346,15 @@ void setup (void) {
 	}
 	
 	for (g = 0; g < NUM_IMAGES; g++) {
-		image = IMG_Load (images_names[g]);
+		sprintf (buffer_file, "%s%s", systemdata_path, images_names[g]);
+		image = IMG_Load (buffer_file);
 		
 		if (image == NULL) {
 			fprintf (stderr,
 				_("Failed to load data file:\n"
 				"%s\n"
 				"The error returned by SDL is:\n"
-				"%s\n"), images_names[g], SDL_GetError());
+				"%s\n"), buffer_file, SDL_GetError());
 			SDL_Quit ();
 			exit (1);
 		}
@@ -3361,7 +3364,8 @@ void setup (void) {
 	}
 	
 	/* Cargar los tiles */
-	image_tiles = IMG_Load (IMG_TILE_NAME);
+	sprintf (buffer_file, "%s%s", systemdata_path, IMG_TILE_NAME);
+	image_tiles = IMG_Load (buffer_file);
 	
 	if (image_tiles == NULL) {
 		fprintf (stderr,
@@ -3375,14 +3379,15 @@ void setup (void) {
 	
 	if (use_sound) {
 		for (g = 0; g < NUM_SOUNDS; g++) {
-			sounds[g] = Mix_LoadWAV (sound_names [g]);
+			sprintf (buffer_file, "%s%s", systemdata_path, sound_names[g]);
+			sounds[g] = Mix_LoadWAV (buffer_file);
 			
 			if (sounds[g] == NULL) {
 				fprintf (stderr,
 					_("Failed to load data file:\n"
 					"%s\n"
 					"The error returned by SDL is:\n"
-					"%s\n"), sound_names [g], SDL_GetError ());
+					"%s\n"), buffer_file, SDL_GetError ());
 				SDL_Quit ();
 				exit (1);
 			}
@@ -3390,8 +3395,10 @@ void setup (void) {
 		}
 		
 		/* Cargar la música */
-		music_intro = Mix_LoadMUS (MUS_INTRO);
-		music_thinice = Mix_LoadMUS (MUS_THINICE);
+		sprintf (buffer_file, "%s%s", systemdata_path, MUS_INTRO);
+		music_intro = Mix_LoadMUS (buffer_file);
+		sprintf (buffer_file, "%s%s", systemdata_path, MUS_THINICE);
+		music_thinice = Mix_LoadMUS (buffer_file);
 		
 		if (music_intro == NULL || music_thinice == NULL) {
 			fprintf (stderr,
@@ -3411,7 +3418,8 @@ void setup (void) {
 		exit (1);
 	}
 	
-	ttf13_burbank_bold = TTF_OpenFont (GAMEDATA_DIR "burbanksb.ttf", 13);
+	sprintf (buffer_file, "%s%s", systemdata_path, "burbanksb.ttf");
+	ttf13_burbank_bold = TTF_OpenFont (buffer_file, 13);
 	
 	if (!ttf13_burbank_bold) {
 		fprintf (stderr,
@@ -3423,7 +3431,7 @@ void setup (void) {
 	}
 	TTF_SetFontHinting (ttf13_burbank_bold, TTF_HINTING_LIGHT);
 	
-	ttf13_burbank_small = TTF_OpenFont (GAMEDATA_DIR "burbanksb.ttf", 13);
+	ttf13_burbank_small = TTF_OpenFont (buffer_file, 13);
 	
 	if (!ttf13_burbank_small) {
 		fprintf (stderr,
@@ -3435,7 +3443,8 @@ void setup (void) {
 	}
 	TTF_SetFontStyle (ttf13_burbank_bold, TTF_STYLE_BOLD);
 	
-	ttf13_big_black = TTF_OpenFont (GAMEDATA_DIR "burbankbgbk.ttf", 13);
+	sprintf (buffer_file, "%s%s", systemdata_path, "burbankbgbk.ttf");
+	ttf13_big_black = TTF_OpenFont (buffer_file, 13);
 	
 	if (!ttf13_big_black) {
 		fprintf (stderr,

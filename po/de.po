@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thin-ice 0.9.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-27 23:26-0500\n"
+"POT-Creation-Date: 2016-01-08 17:18-0600\n"
 "PO-Revision-Date: 2015-09-27 22:41-0500\n"
 "Last-Translator: Félix Arreola Rodríguez <gatuno_123@esdebian.org>\n"
 "Language-Team: German\n"
@@ -17,28 +17,28 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/thinice.c:988
+#: src/thinice.c:985
 #, c-format
 msgid "Failed to init the substamp system\n"
 msgstr ""
 
-#: src/thinice.c:1039
+#: src/thinice.c:1036
 msgid "Start"
 msgstr "Start"
 
-#: src/thinice.c:1193
+#: src/thinice.c:1190
 msgid "Play"
 msgstr "Spielen"
 
-#: src/thinice.c:1194
+#: src/thinice.c:1191
 msgid "Back"
 msgstr "Zurück"
 
-#: src/thinice.c:1195
+#: src/thinice.c:1192
 msgid "Next"
 msgstr "Weiter"
 
-#: src/thinice.c:1199
+#: src/thinice.c:1196
 msgid ""
 "Melt ice on your way through each maze. Once the ice is melted you\n"
 "can't walk back. Melt all the ice to solve the stage"
@@ -47,7 +47,7 @@ msgstr ""
 " Wenn das Eis weg ist, kannst du nicht mehr zurück.\n"
 "Zum Lösen des Levels muss das ganze Eis weg sein."
 
-#: src/thinice.c:1200
+#: src/thinice.c:1197
 msgid ""
 "Use the arrow keys to move your\n"
 "character around."
@@ -55,11 +55,11 @@ msgstr ""
 "Benutze die Pfeiltasten,\n"
 "um deine Figur zu bewegen."
 
-#: src/thinice.c:1201
+#: src/thinice.c:1198
 msgid "Make your way to the red exit to finish the level."
 msgstr "Bewege dich zum roten Ausgang, um das Level zu lösen."
 
-#: src/thinice.c:1202
+#: src/thinice.c:1199
 msgid ""
 "More points are earned by walking over all ice in the\n"
 "stage."
@@ -67,7 +67,7 @@ msgstr ""
 "Du bekommst mehr Punkte, wenn du über\n"
 "das ganze Eis im Level läufst."
 
-#: src/thinice.c:1203
+#: src/thinice.c:1200
 msgid ""
 "Earn more points by solving each level on your first try. Also, coin\n"
 "bags will appear if you are solving levels."
@@ -75,65 +75,65 @@ msgstr ""
 "Du bekommst mehr Punkte, wenn du das Level beim ersten Versuch löst.\n"
 "Wenn du ein Level erfolgreich löst, tauchen Münzsäcke auf."
 
-#: src/thinice.c:1867
+#: src/thinice.c:1864
 msgid "Reset"
 msgstr "Neu Starten"
 
-#: src/thinice.c:1902
+#: src/thinice.c:1899
 msgid "Level"
 msgstr "Level"
 
-#: src/thinice.c:1911
+#: src/thinice.c:1908
 msgid "Solved"
 msgstr "Gelöst"
 
-#: src/thinice.c:1920
+#: src/thinice.c:1917
 msgid "Points"
 msgstr "Punkte"
 
-#: src/thinice.c:2738
+#: src/thinice.c:2735
 msgid "Levels solved"
 msgstr "Gelöste Levels"
 
-#: src/thinice.c:2739
+#: src/thinice.c:2736
 msgid "Levels solved on first try"
 msgstr "Beim ersten Versuch gelöste Levels"
 
-#: src/thinice.c:2740
+#: src/thinice.c:2737
 msgid "Coins bags collected"
 msgstr "Gesammelte Münzsäcke"
 
-#: src/thinice.c:2741
+#: src/thinice.c:2738
 msgid "Total ice melted"
 msgstr "Gesamtes geschmolzenes Eis"
 
-#: src/thinice.c:2742
+#: src/thinice.c:2739
 msgid "Solved game quickly bonus"
 msgstr "Bonus für schnelles Spiel"
 
-#: src/thinice.c:2743
+#: src/thinice.c:2740
 msgid "Total points"
 msgstr "Gesamtpunktzahl"
 
-#: src/thinice.c:2744
+#: src/thinice.c:2741
 msgid "Coins earned"
 msgstr "Gefundene Münzen"
 
-#: src/thinice.c:2770
+#: src/thinice.c:2767
 #, c-format
 msgid "%i tiles"
 msgstr "%i Ziegel"
 
-#: src/thinice.c:2773
+#: src/thinice.c:2770
 #, c-format
 msgid "%i points"
 msgstr "%i Punkte"
 
-#: src/thinice.c:2791
+#: src/thinice.c:2788
 msgid "Finish"
 msgstr "Beenden"
 
-#: src/thinice.c:3303
+#: src/thinice.c:3301
 #, c-format
 msgid ""
 "Error: Can't initialize the video subsystem\n"
@@ -141,11 +141,11 @@ msgid ""
 "%s\n"
 msgstr ""
 
-#: src/thinice.c:3314
+#: src/thinice.c:3313
 msgid "Thin Ice"
 msgstr "Dünnes Eis"
 
-#: src/thinice.c:3321
+#: src/thinice.c:3320
 #, c-format
 msgid ""
 "Error: Can't setup 760x480 video mode.\n"
@@ -153,19 +153,19 @@ msgid ""
 "%s\n"
 msgstr ""
 
-#: src/thinice.c:3330
+#: src/thinice.c:3329
 #, c-format
 msgid ""
 "Warning: Can't initialize the audio subsystem\n"
 "Continuing...\n"
 msgstr ""
 
-#: src/thinice.c:3339
+#: src/thinice.c:3338
 #, c-format
 msgid "Warning: Can't initialize the SDL Mixer library\n"
 msgstr ""
 
-#: src/thinice.c:3351 src/thinice.c:3368 src/thinice.c:3382
+#: src/thinice.c:3351 src/thinice.c:3368 src/thinice.c:3383
 #, c-format
 msgid ""
 "Failed to load data file:\n"
@@ -174,7 +174,7 @@ msgid ""
 "%s\n"
 msgstr ""
 
-#: src/thinice.c:3398
+#: src/thinice.c:3401
 #, c-format
 msgid ""
 "Failed to load a music file.\n"
@@ -182,14 +182,14 @@ msgid ""
 "%s\n"
 msgstr ""
 
-#: src/thinice.c:3408
+#: src/thinice.c:3411
 #, c-format
 msgid ""
 "Error: Can't initialize the SDL TTF library\n"
 "%s\n"
 msgstr ""
 
-#: src/thinice.c:3418 src/thinice.c:3430
+#: src/thinice.c:3422 src/thinice.c:3434
 #, c-format
 msgid ""
 "Failed to load font file 'Burbank Small Bold'\n"
@@ -197,7 +197,7 @@ msgid ""
 "%s\n"
 msgstr ""
 
-#: src/thinice.c:3442
+#: src/thinice.c:3447
 #, c-format
 msgid ""
 "Failed to load font file 'Burbank Big Regular Black'\n"
