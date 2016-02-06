@@ -1,4 +1,4 @@
-AC_INIT([Thin Ice], [1.0.0], [], [thin-ice])
+AC_INIT([Thin Ice], [1.0.1], [], [thin-ice])
 
 AC_REVISION([Revision 8])
 
@@ -31,7 +31,7 @@ SDL_VERSION=1.2.14
 SDL_IMAGE_VERSION=1.2.10
 SDL_TTF_VERSION=2.0.11
 SDL_MIXER_VERSION=1.2.12
-CPSTAMP_VERSION=0.9.4
+CPSTAMP_VERSION=0.9.5
 
 AC_MSG_CHECKING([if you have SDL installed on your system])
 PKG_CHECK_EXISTS([sdl >= $SDL_VERSION], [AC_MSG_RESULT([yes])], [AC_MSG_FAILURE([SDL not found in your system])])

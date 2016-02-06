@@ -954,6 +954,7 @@ TTF_Font *ttf13_big_black;
 TTF_Font *ttf13_burbank_small;
 
 CPStampCategory *c;
+CPStampHandle *stamp_handle;
 
 int first_try_count, solved_stages, save_bonus_point, save_tiles_flipped, score, timepoints = 0;
 
@@ -968,7 +969,9 @@ int main (int argc, char *argv[]) {
 	textdomain (PACKAGE);
 	
 	setup ();
-	CPStamp_Init (argc, argv);
+	stamp_handle = CPStamp_Init (argc, argv);
+	
+	if (use_sound) CPStamp_WithSound (stamp_handle, TRUE);
 	
 	/* Registrar botones */
 	cp_registrar_botones (NUM_BUTTONS);
@@ -982,7 +985,7 @@ int main (int argc, char *argv[]) {
 	cp_button_start ();
 	
 	/* Registrar las estampas */
-	c = CPStamp_Open (STAMP_TYPE_GAME, "Thin Ice", "thin-ice");
+	c = CPStamp_Open (stamp_handle, STAMP_TYPE_GAME, "Thin Ice", "thin-ice");
 	
 	if (c == NULL) {
 		printf (_("Failed to init the substamp system\n"));
@@ -1094,7 +1097,7 @@ int game_intro (void) {
 		last_time = SDL_GetTicks ();
 		num_rects = 0;
 		
-		CPStamp_Restore (screen);
+		CPStamp_Restore (stamp_handle, screen);
 		
 		if (music_intro != NULL) {
 			if (!Mix_PlayingMusic ()) {
@@ -1408,7 +1411,6 @@ int game_explain (void) {
 				rect.h = images[IMG_MONEY_BAG]->h;
 				
 				SDL_BlitSurface (images[IMG_MONEY_BAG], NULL, screen, &rect);
-				if (use_sound) Mix_PlayChannel (-1, sounds[SND_MONEY], 0);
 			}
 			refresh_escena = 0;
 		}
@@ -1417,7 +1419,7 @@ int game_explain (void) {
 			rect.x = rect.y = 192;
 			rect.w = images[IMG_EXPLAIN_1]->w;
 			rect.h = images[IMG_EXPLAIN_1]->h;
-		
+			
 			SDL_BlitSurface (images[IMG_EXPLAIN_1], NULL, screen, &rect);
 			switch (frame) {
 				case 0:
@@ -1433,84 +1435,84 @@ int game_explain (void) {
 					break;
 				case 16:
 					mapa[1][0] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 17:
 				case 18:
 					puffle.x += 8;
 					break;
 				case 21:
 					mapa[1][1] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 22:
 				case 23:
 					puffle.x += 8;
 					break;
 				case 26:
 					mapa[1][2] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 27:
 				case 28:
 					puffle.x += 8;
 					break;
 				case 31:
 					mapa[1][3] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 32:
 				case 33:
 					puffle.x += 8;
 					break;
 				case 36:
 					mapa[1][4] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 37:
 				case 38:
 					puffle.x += 8;
 					break;
 				case 41:
 					mapa[1][5] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 42:
 				case 43:
 					puffle.x += 8;
 					break;
 				case 46:
 					mapa[1][6] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 47:
 				case 48:
 					puffle.x += 8;
 					break;
 				case 51:
 					mapa[1][7] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 52:
 				case 53:
 					puffle.x += 8;
 					break;
 				case 56:
 					mapa[1][8] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 57:
 				case 58:
 					puffle.x += 8;
 					break;
 				case 61:
 					mapa[1][9] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 62:
 				case 63:
 					puffle.x += 8;
 					break;
 				case 66:
 					mapa[1][10] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 67:
 				case 68:
 					puffle.x += 8;
 					break;
 				case 71:
 					mapa[1][11] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 72:
 				case 73:
 					puffle.x += 8;
@@ -1554,126 +1556,126 @@ int game_explain (void) {
 					break;
 				case 16:
 					mapa[1][0] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 17:
 				case 18:
 					puffle.x += 8;
 					break;
 				case 21:
 					mapa[1][1] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 22:
 				case 23:
 					puffle.x += 8;
 					break;
 				case 26:
 					mapa[1][2] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 27:
 				case 28:
 					puffle.x += 8;
 					break;
 				case 31:
 					mapa[1][3] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 32:
 				case 33:
 					puffle.x += 8;
 					break;
 				case 36:
 					mapa[1][4] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 37:
 				case 38:
 					puffle.x += 8;
 					break;
 				case 41:
 					mapa[1][5] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 42:
 				case 43:
 					puffle.x += 8;
 					break;
 				case 46:
 					mapa[1][6] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 47:
 				case 48:
 					puffle.x += 8;
 					break;
 				case 51:
 					mapa[1][7] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 52:
 				case 53:
 					puffle.y -= 8;
 					break;
 				case 56:
 					mapa[0][7] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 57:
 				case 58:
 					puffle.x += 8;
 					break;
 				case 61:
 					mapa[0][8] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 62:
 				case 63:
 					puffle.x += 8;
 					break;
 				case 66:
 					mapa[0][9] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 67:
 				case 68:
 					puffle.y += 8;
 					break;
 				case 71:
 					mapa[1][9] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 72:
 				case 73:
 					puffle.x -= 8;
 					break;
 				case 76:
 					mapa[1][8] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 77:
 				case 78:
 					puffle.y += 8;
 					break;
 				case 81:
 					mapa[2][8] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 82:
 				case 83:
 					puffle.x += 8;
 					break;
 				case 86:
 					mapa[2][9] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 87:
 				case 88:
 					puffle.x += 8;
 					break;
 				case 91:
 					mapa[2][10] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 92:
 				case 93:
 					puffle.y -= 8;
 					break;
 				case 96:
 					mapa[1][10] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 97:
 				case 98:
 					puffle.x += 8;
 					break;
 				case 101:
 					mapa[1][11] = tiles_start[22];
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (-1, sounds[SND_ICE], 0);
 				case 102:
 				case 103:
 					puffle.x += 8;
@@ -1681,6 +1683,10 @@ int game_explain (void) {
 				case 104:
 					if (use_sound) Mix_PlayChannel (-1, sounds[SND_COMPLETE], 0);
 					break;
+			}
+		} else if (escena == 4) {
+			if (frame == 6) {
+				if (use_sound) Mix_PlayChannel (-1, sounds[SND_MONEY], 0);
 			}
 		}
 		
@@ -1704,6 +1710,8 @@ int game_explain (void) {
 			
 			puffle_frame = player_frames [puffle_frame];
 			copy_tile (&puffle, player_outputs[puffle_frame]);
+		} else if (escena == 4) {
+			if (frame <= 10) frame++;
 		}
 		
 		if (cp_button_refresh[BUTTON_PLAY]) {
@@ -1985,7 +1993,7 @@ int game_loop (void) {
 			}
 		}
 		
-		CPStamp_Restore (screen);
+		CPStamp_Restore (stamp_handle, screen);
 		
 		while (SDL_PollEvent(&event) > 0) {
 			switch (event.type) {
@@ -2219,15 +2227,15 @@ int game_loop (void) {
 			
 			int suma_bolsas = save_bonus_point + bonus_point;
 			if (suma_bolsas == 1) {
-				CPStamp_Earn (c, 63);
+				CPStamp_Earn (stamp_handle, c, 63);
 			} else if (suma_bolsas == 3) {
-				CPStamp_Earn (c, 64);
+				CPStamp_Earn (stamp_handle, c, 64);
 			} else if (suma_bolsas == 6) {
-				CPStamp_Earn (c, 65);
+				CPStamp_Earn (stamp_handle, c, 65);
 			} else if (suma_bolsas == 10) {
-				CPStamp_Earn (c, 67);
+				CPStamp_Earn (stamp_handle, c, 67);
 			} else if (suma_bolsas == 33) {
-				CPStamp_Earn (c, 70);
+				CPStamp_Earn (stamp_handle, c, 70);
 			}
 		} else if (*tile_actual == 8) {
 			mapa[player.y][player.x] = 3;
@@ -2283,7 +2291,7 @@ int game_loop (void) {
 				SDL_BlitSurface (text, NULL, screen, &rect);
 				SDL_FreeSurface (text);
 				
-				if (nivel != 19) if (use_sound) Mix_PlayChannel (-1, sounds[SND_COMPLETE], 0);
+				if (nivel != 20) if (use_sound) Mix_PlayChannel (-1, sounds[SND_COMPLETE], 0);
 				if (tries == 1) {
 					first_try_points += tiles_flipped;
 					first_try_count++;
@@ -2294,7 +2302,7 @@ int game_loop (void) {
 			
 			if (solved_stages == 19) {
 				timepoints = ((SDL_GetTicks () - timer) / 1000) * 6;
-				CPStamp_Earn (c, 71);
+				CPStamp_Earn (stamp_handle, c, 71);
 			}
 			
 			save_tiles_flipped += tiles_flipped;
@@ -2349,7 +2357,7 @@ int game_loop (void) {
 		} else if (*tile_actual == 14) {
 			area_secreta (mapa, frames, solved_stages);
 			if (use_sound) Mix_PlayChannel (-1, sounds[SND_WARP], 0);
-			CPStamp_Earn (c, 66);
+			CPStamp_Earn (stamp_handle, c, 66);
 		}
 		
 		if (player_moving == 0) {
@@ -2405,9 +2413,9 @@ int game_loop (void) {
 					frames[player.y][player.x] = tiles_start [22];
 					tiles_flipped++;
 					snow_melted++;
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_ICE], 0);
+					if (use_sound) Mix_PlayChannel (5, sounds[SND_ICE], 0);
 					if (save_snow_melted + snow_melted == 480) {
-						CPStamp_Earn (c, 68);
+						CPStamp_Earn (stamp_handle, c, 68);
 					}
 					
 					/* Actualizar los tiles flipped */
@@ -2429,7 +2437,7 @@ int game_loop (void) {
 					mapa[player.y][player.x] = 2;
 					frames[player.y][player.x] = tiles_start [2];
 					tiles_flipped++;
-					if (use_sound) Mix_PlayChannel (0, sounds[SND_DOUBLE_ICE], 0);
+					if (use_sound) Mix_PlayChannel (5, sounds[SND_DOUBLE_ICE], 0);
 					/* Actualizar los tiles flipped */
 					
 					sprintf (buf, "%i", tiles_flipped);
@@ -2511,7 +2519,7 @@ int game_loop (void) {
 			if (!movible_wall_up) {
 				old_movible = movible;
 				movible.y = movible.y - 1;
-				slide_moving = 3;
+				slide_moving = 2;
 			} else {
 				slide_block = 0;
 			}
@@ -2519,7 +2527,7 @@ int game_loop (void) {
 			if (!movible_wall_down) {
 				old_movible = movible;
 				movible.y = movible.y + 1;
-				slide_moving = 3;
+				slide_moving = 2;
 			} else {
 				slide_block = 0;
 			}
@@ -2527,7 +2535,7 @@ int game_loop (void) {
 			if (!movible_wall_left) {
 				old_movible = movible;
 				movible.x = movible.x - 1;
-				slide_moving = 3;
+				slide_moving = 2;
 			} else {
 				slide_block = 0;
 			}
@@ -2535,7 +2543,7 @@ int game_loop (void) {
 			if (!movible_wall_right) {
 				old_movible = movible;
 				movible.x = movible.x + 1;
-				slide_moving = 3;
+				slide_moving = 2;
 			} else {
 				slide_block = 0;
 			}
@@ -2547,7 +2555,7 @@ int game_loop (void) {
 				movibles++;
 				
 				if (movibles == 7) {
-					CPStamp_Earn (c, 69);
+					CPStamp_Earn (stamp_handle, c, 69);
 				}
 			}
 		}
@@ -2555,8 +2563,8 @@ int game_loop (void) {
 		if (slide_moving > 0) {
 			slide_moving--;
 			
-			rect.x = MAP_X + (movible.x * TILE_WIDTH) + ((old_movible.x - movible.x) * 8 * slide_moving);
-			rect.y = MAP_Y + (movible.y * TILE_HEIGHT) + ((old_movible.y - movible.y) * 8 * slide_moving);
+			rect.x = MAP_X + (movible.x * TILE_WIDTH) + ((old_movible.x - movible.x) * 12 * slide_moving);
+			rect.y = MAP_Y + (movible.y * TILE_HEIGHT) + ((old_movible.y - movible.y) * 12 * slide_moving);
 			copy_tile (&rect, TILE_BLOCK);
 		} else if (movible.x != -1) {
 			rect.x = MAP_X + (movible.x * TILE_WIDTH);
@@ -2673,9 +2681,9 @@ int game_loop (void) {
 		rect.h = 432;
 		rects[num_rects++] = rect;
 		
-		if (cpstamp_activate) {
-			CPStamp_Draw (screen, c, TRUE);
-			rects[num_rects++] = cpstamp_rect;
+		if (CPStamp_IsActive (stamp_handle)) {
+			CPStamp_Draw (stamp_handle, screen, TRUE);
+			rects[num_rects++] = CPStamp_GetUpdateRect (stamp_handle);
 		}
 		
 		SDL_UpdateRects (screen, num_rects, rects);
@@ -2734,7 +2742,7 @@ int game_finish (void) {
 	char buf[30];
 	SDL_Surface *texts_finish[7], *get_coins_text_button;
 	SDL_Surface *numero[7];
-	char *texts_finish_string[7] = {
+	const char *texts_finish_string[7] = {
 		_("Levels solved"),
 		_("Levels solved on first try"),
 		_("Coins bags collected"),
@@ -2828,7 +2836,7 @@ int game_finish (void) {
 		
 		num_rects = 0;
 		
-		CPStamp_Restore (screen);
+		CPStamp_Restore (stamp_handle, screen);
 		
 		while (SDL_PollEvent(&event) > 0) {
 			switch (event.type) {
@@ -3269,9 +3277,9 @@ int game_finish (void) {
 			cp_button_refresh[BUTTON_GET_COINS] = 0;
 		}
 		
-		if (cpstamp_activate) {
-			CPStamp_Draw (screen, c, TRUE);
-			rects[num_rects++] = cpstamp_rect;
+		if (CPStamp_IsActive (stamp_handle)) {
+			CPStamp_Draw (stamp_handle, screen, TRUE);
+			rects[num_rects++] = CPStamp_GetUpdateRect (stamp_handle);
 		}
 		
 		SDL_UpdateRects (screen, num_rects, rects);
@@ -3341,7 +3349,7 @@ void setup (void) {
 				_("Warning: Can't initialize the SDL Mixer library\n"));
 			use_sound = 0;
 		} else {
-			Mix_AllocateChannels (3);
+			Mix_AllocateChannels (6);
 		}
 	}
 	
