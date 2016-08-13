@@ -24,7 +24,11 @@ thin_ice_SOURCES = thinice.c cp-button.c draw-text.c cp-button.h draw-text.h get
 	mapa18.h \
 	mapa19.h
 
-EXTRA_DIST=thinice.rc
+if MACOSX
+thin_ice_SOURCES += SDLMain.m SDLMain.h
+endif
+
+EXTRA_DIST=thinice.rc SDLMain.m SDLMain.h
 
 if MINGW32
 thinice_ico.o: thinice.rc ../data/thinice.ico
@@ -40,9 +44,9 @@ thin_ice_CPPFLAGS = -DGAMEDATA_DIR=\"$(gamedatadir)/\" -DLOCALEDIR=\"$(localedir
 thin_ice_CFLAGS = $(SDL_CFLAGS) $(SDL_image_CFLAGS) $(SDL_mixer_CFLAGS) $(SDL_ttf_CFLAGS) $(CPSTAMP_CFLAGS) $(AM_CFLAGS)
 if MACOSX
 # En MAC OS X, hay que ligar/compilar contra los frameworks
-thin_ice_LDADD = $(SDL_LIBS)
+thin_ice_LDFLAGS = -Wl,-rpath,@loader_path/../Frameworks
 else
-thin_ice_LDADD = $(SDL_LIBS) $(SDL_image_LIBS) $(SDL_mixer_LIBS) $(SDL_ttf_LIBS) $(CPSTAMP_LIBS) $(mingw_ldadd)
+thin_ice_LDADD = $(SDL_LIBS) $(SDL_image_LIBS) $(SDL_mixer_LIBS) $(SDL_ttf_LIBS) $(CPSTAMP_LIBS) -lm $(mingw_ldadd)
 endif
 LDADD = $(LIBINTL)
 
