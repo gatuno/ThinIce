@@ -93,6 +93,9 @@ nobase_dist_gamedata_DATA = images/tiles.png \
 	images/stamps/69.png \
 	images/stamps/70.png \
 	images/stamps/71.png \
+	images/stamps/background.png \
+	images/stamps/category_big.png \
+	images/stamps/category_small.png \
 	burbanksb.ttf \
 	burbankbgbk.ttf \
 	sounds/complete.wav \

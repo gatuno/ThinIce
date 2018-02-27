@@ -964,7 +964,7 @@ int main (int argc, char *argv[]) {
 	
 	/* Inicializar l18n */
 	setlocale (LC_ALL, "");
-	bindtextdomain (PACKAGE, l10n_path);
+	bindtextdomain (PACKAGE, get_l10n_path ());
 	
 	textdomain (PACKAGE);
 	
@@ -987,36 +987,41 @@ int main (int argc, char *argv[]) {
 	/* Registrar las estampas */
 	c = CPStamp_Open (stamp_handle, STAMP_TYPE_GAME, "Thin Ice", "thin-ice");
 	
+	CPStamp_SetLocale (c, PACKAGE, LOCALEDIR);
+	char buffer_file[8192];
+	sprintf (buffer_file, "%simages/stamps", GAMEDATA_DIR);
+	CPStamp_SetResourceDir (c, buffer_file);
+	
 	if (c == NULL) {
 		printf (_("Failed to init the substamp system\n"));
 	}
 	
 	if (!CPStamp_IsRegistered (c, 63)) {
-		CPStamp_Register (c, 63, "1 coin bag", "Collect 1 coin bag", "images/stamps/63.png", STAMP_TYPE_GAME, STAMP_EASY);
+		CPStamp_Register (c, 63, gettext_noop ("1 coin bag"), gettext_noop ("Collect 1 coin bag"), "images/stamps/63.png", STAMP_TYPE_GAME, STAMP_EASY);
 	}
 	if (!CPStamp_IsRegistered (c, 64)) {
-		CPStamp_Register (c, 64, "3 coin bags", "Collect 3 coin bags", "images/stamps/64.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+		CPStamp_Register (c, 64, gettext_noop ("3 coin bags"), gettext_noop ("Collect 3 coin bags"), "images/stamps/64.png", STAMP_TYPE_GAME, STAMP_NORMAL);
 	}
 	if (!CPStamp_IsRegistered (c, 65)) {
-		CPStamp_Register (c, 65, "6 coin bags", "Collect 6 coin bags", "images/stamps/65.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+		CPStamp_Register (c, 65, gettext_noop ("6 coin bags"), gettext_noop ("Collect 6 coin bags"), "images/stamps/65.png", STAMP_TYPE_GAME, STAMP_NORMAL);
 	}
 	if (!CPStamp_IsRegistered (c, 66)) {
-		CPStamp_Register (c, 66, "Iced Treasure", "Find the hidden treasure room", "images/stamps/66.png", STAMP_TYPE_GAME, STAMP_NORMAL);
+		CPStamp_Register (c, 66, gettext_noop ("Iced Treasure"), gettext_noop ("Find the hidden treasure room"), "images/stamps/66.png", STAMP_TYPE_GAME, STAMP_NORMAL);
 	}
 	if (!CPStamp_IsRegistered (c, 67)) {
-		CPStamp_Register (c, 67, "10 coin bags", "Collect 10 coin bags", "images/stamps/67.png", STAMP_TYPE_GAME, STAMP_HARD);
+		CPStamp_Register (c, 67, gettext_noop ("10 coin bags"), gettext_noop ("Collect 10 coin bags"), "images/stamps/67.png", STAMP_TYPE_GAME, STAMP_HARD);
 	}
 	if (!CPStamp_IsRegistered (c, 68)) {
-		CPStamp_Register (c, 68, "Ice Bonus", "Completely melt 480 ice tiles", "images/stamps/68.png", STAMP_TYPE_GAME, STAMP_HARD);
+		CPStamp_Register (c, 68, gettext_noop ("Ice Bonus"), gettext_noop ("Completely melt 480 ice tiles"), "images/stamps/68.png", STAMP_TYPE_GAME, STAMP_HARD);
 	}
 	if (!CPStamp_IsRegistered (c, 69)) {
-		CPStamp_Register (c, 69, "Ice Trekker", "Push all blocks to the correct position", "images/stamps/69.png", STAMP_TYPE_GAME, STAMP_HARD);
+		CPStamp_Register (c, 69, gettext_noop ("Ice Trekker"), gettext_noop ("Push all blocks to the correct position"), "images/stamps/69.png", STAMP_TYPE_GAME, STAMP_HARD);
 	}
 	if (!CPStamp_IsRegistered (c, 70)) {
-		CPStamp_Register (c, 70, "33 coin bags", "Collect all coin bags on every level", "images/stamps/70.png", STAMP_TYPE_GAME, STAMP_EXTREME);
+		CPStamp_Register (c, 70, gettext_noop ("33 coin bags"), gettext_noop ("Collect all coin bags on every level"), "images/stamps/70.png", STAMP_TYPE_GAME, STAMP_EXTREME);
 	}
 	if (!CPStamp_IsRegistered (c, 71)) {
-		CPStamp_Register (c, 71, "Ice Master", "Master all the mazes", "images/stamps/71.png", STAMP_TYPE_GAME, STAMP_EXTREME);
+		CPStamp_Register (c, 71, gettext_noop ("Ice Master"), gettext_noop ("Master all the mazes"), "images/stamps/71.png", STAMP_TYPE_GAME, STAMP_EXTREME);
 	}
 	do {
 		if (game_intro () == GAME_QUIT) break;
@@ -3305,6 +3310,7 @@ void setup (void) {
 	SDL_Surface * image;
 	int g;
 	char buffer_file[8192];
+	char *systemdata_path = get_systemdata_path ();
 	
 	/* Inicializar el Video SDL */
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {

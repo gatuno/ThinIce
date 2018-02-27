@@ -1,4 +1,4 @@
-AC_INIT([Thin Ice], [1.0.2], [], [thin-ice])
+AC_INIT([Thin Ice], [1.0.3], [], [thin-ice])
 
 AC_REVISION([Revision 9])
 
@@ -17,7 +17,7 @@ AC_PROG_OBJC
 AM_INIT_AUTOMAKE([-Wall -Werror])
 
 # Translate this program
-AM_GNU_GETTEXT_VERSION([0.18.1])
+AM_GNU_GETTEXT_VERSION([0.19.3])
 AM_GNU_GETTEXT([external])
 
 ALL_LINGUAS="de es fr pt en"
@@ -63,7 +63,7 @@ CPSTAMP_VERSION=0.9.5
 
 if test "x$MACOSX" = xyes; then
 	AC_MSG_WARN([*******************************************************])
-	AC_MSG_WARN([Cannot check if SDL librarys are installed on MAC OS X.])
+	AC_MSG_WARN([Cannot check if SDL libraries are installed on MAC OS X.])
 	AC_MSG_WARN([The following code assumes that the Frameworks are installed on the system locations])
 	AC_MSG_WARN([If they are not, use the --with-frameworks option])
 	AC_MSG_WARN([*******************************************************])
@@ -87,6 +87,7 @@ if test "x$MACOSX" = xyes; then
 			AC_LIB_APPENDTOVAR([CFLAGS], [-F$cy_framework])
 			AC_LIB_APPENDTOVAR([CXXFLAGS], [-F$cy_framework])
 			AC_LIB_APPENDTOVAR([OBJCCXXFLAGS], [-F$cy_framework])
+			AC_LIB_APPENDTOVAR([LDFLAGS], [-F$cy_framework])
 			for g in $SDL_FRAMEWORKS; do
 				AC_LIB_APPENDTOVAR([CPPFLAGS], [-I$cy_framework/$g.framework/Headers])
 			done
