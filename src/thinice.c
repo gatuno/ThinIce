@@ -969,6 +969,7 @@ int main (int argc, char *argv[]) {
 	textdomain (PACKAGE);
 	
 	setup ();
+	bind_textdomain_codeset (PACKAGE, "UTF-8");
 	stamp_handle = CPStamp_Init (argc, argv);
 	
 	if (use_sound) CPStamp_WithSound (stamp_handle, TRUE);
@@ -3311,6 +3312,7 @@ void setup (void) {
 	int g;
 	char buffer_file[8192];
 	char *systemdata_path = get_systemdata_path ();
+	SDL_RWops *ttf_burbank_sb;
 	
 	/* Inicializar el Video SDL */
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -3433,9 +3435,9 @@ void setup (void) {
 	}
 	
 	sprintf (buffer_file, "%s%s", systemdata_path, "burbanksb.ttf");
-	ttf13_burbank_bold = TTF_OpenFont (buffer_file, 13);
+	ttf_burbank_sb = SDL_RWFromFile (buffer_file, "rb");
 	
-	if (!ttf13_burbank_bold) {
+	if (ttf_burbank_sb == NULL) {
 		fprintf (stderr,
 			_("Failed to load font file 'Burbank Small Bold'\n"
 			"The error returned by SDL is:\n"
@@ -3443,18 +3445,18 @@ void setup (void) {
 		SDL_Quit ();
 		exit (1);
 	}
+	
+	SDL_RWseek (ttf_burbank_sb, 0, RW_SEEK_SET);
+	ttf13_burbank_bold = TTF_OpenFontRW (ttf_burbank_sb, 0, 13);
+	SDL_RWseek (ttf_burbank_sb, 0, RW_SEEK_SET);
+	ttf13_burbank_small = TTF_OpenFontRW (ttf_burbank_sb, 1, 13);
+	
+	if (!ttf13_burbank_bold || !ttf13_burbank_small) {
+		SDL_Quit ();
+		exit (1);
+	}
+	
 	TTF_SetFontHinting (ttf13_burbank_bold, TTF_HINTING_LIGHT);
-	
-	ttf13_burbank_small = TTF_OpenFont (buffer_file, 13);
-	
-	if (!ttf13_burbank_small) {
-		fprintf (stderr,
-			_("Failed to load font file 'Burbank Small Bold'\n"
-			"The error returned by SDL is:\n"
-			"%s\n"), TTF_GetError ());
-		SDL_Quit ();
-		exit (1);
-	}
 	TTF_SetFontStyle (ttf13_burbank_bold, TTF_STYLE_BOLD);
 	
 	sprintf (buffer_file, "%s%s", systemdata_path, "burbankbgbk.ttf");
