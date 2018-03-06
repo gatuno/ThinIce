@@ -986,11 +986,11 @@ int main (int argc, char *argv[]) {
 	cp_button_start ();
 	
 	/* Registrar las estampas */
-	c = CPStamp_Open (stamp_handle, STAMP_TYPE_GAME, "Thin Ice", "thin-ice");
+	c = CPStamp_Open (stamp_handle, STAMP_TYPE_GAME, gettext_noop ("Thin Ice"), "thin-ice");
 	
-	CPStamp_SetLocale (c, PACKAGE, LOCALEDIR);
+	CPStamp_SetLocale (c, PACKAGE, get_l10n_path ());
 	char buffer_file[8192];
-	sprintf (buffer_file, "%simages/stamps", GAMEDATA_DIR);
+	sprintf (buffer_file, "%simages/stamps", get_systemdata_path ());
 	CPStamp_SetResourceDir (c, buffer_file);
 	
 	if (c == NULL) {
@@ -3471,7 +3471,7 @@ void setup (void) {
 		exit (1);
 	}
 	
-	srand (SDL_GetTicks ());
+	srand ((unsigned int) getpid ());
 }
 
 void copy_tile (SDL_Rect *rect, int tile) {
