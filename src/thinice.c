@@ -949,6 +949,8 @@ Mix_Music * music_thinice;
 SDL_Rect rects[MAX_RECTS];
 int num_rects = 0;
 
+SDL_RWops *ttf_burbank_sb;
+
 TTF_Font *ttf13_burbank_bold;
 TTF_Font *ttf13_big_black;
 TTF_Font *ttf13_burbank_small;
@@ -2731,6 +2733,7 @@ int game_loop (void) {
 	} while (!done);
 	
 	SDL_FreeSurface (reset_text_button);
+	TTF_CloseFont (ttf13_burbank_bold);
 	return done;
 }
 
@@ -2836,6 +2839,10 @@ int game_finish (void) {
 	SDL_BlitSurface (images[IMG_DOWN_1], NULL, screen, &rect);
 	
 	SDL_Flip (screen);
+	
+	TTF_CloseFont (ttf13_big_black);
+	TTF_CloseFont (ttf13_burbank_small);
+	SDL_RWclose (ttf_burbank_sb);
 	
 	do {
 		last_time = SDL_GetTicks ();
@@ -3312,7 +3319,6 @@ void setup (void) {
 	int g;
 	char buffer_file[8192];
 	char *systemdata_path = get_systemdata_path ();
-	SDL_RWops *ttf_burbank_sb;
 	
 	/* Inicializar el Video SDL */
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -3449,7 +3455,7 @@ void setup (void) {
 	SDL_RWseek (ttf_burbank_sb, 0, RW_SEEK_SET);
 	ttf13_burbank_bold = TTF_OpenFontRW (ttf_burbank_sb, 0, 13);
 	SDL_RWseek (ttf_burbank_sb, 0, RW_SEEK_SET);
-	ttf13_burbank_small = TTF_OpenFontRW (ttf_burbank_sb, 1, 13);
+	ttf13_burbank_small = TTF_OpenFontRW (ttf_burbank_sb, 0, 13);
 	
 	if (!ttf13_burbank_bold || !ttf13_burbank_small) {
 		SDL_Quit ();
